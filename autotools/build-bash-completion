@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 #
 
 # Copyright (C) 2009, 2010, 2011, 2012 Google Inc.
@@ -40,7 +40,7 @@ import os.path
 import re
 import itertools
 import optparse
-from cStringIO import StringIO
+from io import StringIO
 
 # _constants shouldn't be imported from anywhere except constants.py, but we're
 # making an exception here because this script is only used at build time.
@@ -310,7 +310,7 @@ class CompletionWriter(object):
       # pylint. pylint: disable=W0212
       opt.all_names = sorted(opt._short_opts + opt._long_opts)
 
-      invalid = list(itertools.ifilterfalse(_OPT_NAME_RE.match, opt.all_names))
+      invalid = list(itertools.filterfalse(_OPT_NAME_RE.match, opt.all_names))
       if invalid:
         raise Exception("Option names don't match regular expression '%s': %s" %
                         (_OPT_NAME_RE.pattern, utils.CommaJoin(invalid)))
@@ -362,7 +362,7 @@ class CompletionWriter(object):
       if not suggest:
         suggest = opt.choices
 
-      if (isinstance(suggest, (int, long)) and
+      if (isinstance(suggest, int) and
           suggest in cli.OPT_COMPL_ALL):
         key = suggest
       elif suggest:
@@ -380,7 +380,7 @@ class CompletionWriter(object):
 
     wrote_opt = False
 
-    for (suggest, allnames) in values.items():
+    for (suggest, allnames) in list(values.items()):
       longnames = [i for i in allnames if i.startswith("--")]
 
       if wrote_opt:
@@ -626,15 +626,15 @@ def WriteCompletion(sw, scriptname, funcname, support_debug,
 
       # Group commands by arguments and options
       grouped_cmds = {}
-      for cmd, (_, argdef, optdef, _, _) in commands.items():
+      for cmd, (_, argdef, optdef, _, _) in list(commands.items()):
         if not (argdef or optdef):
           continue
         grouped_cmds.setdefault((tuple(argdef), tuple(optdef)), set()).add(cmd)
 
       # We're doing options and arguments to commands
       sw.Write("""case "${COMP_WORDS[1]}" in""")
-      sort_grouped = sorted(grouped_cmds.items(),
-                            key=lambda (_, y): sorted(y)[0])
+      sort_grouped = sorted(list(grouped_cmds.items()),
+                            key=lambda __y: sorted(__y[1])[0])
       for ((argdef, optdef), cmds) in sort_grouped:
         assert argdef or optdef
         sw.Write("%s)", "|".join(map(utils.ShellQuote, sorted(cmds))))
@@ -674,7 +674,7 @@ def GetCommands(filename, module):
   help_option = cli.cli_option("-h", "--help", default=False,
                                action="store_true")
 
-  for name, (_, _, optdef, _, _) in commands.items():
+  for name, (_, _, optdef, _, _) in list(commands.items()):
     if help_option not in optdef:
       optdef.append(help_option)
     for opt in cli.COMMON_OPTS:
@@ -687,7 +687,7 @@ def GetCommands(filename, module):
   aliases = getattr(module, "aliases", {})
   if aliases:
     commands = commands.copy()
-    for name, target in aliases.items():
+    for name, target in list(aliases.items()):
       commands[name] = commands[target]
 
   return commands
@@ -910,7 +910,7 @@ def main():
   sw.Write("[[ -n \"$gnt_shopt_extglob\" ]] && $gnt_shopt_extglob")
   sw.Write("unset gnt_shopt_extglob")
 
-  print(buf.getvalue())
+  print((buf.getvalue()))
 
 
 if __name__ == "__main__":
