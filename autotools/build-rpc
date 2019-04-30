@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 #
 
 # Copyright (C) 2011 Google Inc.
@@ -39,7 +39,7 @@ import sys
 import re
 import itertools
 import textwrap
-from cStringIO import StringIO
+from io import StringIO
 
 from ganeti import utils
 from ganeti import compat
@@ -144,7 +144,7 @@ def _WriteBaseClass(sw, clsname, calls):
       else:
         raise Exception("Unknown kind '%s'" % kind)
 
-      funcargs.extend(map(compat.fst, args))
+      funcargs.extend(list(map(compat.fst, args)))
 
       funcargs.append("_def=_CALLS[%r]" % name)
 
@@ -170,7 +170,7 @@ def _WriteBaseClass(sw, clsname, calls):
 
         buf.write(", [%s])" %
                   # Function arguments
-                  utils.CommaJoin(map(compat.fst, args)))
+                  utils.CommaJoin(list(map(compat.fst, args))))
 
         if kind == _SINGLE:
           buf.write("[node]")
@@ -204,15 +204,15 @@ def main():
     assert module.SINGLE == _SINGLE
     assert module.MULTI == _MULTI
 
-    dups = utils.GetRepeatedKeys(*module.CALLS.values())
+    dups = utils.GetRepeatedKeys(*list(module.CALLS.values()))
     if dups:
       raise Exception("Found duplicate RPC definitions for '%s'" %
                       utils.CommaJoin(sorted(dups)))
 
     for (clsname, calls) in sorted(module.CALLS.items()):
-      _WriteBaseClass(sw, clsname, calls.values())
+      _WriteBaseClass(sw, clsname, list(calls.values()))
 
-  print(buf.getvalue().rstrip())
+  print((buf.getvalue().rstrip()))
 
 
 if __name__ == "__main__":
