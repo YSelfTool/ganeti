@@ -33,7 +33,7 @@
 # W0401: Wildcard import ganeti.cli
 # W0614: Unused import %s from wildcard import (since we need cli)
 
-from cStringIO import StringIO
+from io import StringIO
 
 from ganeti.cli import *
 from ganeti import constants
@@ -112,7 +112,7 @@ def _FmtDict(data):
     return "(empty)"
 
   return utils.CommaJoin(["%s=%s" % (key, value)
-                          for key, value in data.items()])
+                          for key, value in list(data.items())])
 
 
 def ListGroups(opts, args):

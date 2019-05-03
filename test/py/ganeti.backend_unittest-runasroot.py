@@ -40,7 +40,7 @@ from ganeti import utils
 from ganeti import compat
 from ganeti import backend
 
-import testutils
+from . import testutils
 
 
 class TestCommonRestrictedCmdCheck(testutils.GanetiTestCase):

@@ -90,7 +90,7 @@ class FakeSshFileManager(object):
 
   def _SetMasterNodeName(self):
     self._master_node_name = [name for name, node_info
-                              in self._all_node_data.items()
+                              in list(self._all_node_data.items())
                               if node_info.is_master][0]
 
   def GetMasterNodeName(self):
@@ -121,12 +121,12 @@ class FakeSshFileManager(object):
     # Nodes which are not potential master candidates receive no keys
     if not node_info.is_potential_master_candidate:
       return
-    for node_info in self._all_node_data.values():
+    for node_info in list(self._all_node_data.values()):
       if node_info.is_potential_master_candidate:
         self._public_keys[receiving_node_name][node_info.uuid] = [node_info.key]
 
   def _FillAuthorizedKeyOfOneNode(self, receiving_node_name):
-    for node_name, node_info in self._all_node_data.items():
+    for node_name, node_info in list(self._all_node_data.items()):
       if node_info.is_master_candidate \
           or node_name == receiving_node_name:
         self._authorized_keys[receiving_node_name].add(node_info.key)
@@ -145,7 +145,7 @@ class FakeSshFileManager(object):
     self._public_keys = {}
     self._authorized_keys = {}
     self._CreateNodeDict(num_nodes, num_pot_mcs, num_mcs)
-    for node in self._all_node_data.keys():
+    for node in list(self._all_node_data.keys()):
       self._FillPublicKeyOfOneNode(node)
       self._FillAuthorizedKeyOfOneNode(node)
     self._SetMasterNodeName()
@@ -171,7 +171,7 @@ class FakeSshFileManager(object):
 
     """
     port_map = {}
-    for node in self._all_node_data.keys():
+    for node in list(self._all_node_data.keys()):
       port_map[node] = port
     return port_map
 
@@ -181,16 +181,16 @@ class FakeSshFileManager(object):
     @rtype: list of str
     @returns: list of all node names
     """
-    return self._all_node_data.keys()
+    return list(self._all_node_data.keys())
 
   def GetAllPotentialMasterCandidateNodeNames(self):
     return [name for name, node_info
-            in self._all_node_data.items()
+            in list(self._all_node_data.items())
             if node_info.is_potential_master_candidate]
 
   def GetAllMasterCandidateUuids(self):
     return [node_info.uuid for node_info
-            in self._all_node_data.values() if node_info.is_master_candidate]
+            in list(self._all_node_data.values()) if node_info.is_master_candidate]
 
   def GetAllPurePotentialMasterCandidates(self):
     """Get the potential master candidates which are not master candidates.
@@ -201,7 +201,7 @@ class FakeSshFileManager(object):
               candidates
     """
     return [(name, node_info) for name, node_info
-            in self._all_node_data.items()
+            in list(self._all_node_data.items())
             if node_info.is_potential_master_candidate and
             not node_info.is_master_candidate]
 
@@ -213,7 +213,7 @@ class FakeSshFileManager(object):
               candidate nodes.
     """
     return [(name, node_info) for name, node_info
-            in self._all_node_data.items() if node_info.is_master_candidate]
+            in list(self._all_node_data.items()) if node_info.is_master_candidate]
 
   def GetAllNormalNodes(self):
     """Get all normal nodes.
@@ -226,7 +226,7 @@ class FakeSshFileManager(object):
               nodes
     """
     return [(name, node_info) for name, node_info
-            in self._all_node_data.items() if not node_info.is_master_candidate
+            in list(self._all_node_data.items()) if not node_info.is_master_candidate
             and not node_info.is_potential_master_candidate]
 
   def GetAllNodesDiverse(self):
@@ -329,7 +329,7 @@ class FakeSshFileManager(object):
     @return: True if the key_node's UUID is found with the machting key 'key'
 
     """
-    for (node_uuid, pub_keys) in self._public_keys[file_node_name].items():
+    for (node_uuid, pub_keys) in list(self._public_keys[file_node_name].items()):
       if key in pub_keys and key_node_uuid == node_uuid:
         return True
     return False
@@ -359,7 +359,7 @@ class FakeSshFileManager(object):
 
     """
     assert isinstance(node_set, list)
-    for node_name in self._all_node_data.keys():
+    for node_name in list(self._all_node_data.keys()):
       if node_name in node_set:
         if not self.NodeHasAuthorizedKey(node_name, query_node_key):
           raise Exception("Node '%s' does not have authorized key '%s'."
@@ -377,7 +377,7 @@ class FakeSshFileManager(object):
     @raise Exception: if a node does not have the authorized key.
 
     """
-    self.AssertNodeSetOnlyHasAuthorizedKey(self._all_node_data.keys(), key)
+    self.AssertNodeSetOnlyHasAuthorizedKey(list(self._all_node_data.keys()), key)
 
   def AssertNoNodeHasAuthorizedKey(self, key):
     """Check if none of the nodes has a particular key in their auth. keys file.
@@ -401,7 +401,7 @@ class FakeSshFileManager(object):
     @param query_node_key: key which is looked for
 
     """
-    for node_name in self._all_node_data.keys():
+    for node_name in list(self._all_node_data.keys()):
       if node_name in node_set:
         if not self.NodeHasPublicKey(node_name, query_node_uuid,
                                      query_node_key):
@@ -453,10 +453,10 @@ class FakeSshFileManager(object):
 
     """
     assert isinstance(self._public_keys, dict)
-    for node_file, pub_keys in self._public_keys.items():
+    for node_file, pub_keys in list(self._public_keys.items()):
       assert isinstance(node_file, str)
       assert isinstance(pub_keys, dict)
-      for node_key, keys in pub_keys.items():
+      for node_key, keys in list(pub_keys.items()):
         assert isinstance(node_key, str)
         assert isinstance(keys, list)
         for key in keys:
@@ -470,7 +470,7 @@ class FakeSshFileManager(object):
 
     """
     assert isinstance(self._authorized_keys, dict)
-    for node_file, auth_keys in self._authorized_keys.items():
+    for node_file, auth_keys in list(self._authorized_keys.items()):
       assert isinstance(node_file, str)
       assert isinstance(auth_keys, set)
       for key in auth_keys:
@@ -539,7 +539,7 @@ class FakeSshFileManager(object):
 
   def _HandleAuthorizedKeys(self, instructions, node):
     (action, authorized_keys) = instructions
-    ssh_key_sets = authorized_keys.values()
+    ssh_key_sets = list(authorized_keys.values())
     if action == constants.SSHS_ADD:
       for ssh_keys in ssh_key_sets:
         self._AddAuthorizedKeys(node, ssh_keys)
@@ -562,7 +562,7 @@ class FakeSshFileManager(object):
   def _OverridePublicKeys(self, ssh_keys, file_node_name):
     assert isinstance(ssh_keys, dict)
     self._ClearPublicKeys(file_node_name)
-    for key_node_uuid, node_keys in ssh_keys.items():
+    for key_node_uuid, node_keys in list(ssh_keys.items()):
       assert isinstance(node_keys, list)
       if key_node_uuid in self._public_keys[file_node_name]:
         raise Exception("Duplicate node in ssh_update data.")
@@ -572,7 +572,7 @@ class FakeSshFileManager(object):
   def _ReplaceOrAddPublicKeys(self, public_keys, file_node_name):
     assert isinstance(public_keys, dict)
     self._EnsurePublicKeyFile(file_node_name)
-    for key_node_uuid, keys in public_keys.items():
+    for key_node_uuid, keys in list(public_keys.items()):
       assert isinstance(keys, list)
       self._public_keys[file_node_name][key_node_uuid] = keys
     self._AssertTypePublicKeys()
@@ -580,7 +580,7 @@ class FakeSshFileManager(object):
   def _RemovePublicKeys(self, public_keys, file_node_name):
     assert isinstance(public_keys, dict)
     self._EnsurePublicKeyFile(file_node_name)
-    for key_node_uuid, _ in public_keys.items():
+    for key_node_uuid, _ in list(public_keys.items()):
       if key_node_uuid in self._public_keys[file_node_name]:
         self._public_keys[file_node_name][key_node_uuid] = []
     self._AssertTypePublicKeys()
@@ -677,7 +677,7 @@ class FakeSshFileManager(object):
       target_uuids = [target_uuids]
     result_dict = {}
     for key_node_uuid, keys in \
-        self._public_keys[self._master_node_name].items():
+        list(self._public_keys[self._master_node_name].items()):
       if key_node_uuid in target_uuids:
         result_dict[key_node_uuid] = keys
     self._AssertTypePublicKeys()

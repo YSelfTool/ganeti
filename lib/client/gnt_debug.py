@@ -442,7 +442,7 @@ def TestJobqueue(opts, _):
   (TM_SUCCESS,
    TM_MULTISUCCESS,
    TM_FAIL,
-   TM_PARTFAIL) = range(4)
+   TM_PARTFAIL) = list(range(4))
   TM_ALL = compat.UniqueFrozenset([
     TM_SUCCESS,
     TM_MULTISUCCESS,
@@ -658,7 +658,7 @@ def Metad(opts, args): # pylint: disable=W0613
       ToStderr("Command 'echo' takes only precisely argument.")
       return 1
     result = metad.Client().Echo(args[1])
-    print("Answer: %s" % (result,))
+    print(("Answer: %s" % (result,)))
   else:
     ToStderr("Command '%s' not supported", args[0])
     return 1
@@ -681,7 +681,7 @@ def Wconfd(opts, args): # pylint: disable=W0613
       ToStderr("Command 'echo' takes only precisely argument.")
       return 1
     result = wconfd.Client().Echo(args[1])
-    print("Answer: %s" % (result,))
+    print(("Answer: %s" % (result,)))
   elif args[0] == "cleanuplocks":
     if len(args) != 1:
       ToStderr("Command 'cleanuplocks' takes no arguments.")
@@ -695,19 +695,19 @@ def Wconfd(opts, args): # pylint: disable=W0613
     wconfdcontext = (int(args[1]),
                      utils.livelock.GuessLockfileFor("masterd_1"))
     result = wconfd.Client().ListLocks(wconfdcontext)
-    print("Answer: %s" % (result,))
+    print(("Answer: %s" % (result,)))
   elif args[0] == "listalllocks":
     if len(args) != 1:
       ToStderr("Command 'listalllocks' takes no arguments.")
       return 1
     result = wconfd.Client().ListAllLocks()
-    print("Answer: %s" % (result,))
+    print(("Answer: %s" % (result,)))
   elif args[0] == "listalllocksowners":
     if len(args) != 1:
       ToStderr("Command 'listalllocks' takes no arguments.")
       return 1
     result = wconfd.Client().ListAllLocksOwners()
-    print("Answer: %s" % (result,))
+    print(("Answer: %s" % (result,)))
   elif args[0] == "flushconfig":
     if len(args) != 1:
       ToStderr("Command 'flushconfig' takes no arguments.")

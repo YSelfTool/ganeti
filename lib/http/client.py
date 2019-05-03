@@ -34,7 +34,7 @@
 import logging
 import threading
 
-from cStringIO import StringIO
+from io import StringIO
 
 import pycurl
 
@@ -99,7 +99,7 @@ class HttpClientRequest(object):
     elif isinstance(headers, dict):
       # Support for old interface
       self.headers = ["%s: %s" % (name, value)
-                      for name, value in headers.items()]
+                      for name, value in list(headers.items())]
     else:
       self.headers = headers
 
@@ -393,7 +393,7 @@ def ProcessRequests(requests, lock_monitor_cb=None, _curl=pycurl.Curl,
     monitor = _NoOpRequestMonitor
 
   # Process all requests and act based on the returned values
-  for (curl, msg) in _curl_process(_curl_multi(), curl_to_client.keys()):
+  for (curl, msg) in _curl_process(_curl_multi(), list(curl_to_client.keys())):
     monitor.acquire(shared=0)
     try:
       curl_to_client.pop(curl).Done(msg)

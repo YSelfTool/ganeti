@@ -36,7 +36,7 @@ from ganeti import errors
 from ganeti import constants
 from ganeti.tools import node_daemon_setup
 
-import testutils
+from . import testutils
 
 
 _SetupError = node_daemon_setup.SetupError

@@ -91,7 +91,7 @@ def _GetIpAddressesFromIpOutput(ip_output):
            corresponding list of addresses found in the IP output.
 
   """
-  addr = dict((i, []) for i in _NAME_TO_IP_VER.values())
+  addr = dict((i, []) for i in list(_NAME_TO_IP_VER.values()))
 
   for row in ip_output.splitlines():
     match = _IP_FAMILY_RE.search(row)
@@ -428,7 +428,7 @@ class IPAddress(object):
     @return: True if valid, False otherwise
 
     """
-    assert isinstance(netmask, (int, long))
+    assert isinstance(netmask, int)
 
     return 0 < netmask <= cls.iplen
 

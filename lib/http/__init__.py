@@ -37,7 +37,7 @@ import mimetools
 import select
 import socket
 
-from cStringIO import StringIO
+from io import StringIO
 
 import OpenSSL
 
@@ -84,7 +84,7 @@ _SSL_UNEXPECTED_EOF = "Unexpected EOF"
 (SOCKOP_SEND,
  SOCKOP_RECV,
  SOCKOP_SHUTDOWN,
- SOCKOP_HANDSHAKE) = range(4)
+ SOCKOP_HANDSHAKE) = list(range(4))
 
 # send/receive quantum
 SOCK_BUF_SIZE = 32768
@@ -755,7 +755,7 @@ class HttpMessageWriter(object):
 
     # Add headers
     if self._msg.start_line.version != HTTP_0_9:
-      for name, value in self._msg.headers.iteritems():
+      for name, value in self._msg.headers.items():
         buf.write("%s: %s\r\n" % (name, value))
 
     buf.write("\r\n")

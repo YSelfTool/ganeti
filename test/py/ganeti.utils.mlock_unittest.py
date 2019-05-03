@@ -39,7 +39,7 @@ import unittest
 from ganeti import utils
 from ganeti import errors
 
-import testutils
+from . import testutils
 
 
 # WARNING: The following tests modify the memory behaviour at runtime. Don't

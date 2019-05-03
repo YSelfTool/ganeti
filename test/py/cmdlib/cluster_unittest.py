@@ -52,7 +52,7 @@ from ganeti import pathutils
 from ganeti import query
 from ganeti.hypervisor import hv_xen
 
-from testsupport import *
+from .testsupport import *
 
 import testutils
 
@@ -190,7 +190,7 @@ class TestLUClusterConfigQuery(CmdlibTestCase):
     self.ExecOpCodeExpectOpPrereqError(op, "pinky_bunny")
 
   def testAllFields(self):
-    op = opcodes.OpClusterConfigQuery(output_fields=query.CLUSTER_FIELDS.keys())
+    op = opcodes.OpClusterConfigQuery(output_fields=list(query.CLUSTER_FIELDS.keys()))
 
     self.rpc.call_get_watcher_pause.return_value = \
       self.RpcResultsBuilder() \
@@ -1215,7 +1215,7 @@ class TestLUClusterVerifyGroup(CmdlibTestCase):
     drbd_map = {ninfo.uuid: {0: disk.uuid}}
     minors = verify.LUClusterVerifyGroup._ComputeDrbdMinors(
       ninfo, instanceinfo, disks_info, drbd_map, lambda *args: None)
-    self.assertEquals(minors, {0: (disk.uuid, instance.uuid, False)})
+    self.assertEqual(minors, {0: (disk.uuid, instance.uuid, False)})
 
 
 class TestLUClusterVerifyClientCerts(CmdlibTestCase):
@@ -2463,7 +2463,7 @@ class TestLUClusterRenewCrypto(CmdlibTestCase):
     nodes = self.cfg.GetAllNodesInfo()
     master_uuid = self.cfg.GetMasterNode()
 
-    for (node_uuid, _) in nodes.items():
+    for (node_uuid, _) in list(nodes.items()):
       if node_uuid == master_uuid:
         # The master digest is from the actual test certificate.
         self.assertEqual(self._client_node_cert_digest,
@@ -2509,7 +2509,7 @@ class TestLUClusterRenewCrypto(CmdlibTestCase):
     # There should be one digest missing.
     self.assertEqual(num_nodes, len(cluster.candidate_certs))
     nodes = self.cfg.GetAllNodesInfo()
-    for (node_uuid, _) in nodes.items():
+    for (node_uuid, _) in list(nodes.items()):
       if node_uuid == self._failed_node:
         self.assertTrue(node_uuid not in cluster.candidate_certs)
       else:
@@ -2537,7 +2537,7 @@ class TestLUClusterRenewCrypto(CmdlibTestCase):
     # There should be one digest missing.
     self.assertEqual(num_nodes, len(cluster.candidate_certs))
     nodes = self.cfg.GetAllNodesInfo()
-    for (node_uuid, node_info) in nodes.items():
+    for (node_uuid, node_info) in list(nodes.items()):
       if node_info.offline == True:
         self.assertTrue(node_uuid not in cluster.candidate_certs)
       else:
@@ -2584,14 +2584,14 @@ class TestLUClusterRenewCrypto(CmdlibTestCase):
   @patchPathutils("cluster")
   def testNonMasterRetriesSuccess(self, pathutils):
     cluster = self._NonMasterRetries(pathutils, 2)
-    self.assertEqual(2, len(cluster.candidate_certs.values()))
+    self.assertEqual(2, len(list(cluster.candidate_certs.values())))
 
   @patchPathutils("cluster")
   def testNonMasterRetriesFail(self, pathutils):
     cluster = self._NonMasterRetries(pathutils, 5)
 
     # Only the master digest should be in the cert list
-    self.assertEqual(1, len(cluster.candidate_certs.values()))
+    self.assertEqual(1, len(list(cluster.candidate_certs.values())))
     self.assertTrue(self._master_uuid in cluster.candidate_certs)
 
 

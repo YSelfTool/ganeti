@@ -181,7 +181,7 @@ def InvertDict(dict_in):
   @return: the inverted dict
 
   """
-  return dict(zip(dict_in.values(), dict_in.keys()))
+  return dict(list(zip(list(dict_in.values()), list(dict_in.keys()))))
 
 
 def InsertAtPos(src, pos, other):
@@ -215,7 +215,7 @@ def SequenceToDict(seq, key=compat.fst):
   @rtype: dict
 
   """
-  keys = map(key, seq)
+  keys = list(map(key, seq))
 
   duplicates = FindDuplicates(keys)
   if duplicates:
@@ -223,7 +223,7 @@ def SequenceToDict(seq, key=compat.fst):
 
   assert len(keys) == len(seq)
 
-  return dict(zip(keys, seq))
+  return dict(list(zip(keys, seq)))
 
 
 def _MakeFlatToDict(data):

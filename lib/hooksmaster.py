@@ -50,7 +50,7 @@ def _RpcResultsToHooksResults(rpc_results):
 
   """
   return dict((node, (rpc_res.fail_msg, rpc_res.offline, rpc_res.payload))
-              for (node, rpc_res) in rpc_results.items())
+              for (node, rpc_res) in list(rpc_results.items()))
 
 
 class HooksMaster(object):
@@ -131,7 +131,7 @@ class HooksMaster(object):
         assert not compat.any(key.upper().startswith(prefix)
                               for key in phase_env)
         env.update(("%s%s" % (prefix, key), value)
-                   for (key, value) in phase_env.items())
+                   for (key, value) in list(phase_env.items()))
 
     if phase == constants.HOOKS_PHASE_PRE:
       assert compat.all((key.startswith("GANETI_") and
@@ -179,7 +179,7 @@ class HooksMaster(object):
       env = utils.algo.JoinDisjointDicts(env, phase_env)
 
     # Convert everything to strings
-    env = dict([(str(key), str(val)) for key, val in env.iteritems()])
+    env = dict([(str(key), str(val)) for key, val in env.items()])
 
     assert compat.all(key == "PATH" or key.startswith("GANETI_")
                       for key in env)
@@ -236,7 +236,7 @@ class HooksMaster(object):
       converted_res = self.hooks_results_adapt_fn(results)
 
     errs = []
-    for node_name, (fail_msg, offline, hooks_results) in converted_res.items():
+    for node_name, (fail_msg, offline, hooks_results) in list(converted_res.items()):
       if offline:
         continue
 

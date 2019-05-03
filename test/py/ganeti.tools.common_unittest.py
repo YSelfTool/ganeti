@@ -43,7 +43,7 @@ from ganeti import serializer
 from ganeti import utils
 from ganeti.tools import common
 
-import testutils
+from . import testutils
 
 
 class TestGenerateClientCert(unittest.TestCase):

@@ -38,7 +38,7 @@ from ganeti import errors
 from ganeti import objects
 from ganeti.client import gnt_instance
 
-import testutils
+from . import testutils
 
 
 class TestConsole(unittest.TestCase):

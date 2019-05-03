@@ -36,7 +36,7 @@
 # C0413: Wrong import position
 
 import re
-from cStringIO import StringIO
+from io import StringIO
 
 import docutils.statemachine
 import docutils.nodes
@@ -290,7 +290,7 @@ def PythonEvalRole(role, rawtext, text, lineno, inliner,
                                  line=lineno)
     return ([inliner.problematic(rawtext, rawtext, msg)], [msg])
 
-  node = docutils.nodes.literal("", unicode(result), **options)
+  node = docutils.nodes.literal("", str(result), **options)
 
   return ([node], [])
 
@@ -334,7 +334,7 @@ def BuildQueryFields(fields):
 
   """
   defs = [(fdef.name, fdef.doc)
-           for (_, (fdef, _, _, _)) in utils.NiceSort(fields.items(),
+           for (_, (fdef, _, _, _)) in utils.NiceSort(list(fields.items()),
                                                       key=compat.fst)]
   return BuildValuesDoc(defs)
 
@@ -451,7 +451,7 @@ def _EncodeRapiResourceLink(method, uri):
   if method is not None:
     parts.append(method.lower())
 
-  return "rapi-res-%s" % "+".join(filter(None, parts))
+  return "rapi-res-%s" % "+".join([_f for _f in parts if _f])
 
 
 def _MakeRapiResourceLink(method, uri):
@@ -546,7 +546,7 @@ def _BuildRapiAccessTable(res):
   """Build a table with access permissions needed for all RAPI resources.
 
   """
-  for (uri, handler) in utils.NiceSort(res.items(), key=compat.fst):
+  for (uri, handler) in utils.NiceSort(list(res.items()), key=compat.fst):
     reslink = _MakeRapiResourceLink(None, uri)
     if not reslink:
       # No link was generated

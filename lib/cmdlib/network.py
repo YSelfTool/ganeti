@@ -170,7 +170,7 @@ class LUNetworkAdd(LogicalUnit):
     # These may not be allocated to any instances in routed mode, as
     # they wouldn't function anyway.
     if self.op.conflicts_check:
-      for node in self.cfg.GetAllNodesInfo().values():
+      for node in list(self.cfg.GetAllNodesInfo().values()):
         for ip in [node.primary_ip, node.secondary_ip]:
           try:
             if pool.Contains(ip):
@@ -229,7 +229,7 @@ class LUNetworkRemove(LogicalUnit):
     """
     # Verify that the network is not conncted.
     node_groups = [group.name
-                   for group in self.cfg.GetAllNodeGroupsInfo().values()
+                   for group in list(self.cfg.GetAllNodeGroupsInfo().values())
                    if self.network_uuid in group.networks]
 
     if node_groups:

@@ -106,17 +106,17 @@ _USER_STORAGE_TYPE = {
 _STORAGE_TYPE_OPT = \
   cli_option("-t", "--storage-type",
              dest="user_storage_type",
-             choices=_USER_STORAGE_TYPE.keys(),
+             choices=list(_USER_STORAGE_TYPE.keys()),
              default=None,
              metavar="STORAGE_TYPE",
              help=("Storage type (%s)" %
-                   utils.CommaJoin(_USER_STORAGE_TYPE.keys())))
+                   utils.CommaJoin(list(_USER_STORAGE_TYPE.keys()))))
 
 _REPAIRABLE_STORAGE_TYPES = \
-  [st for st, so in constants.VALID_STORAGE_OPERATIONS.iteritems()
+  [st for st, so in constants.VALID_STORAGE_OPERATIONS.items()
    if constants.SO_FIX_CONSISTENCY in so]
 
-_MODIFIABLE_STORAGE_TYPES = constants.MODIFIABLE_STORAGE_FIELDS.keys()
+_MODIFIABLE_STORAGE_TYPES = list(constants.MODIFIABLE_STORAGE_FIELDS.keys())
 
 _OOB_COMMAND_ASK = compat.UniqueFrozenset([
   constants.OOB_POWER_OFF,
@@ -180,7 +180,7 @@ def _ReadSshKeys(keyfiles, _tostderr_fn=ToStderr):
   """
   result = []
 
-  for (kind, (private_file, public_file)) in keyfiles.items():
+  for (kind, (private_file, public_file)) in list(keyfiles.items()):
     private_key = _TryReadFile(private_file)
     public_key = _TryReadFile(public_file)
 
@@ -224,7 +224,7 @@ def _SetupSSH(options, cluster_name, node, ssh_port, cl):
     ssh.GetAllUserFiles(constants.SSH_LOGIN_USER, mkdir=False, dircheck=False)
 
   dsa_root_keyfiles = dict((kind, value) for (kind, value)
-                           in root_keyfiles.items()
+                           in list(root_keyfiles.items())
                            if kind == constants.SSHK_DSA)
   root_keys = _ReadSshKeys(dsa_root_keyfiles)
 

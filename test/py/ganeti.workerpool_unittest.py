@@ -42,7 +42,7 @@ from ganeti import errors
 from ganeti import utils
 from ganeti import compat
 
-import testutils
+from . import testutils
 
 
 class CountingContext(object):
@@ -183,7 +183,7 @@ class TestWorkerpool(unittest.TestCase):
       wp.TerminateWorkers()
       self._CheckWorkerCount(wp, 0)
 
-    self.assertEquals(ctx.GetDoneTasks(), 10)
+    self.assertEqual(ctx.GetDoneTasks(), 10)
 
   def testNoTasks(self):
     wp = workerpool.WorkerPool("Test", 3, CountingBaseWorker)
@@ -250,7 +250,7 @@ class TestWorkerpool(unittest.TestCase):
       wp.TerminateWorkers()
       self._CheckWorkerCount(wp, 0)
 
-    self.assertEquals(ctx.GetDoneTasks(), 22)
+    self.assertEqual(ctx.GetDoneTasks(), 22)
 
   def testManyTasksSequence(self):
     ctx = CountingContext()
@@ -273,7 +273,7 @@ class TestWorkerpool(unittest.TestCase):
       wp.TerminateWorkers()
       self._CheckWorkerCount(wp, 0)
 
-    self.assertEquals(ctx.GetDoneTasks(), 11)
+    self.assertEqual(ctx.GetDoneTasks(), 11)
 
   def _CheckNoTasks(self, wp):
     wp._lock.acquire()
@@ -465,8 +465,8 @@ class TestWorkerpool(unittest.TestCase):
 
         all_order_ids = []
 
-        for (num, numordertaskid) in ctx.num2ordertaskid.items():
-          order_ids = map(compat.fst, numordertaskid)
+        for (num, numordertaskid) in list(ctx.num2ordertaskid.items()):
+          order_ids = list(map(compat.fst, numordertaskid))
           self.assertFalse(utils.FindDuplicates(order_ids),
                            msg="Order ID has been reused")
           all_order_ids.extend(order_ids)

@@ -186,7 +186,7 @@ def ExpandUidPool(uid_pool):
   """
   uids = set()
   for lower, higher in uid_pool:
-    uids.update(range(lower, higher + 1))
+    uids.update(list(range(lower, higher + 1)))
   return list(uids)
 
 

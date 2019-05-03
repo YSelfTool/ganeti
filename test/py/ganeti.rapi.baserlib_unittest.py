@@ -40,7 +40,7 @@ from ganeti import http
 from ganeti import compat
 from ganeti.rapi import baserlib
 
-import testutils
+from . import testutils
 
 
 class TestFillOpcode(unittest.TestCase):
@@ -73,11 +73,11 @@ class TestFillOpcode(unittest.TestCase):
                       self.OpTest, {}, {"test": [1, 2, 3]})
 
   def testUnicode(self):
-    op = baserlib.FillOpcode(self.OpTest, {u"test": "abc"}, {})
+    op = baserlib.FillOpcode(self.OpTest, {"test": "abc"}, {})
     self.assertTrue(isinstance(op, self.OpTest))
     self.assertEqual(op.test, "abc")
 
-    op = baserlib.FillOpcode(self.OpTest, {}, {u"test": "abc"})
+    op = baserlib.FillOpcode(self.OpTest, {}, {"test": "abc"})
     self.assertTrue(isinstance(op, self.OpTest))
     self.assertEqual(op.test, "abc")
 
@@ -89,7 +89,7 @@ class TestFillOpcode(unittest.TestCase):
     self.assertRaises(http.HttpBadRequest, baserlib.FillOpcode,
                       self.OpTest, "", None)
     self.assertRaises(http.HttpBadRequest, baserlib.FillOpcode,
-                      self.OpTest, range(10), None)
+                      self.OpTest, list(range(10)), None)
 
   def testRenameBothSpecified(self):
     self.assertRaises(http.HttpBadRequest, baserlib.FillOpcode,

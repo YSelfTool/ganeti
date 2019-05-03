@@ -82,7 +82,7 @@ ACCEPT_OFFLINE_NODE = object()
  ED_MULTI_DISKS_DICT_DP,
  ED_SINGLE_DISK_DICT_DP,
  ED_NIC_DICT,
- ED_DEVICE_DICT) = range(1, 17)
+ ED_DEVICE_DICT) = list(range(1, 17))
 
 
 def _Prepare(calls):
@@ -115,7 +115,7 @@ def _BlockdevGetMirrorStatusPostProc(result):
 
   """
   if not result.fail_msg:
-    result.payload = map(objects.BlockDevStatus.FromDict, result.payload)
+    result.payload = list(map(objects.BlockDevStatus.FromDict, result.payload))
   return result
 
 

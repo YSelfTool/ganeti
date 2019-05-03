@@ -738,7 +738,7 @@ class LUInstanceSetParams(LogicalUnit):
         assert snode_info
         nodes.append(snode_info)
       has_es = lambda n: IsExclusiveStorageEnabledNode(self.cfg, n)
-      if compat.any(map(has_es, nodes)):
+      if compat.any(list(map(has_es, nodes))):
         errmsg = ("Cannot convert disk template from %s to %s when exclusive"
                   " storage is enabled" % (
                       self.cfg.GetInstanceDiskTemplate(self.instance.uuid),
@@ -787,7 +787,7 @@ class LUInstanceSetParams(LogicalUnit):
 
     inst_nodes = self.cfg.GetInstanceNodes(self.instance.uuid)
     excl_stor = compat.any(
-      rpc.GetExclusiveStorageForNodes(self.cfg, inst_nodes).values()
+      list(rpc.GetExclusiveStorageForNodes(self.cfg, inst_nodes).values())
       )
 
     # Get the group access type
@@ -981,7 +981,7 @@ class LUInstanceSetParams(LogicalUnit):
       # Only perform this test if a new CPU mask is given
       if constants.HV_CPU_MASK in self.hv_new and cpu_list:
         # Calculate the largest CPU number requested
-        max_requested_cpu = max(map(max, cpu_list))
+        max_requested_cpu = max(list(map(max, cpu_list)))
         # Check that all of the instance's nodes have enough physical CPUs to
         # satisfy the requested CPU mask
         hvspecs = [(self.instance.hypervisor,
@@ -1071,7 +1071,7 @@ class LUInstanceSetParams(LogicalUnit):
       if self.be_new[constants.BE_AUTO_BALANCE]:
         secondary_nodes = \
           self.cfg.GetInstanceSecondaryNodes(self.instance.uuid)
-        for node_uuid, nres in nodeinfo.items():
+        for node_uuid, nres in list(nodeinfo.items()):
           if node_uuid not in secondary_nodes:
             continue
           nres.Raise("Can't get info from secondary node %s" %
@@ -1714,7 +1714,7 @@ class LUInstanceSetParams(LogicalUnit):
 
     # Modify arbitrary params in case instance template is ext
 
-    for key, value in params.iteritems():
+    for key, value in params.items():
       if (key not in constants.MODIFIABLE_IDISK_PARAMS and
           disk.dev_type == constants.DT_EXT):
         # stolen from GetUpdatedParams: default means reset/delete
@@ -1845,7 +1845,7 @@ class LUInstanceSetParams(LogicalUnit):
     if private.filled:
       nic.nicparams = private.filled
 
-      for (key, val) in nic.nicparams.items():
+      for (key, val) in list(nic.nicparams.items()):
         changes.append(("nic.%s/%d" % (key, idx), val))
 
     if self.op.hotplug:
@@ -1948,13 +1948,13 @@ class LUInstanceSetParams(LogicalUnit):
     # hvparams changes
     if self.op.hvparams:
       self.instance.hvparams = self.hv_inst
-      for key, val in self.op.hvparams.iteritems():
+      for key, val in self.op.hvparams.items():
         result.append(("hv/%s" % key, val))
 
     # beparams changes
     if self.op.beparams:
       self.instance.beparams = self.be_inst
-      for key, val in self.op.beparams.iteritems():
+      for key, val in self.op.beparams.items():
         result.append(("be/%s" % key, val))
 
     # OS change
@@ -1964,12 +1964,12 @@ class LUInstanceSetParams(LogicalUnit):
     # osparams changes
     if self.op.osparams:
       self.instance.osparams = self.os_inst
-      for key, val in self.op.osparams.iteritems():
+      for key, val in self.op.osparams.items():
         result.append(("os/%s" % key, val))
 
     if self.op.osparams_private:
       self.instance.osparams_private = self.os_inst_private
-      for key, val in self.op.osparams_private.iteritems():
+      for key, val in self.op.osparams_private.items():
         # Show the Private(...) blurb.
         result.append(("os_private/%s" % key, repr(val)))
 

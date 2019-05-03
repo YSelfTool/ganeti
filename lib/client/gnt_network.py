@@ -271,7 +271,7 @@ def ShowNetworkConfig(_, args):
                                     for idx, (ip, net) in enumerate(value)
                                       if net == uuid)
 
-        ToStdout("    %s: %s", name, l(zip(ips, networks)))
+        ToStdout("    %s: %s", name, l(list(zip(ips, networks))))
     else:
       ToStdout("  not used by any instances")
 
@@ -297,7 +297,7 @@ def SetNetworkParams(opts, args):
     "network6": opts.network6,
   }
 
-  if all_changes.values().count(None) == len(all_changes):
+  if list(all_changes.values()).count(None) == len(all_changes):
     ToStderr("Please give at least one of the parameters.")
     return 1
 

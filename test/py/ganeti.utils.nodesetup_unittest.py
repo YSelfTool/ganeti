@@ -37,7 +37,7 @@ import unittest
 from ganeti import constants
 from ganeti import utils
 
-import testutils
+from . import testutils
 
 
 class TestEtcHosts(testutils.GanetiTestCase):

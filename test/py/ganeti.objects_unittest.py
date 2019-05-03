@@ -40,7 +40,7 @@ from ganeti import objects
 from ganeti import errors
 from ganeti import serializer
 
-import testutils
+from . import testutils
 
 
 class SimpleObject(objects.ConfigObject):
@@ -52,14 +52,14 @@ class TestDictState(unittest.TestCase):
 
   def testSimpleObjectToDict(self):
     o1 = SimpleObject(a="1")
-    self.assertEquals(o1.ToDict(), {"a": "1"})
-    self.assertEquals(o1.__getstate__(), {"a": "1"})
-    self.assertEquals(o1.__getstate__(), o1.ToDict())
+    self.assertEqual(o1.ToDict(), {"a": "1"})
+    self.assertEqual(o1.__getstate__(), {"a": "1"})
+    self.assertEqual(o1.__getstate__(), o1.ToDict())
     o1.a = 2
     o1.b = 5
-    self.assertEquals(o1.ToDict(), {"a": 2, "b": 5})
+    self.assertEqual(o1.ToDict(), {"a": 2, "b": 5})
     o2 = SimpleObject.FromDict(o1.ToDict())
-    self.assertEquals(o1.ToDict(), {"a": 2, "b": 5})
+    self.assertEqual(o1.ToDict(), {"a": 2, "b": 5})
 
 
 class TestClusterObject(unittest.TestCase):
@@ -101,12 +101,12 @@ class TestClusterObject(unittest.TestCase):
 
   def testGetHVDefaults(self):
     cl = self.fake_cl
-    self.failUnlessEqual(cl.GetHVDefaults(constants.HT_FAKE),
+    self.assertEqual(cl.GetHVDefaults(constants.HT_FAKE),
                          cl.hvparams[constants.HT_FAKE])
-    self.failUnlessEqual(cl.GetHVDefaults(None), {})
+    self.assertEqual(cl.GetHVDefaults(None), {})
     defaults = cl.GetHVDefaults(constants.HT_XEN_PVM,
                                           os_name="lenny-image")
-    for param, value in cl.os_hvp["lenny-image"][constants.HT_XEN_PVM].items():
+    for param, value in list(cl.os_hvp["lenny-image"][constants.HT_XEN_PVM].items()):
       self.assertEqual(value, defaults[param])
 
   def testFillHvFullMerge(self):
@@ -145,7 +145,7 @@ class TestClusterObject(unittest.TestCase):
                                  hypervisor=constants.HT_XEN_PVM,
                                  hvparams=inst_hvparams)
     filled_conf = self.fake_cl.FillHV(fake_inst)
-    for param, value in constants.HVC_DEFAULTS[constants.HT_XEN_PVM].items():
+    for param, value in list(constants.HVC_DEFAULTS[constants.HT_XEN_PVM].items()):
       if param == "blah":
         value = "blubb"
       self.assertEqual(value, filled_conf[param])
@@ -165,7 +165,7 @@ class TestClusterObject(unittest.TestCase):
                                  hypervisor=constants.HT_XEN_PVM,
                                  hvparams={})
     filled_conf = self.fake_cl.FillHV(fake_inst)
-    for param, value in self.fake_cl.os_hvp[os][constants.HT_XEN_PVM].items():
+    for param, value in list(self.fake_cl.os_hvp[os][constants.HT_XEN_PVM].items()):
       self.assertEqual(value, filled_conf[param])
 
   def testFillNdParamsCluster(self):
@@ -304,7 +304,7 @@ class TestClusterObjectTcpUdpPortPool(unittest.TestCase):
     cluster.tcpudp_port_pool.add(62511)
 
     data = cluster.ToDict()
-    self.assertEqual(data.keys(), ["tcpudp_port_pool"])
+    self.assertEqual(list(data.keys()), ["tcpudp_port_pool"])
     self.assertEqual(sorted(data["tcpudp_port_pool"]), sorted([3546, 62511]))
 
   def testDeserializingEmpty(self):
@@ -427,14 +427,14 @@ class TestInstancePolicy(unittest.TestCase):
     self.maxDiff = None
 
   def _AssertIPolicyIsFull(self, policy):
-    self.assertEqual(frozenset(policy.keys()), constants.IPOLICY_ALL_KEYS)
+    self.assertEqual(frozenset(list(policy.keys())), constants.IPOLICY_ALL_KEYS)
     self.assertTrue(len(policy[constants.ISPECS_MINMAX]) > 0)
     for minmax in policy[constants.ISPECS_MINMAX]:
-      self.assertEqual(frozenset(minmax.keys()), constants.ISPECS_MINMAX_KEYS)
+      self.assertEqual(frozenset(list(minmax.keys())), constants.ISPECS_MINMAX_KEYS)
       for key in constants.ISPECS_MINMAX_KEYS:
-        self.assertEqual(frozenset(minmax[key].keys()),
+        self.assertEqual(frozenset(list(minmax[key].keys())),
                          constants.ISPECS_PARAMETERS)
-    self.assertEqual(frozenset(policy[constants.ISPECS_STD].keys()),
+    self.assertEqual(frozenset(list(policy[constants.ISPECS_STD].keys())),
                      constants.ISPECS_PARAMETERS)
 
   def testDefaultIPolicy(self):
@@ -542,7 +542,7 @@ class TestInstancePolicy(unittest.TestCase):
 
     bad_ipolicy = copy.deepcopy(good_ipolicy)
     for minmax in bad_ipolicy[constants.ISPECS_MINMAX]:
-      for (key, spec) in minmax.items():
+      for (key, spec) in list(minmax.items()):
         for param in spec:
           oldv = spec[param]
           del spec[param]
@@ -565,7 +565,7 @@ class TestInstancePolicy(unittest.TestCase):
     assert bad_ipolicy == good_ipolicy
 
     for minmax in good_ipolicy[constants.ISPECS_MINMAX]:
-      for spec in minmax.values():
+      for spec in list(minmax.values()):
         good_ipolicy[constants.ISPECS_STD] = spec
         objects.InstancePolicy.CheckISpecSyntax(good_ipolicy, True)
 
@@ -660,14 +660,14 @@ class TestInstancePolicy(unittest.TestCase):
     self.assertEqual(policy, constants.IPOLICY_DEFAULTS)
 
   def _AssertISpecsMerged(self, default_spec, diff_spec, merged_spec):
-    for (param, value) in merged_spec.items():
+    for (param, value) in list(merged_spec.items()):
       if param in diff_spec:
         self.assertEqual(value, diff_spec[param])
       else:
         self.assertEqual(value, default_spec[param])
 
   def _AssertIPolicyMerged(self, default_pol, diff_pol, merged_pol):
-    for (key, value) in merged_pol.items():
+    for (key, value) in list(merged_pol.items()):
       if key in diff_pol:
         if key == constants.ISPECS_STD:
           self._AssertISpecsMerged(default_pol[key], diff_pol[key], value)

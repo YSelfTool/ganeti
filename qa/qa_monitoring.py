@@ -35,10 +35,10 @@
 from ganeti import _constants
 from ganeti import constants
 
-import qa_config
+from . import qa_config
 
-from qa_utils import AssertCommand
-from qa_instance_utils import CreateInstanceByDiskTemplate, \
+from .qa_utils import AssertCommand
+from .qa_instance_utils import CreateInstanceByDiskTemplate, \
                               RemoveInstance
 
 MON_COLLECTOR = _constants.PKGLIBDIR + "/mon-collector"

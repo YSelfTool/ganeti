@@ -39,7 +39,7 @@ import logging
 import signal
 import errno
 import time
-from cStringIO import StringIO
+from io import StringIO
 
 from ganeti import constants
 from ganeti import errors
@@ -101,7 +101,7 @@ SOCAT_OPTION_MAXLEN = 400
  PROG_SOCAT,
  PROG_DD,
  PROG_DD_PID,
- PROG_EXP_SIZE) = range(1, 6)
+ PROG_EXP_SIZE) = list(range(1, 6))
 
 PROG_ALL = compat.UniqueFrozenset([
   PROG_OTHER,
@@ -442,14 +442,14 @@ class ChildIOProcessor(object):
     """Flushes all line splitters.
 
     """
-    for ls in self._splitter.itervalues():
+    for ls in self._splitter.values():
       ls.flush()
 
   def CloseAll(self):
     """Closes all line splitters.
 
     """
-    for ls in self._splitter.itervalues():
+    for ls in self._splitter.values():
       ls.close()
     self._splitter.clear()
 

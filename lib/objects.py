@@ -47,12 +47,12 @@ pass to and from external parties.
 
 # R0902: Allow instances of these objects to have more than 20 attributes
 
-import ConfigParser
+import configparser
 import re
 import copy
 import logging
 import time
-from cStringIO import StringIO
+from io import StringIO
 from socket import AF_INET
 
 from ganeti import errors
@@ -97,7 +97,7 @@ def FillIPolicy(default_ipolicy, custom_ipolicy):
   """Fills an instance policy with defaults.
 
   """
-  assert frozenset(default_ipolicy.keys()) == constants.IPOLICY_ALL_KEYS
+  assert frozenset(list(default_ipolicy.keys())) == constants.IPOLICY_ALL_KEYS
   ret_dict = copy.deepcopy(custom_ipolicy)
   for key in default_ipolicy:
     if key not in ret_dict:
@@ -279,7 +279,7 @@ class ConfigObject(outils.ValidatedSlots):
     if not isinstance(val, dict):
       raise errors.ConfigurationError("Invalid object passed to FromDict:"
                                       " expected dict, got %s" % type(val))
-    val_str = dict([(str(k), v) for k, v in val.iteritems()])
+    val_str = dict([(str(k), v) for k, v in val.items()])
     obj = cls(**val_str)
     return obj
 
@@ -324,7 +324,7 @@ class TaggableObject(ConfigObject):
     function has no return value.
 
     """
-    if not isinstance(tag, basestring):
+    if not isinstance(tag, str):
       raise errors.TagError("Invalid tag type (not a string)")
     if len(tag) > constants.MAX_TAG_LEN:
       raise errors.TagError("Tag too long (>%d characters)" %
@@ -463,7 +463,7 @@ class ConfigData(ConfigObject):
 
     """
 
-    return [disk for disk in self.disks.values()
+    return [disk for disk in list(self.disks.values())
             if disk.IsBasedOnDiskType(dev_type)]
 
   def UpgradeConfig(self):
@@ -471,14 +471,14 @@ class ConfigData(ConfigObject):
 
     """
     self.cluster.UpgradeConfig()
-    for node in self.nodes.values():
+    for node in list(self.nodes.values()):
       node.UpgradeConfig()
-    for instance in self.instances.values():
+    for instance in list(self.instances.values()):
       instance.UpgradeConfig()
     self._UpgradeEnabledDiskTemplates()
     if self.nodegroups is None:
       self.nodegroups = {}
-    for nodegroup in self.nodegroups.values():
+    for nodegroup in list(self.nodegroups.values()):
       nodegroup.UpgradeConfig()
       InstancePolicy.UpgradeDiskTemplates(
         nodegroup.ipolicy, self.cluster.enabled_disk_templates)
@@ -487,9 +487,9 @@ class ConfigData(ConfigObject):
         self.cluster.drbd_usermode_helper = constants.DEFAULT_DRBD_HELPER
     if self.networks is None:
       self.networks = {}
-    for network in self.networks.values():
+    for network in list(self.networks.values()):
       network.UpgradeConfig()
-    for disk in self.disks.values():
+    for disk in list(self.disks.values()):
       disk.UpgradeConfig()
     if self.filters is None:
       self.filters = {}
@@ -501,8 +501,8 @@ class ConfigData(ConfigObject):
     """
     if not self.cluster.enabled_disk_templates:
       template_set = \
-        set([d.dev_type for d in self.disks.values()])
-      if any(not inst.disks for inst in self.instances.values()):
+        set([d.dev_type for d in list(self.disks.values())])
+      if any(not inst.disks for inst in list(self.instances.values())):
         template_set.add(constants.DT_DISKLESS)
       # Add drbd and plain, if lvm is enabled (by specifying a volume group)
       if self.cluster.volume_group_name:
@@ -1044,14 +1044,14 @@ class InstancePolicy(ConfigObject):
     for key in constants.IPOLICY_PARAMETERS:
       if key in ipolicy:
         InstancePolicy.CheckParameter(key, ipolicy[key])
-    wrong_keys = frozenset(ipolicy.keys()) - constants.IPOLICY_ALL_KEYS
+    wrong_keys = frozenset(list(ipolicy.keys())) - constants.IPOLICY_ALL_KEYS
     if wrong_keys:
       raise errors.ConfigurationError("Invalid keys in ipolicy: %s" %
                                       utils.CommaJoin(wrong_keys))
 
   @classmethod
   def _CheckIncompleteSpec(cls, spec, keyname):
-    missing_params = constants.ISPECS_PARAMETERS - frozenset(spec.keys())
+    missing_params = constants.ISPECS_PARAMETERS - frozenset(list(spec.keys()))
     if missing_params:
       msg = ("Missing instance specs parameters for %s: %s" %
              (keyname, utils.CommaJoin(missing_params)))
@@ -1083,11 +1083,11 @@ class InstancePolicy(ConfigObject):
       raise errors.ConfigurationError("Empty minmax specifications")
     std_is_good = False
     for minmaxspecs in ipolicy[constants.ISPECS_MINMAX]:
-      missing = constants.ISPECS_MINMAX_KEYS - frozenset(minmaxspecs.keys())
+      missing = constants.ISPECS_MINMAX_KEYS - frozenset(list(minmaxspecs.keys()))
       if missing:
         msg = "Missing instance specification: %s" % utils.CommaJoin(missing)
         raise errors.ConfigurationError(msg)
-      for (key, spec) in minmaxspecs.items():
+      for (key, spec) in list(minmaxspecs.items()):
         InstancePolicy._CheckIncompleteSpec(spec, key)
 
       spec_std_ok = True
@@ -1509,7 +1509,7 @@ class Node(TaggableObject):
     if disk_state is not None:
       data["disk_state"] = \
         dict((key, outils.ContainerToDicts(value))
-             for (key, value) in disk_state.items())
+             for (key, value) in list(disk_state.items()))
 
     return data
 
@@ -1527,7 +1527,7 @@ class Node(TaggableObject):
     if obj.disk_state is not None:
       obj.disk_state = \
         dict((key, outils.ContainerFromDicts(value, dict, NodeDiskState))
-             for (key, value) in obj.disk_state.items())
+             for (key, value) in list(obj.disk_state.items()))
 
     return obj
 
@@ -1595,7 +1595,7 @@ class NodeGroup(TaggableObject):
     if self.networks is None:
       self.networks = {}
 
-    for network, netparams in self.networks.items():
+    for network, netparams in list(self.networks.items()):
       self.networks[network] = FillDict(constants.NICC_DEFAULTS, netparams)
 
   def FillND(self, node):
@@ -1799,7 +1799,7 @@ class Cluster(TaggableObject):
       # we can either make sure to upgrade the ipolicy always, or only
       # do it in some corner cases (e.g. missing keys); note that this
       # will break any removal of keys from the ipolicy dict
-      wrongkeys = frozenset(self.ipolicy.keys()) - constants.IPOLICY_ALL_KEYS
+      wrongkeys = frozenset(list(self.ipolicy.keys())) - constants.IPOLICY_ALL_KEYS
       if wrongkeys:
         # These keys would be silently removed by FillIPolicy()
         msg = ("Cluster instance policy contains spurious keys: %s" %
@@ -2419,7 +2419,7 @@ class Network(TaggableObject):
 
 
 # need to inherit object in order to use super()
-class SerializableConfigParser(ConfigParser.SafeConfigParser, object):
+class SerializableConfigParser(configparser.SafeConfigParser, object):
   """Simple wrapper over ConfigParse that allows serialization.
 
   This class is basically ConfigParser.SafeConfigParser with two
@@ -2448,7 +2448,7 @@ class SerializableConfigParser(ConfigParser.SafeConfigParser, object):
                                                         **kwargs)
       if value.lower() == constants.VALUE_NONE:
         value = None
-    except ConfigParser.NoOptionError:
+    except configparser.NoOptionError:
       r = re.compile(r"(disk|nic)\d+_name|nic\d+_(network|vlan)")
       match = r.match(option)
       if match:

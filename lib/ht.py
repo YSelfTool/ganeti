@@ -223,7 +223,7 @@ def TInt(val):
   #
   # >>> (isinstance(False, int), isinstance(True, int))
   # (True, True)
-  return isinstance(val, (int, long)) and not isinstance(val, bool)
+  return isinstance(val, int) and not isinstance(val, bool)
 
 
 @WithDesc("Float")
@@ -239,7 +239,7 @@ def TString(val):
   """Checks if the given value is a string.
 
   """
-  return isinstance(val, basestring)
+  return isinstance(val, str)
 
 
 @WithDesc("EvalToTrue")
@@ -494,8 +494,8 @@ def TDictOf(key_type, val_type):
                   (Parens(key_type), Parens(val_type)))
 
   def fn(container):
-    return (compat.all(key_type(v) for v in container.keys()) and
-            compat.all(val_type(v) for v in container.values()))
+    return (compat.all(key_type(v) for v in list(container.keys())) and
+            compat.all(val_type(v) for v in list(container.values())))
 
   return desc(TAnd(TDict, fn))
 
@@ -506,12 +506,12 @@ def _TStrictDictCheck(require_all, exclusive, items, val):
   """
   notfound_fn = lambda _: not exclusive
 
-  if require_all and not frozenset(val.keys()).issuperset(items.keys()):
+  if require_all and not frozenset(list(val.keys())).issuperset(list(items.keys())):
     # Requires items not found in value
     return False
 
   return compat.all(items.get(key, notfound_fn)(value)
-                    for (key, value) in val.items())
+                    for (key, value) in list(val.items()))
 
 
 def TStrictDict(require_all, exclusive, items):
@@ -539,7 +539,7 @@ def TStrictDict(require_all, exclusive, items):
     descparts.append(" keys ")
 
   descparts.append(utils.CommaJoin("\"%s\" (value %s)" % (key, value)
-                                   for (key, value) in items.items()))
+                                   for (key, value) in list(items.items())))
 
   desc = WithDesc("".join(descparts))
 

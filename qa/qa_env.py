@@ -34,9 +34,9 @@
 
 from ganeti import utils
 
-import qa_config
+from . import qa_config
 
-from qa_utils import AssertCommand
+from .qa_utils import AssertCommand
 
 
 def TestSshConnection():

@@ -596,7 +596,7 @@ class BaseHypervisor(object):
 
     """
     return param_value is None \
-      or isinstance(param_value, basestring) and param_value == ""
+      or isinstance(param_value, str) and param_value == ""
 
   @classmethod
   def CheckParameterSyntax(cls, hvparams):
@@ -615,7 +615,7 @@ class BaseHypervisor(object):
         raise errors.HypervisorError("Parameter '%s' is not supported" % key)
 
     # cheap tests that run on the master, should not access the world
-    for name, (required, check_fn, errstr, _, _) in cls.PARAMETERS.items():
+    for name, (required, check_fn, errstr, _, _) in list(cls.PARAMETERS.items()):
       if name not in hvparams:
         raise errors.HypervisorError("Parameter '%s' is missing" % name)
       value = hvparams[name]
@@ -641,7 +641,7 @@ class BaseHypervisor(object):
     @raise errors.HypervisorError: when a parameter is not valid
 
     """
-    for name, (required, _, _, check_fn, errstr) in cls.PARAMETERS.items():
+    for name, (required, _, _, check_fn, errstr) in list(cls.PARAMETERS.items()):
       value = hvparams[name]
       if not required and cls._IsParamValueUnspecified(value):
         continue

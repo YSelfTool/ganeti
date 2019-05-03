@@ -82,7 +82,7 @@ class ValidatedSlots(object):
 
     """
     slots = self.GetAllSlots()
-    for (key, value) in kwargs.items():
+    for (key, value) in list(kwargs.items()):
       if key not in slots:
         raise TypeError("Object %s doesn't support the parameter '%s'" %
                         (self.__class__.__name__, key))
@@ -127,7 +127,7 @@ def ContainerToDicts(container):
 
   """
   if isinstance(container, dict):
-    ret = dict([(k, v.ToDict()) for k, v in container.items()])
+    ret = dict([(k, v.ToDict()) for k, v in list(container.items())])
   elif isinstance(container, _SEQUENCE_TYPES):
     ret = [elem.ToDict() for elem in container]
   else:
@@ -158,9 +158,9 @@ def ContainerFromDicts(source, c_type, e_type):
     source = c_type()
 
   if c_type is dict:
-    ret = dict([(k, e_type.FromDict(v)) for k, v in source.items()])
+    ret = dict([(k, e_type.FromDict(v)) for k, v in list(source.items())])
   elif c_type in _SEQUENCE_TYPES:
-    ret = c_type(map(e_type.FromDict, source))
+    ret = c_type(list(map(e_type.FromDict, source)))
   else:
     raise TypeError("Unknown container type '%s'" % c_type)
 

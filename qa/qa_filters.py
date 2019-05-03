@@ -37,9 +37,9 @@ import time
 from ganeti import query
 from ganeti.utils import retry
 
-import qa_job_utils
-import qa_utils
-from qa_utils import AssertCommand, AssertEqual, AssertIn, stdout_of
+from . import qa_job_utils
+from . import qa_utils
+from .qa_utils import AssertCommand, AssertEqual, AssertIn, stdout_of
 
 
 def GetJobStatus(job_id):
@@ -94,13 +94,13 @@ def AssertStatusRetry(jid, status, interval=1.0, timeout=20.0):
 
 def TestFilterList():
   """gnt-filter list"""
-  qa_utils.GenericQueryTest("gnt-filter", query.FILTER_FIELDS.keys(),
+  qa_utils.GenericQueryTest("gnt-filter", list(query.FILTER_FIELDS.keys()),
                             namefield="uuid", test_unknown=False)
 
 
 def TestFilterListFields():
   """gnt-filter list-fields"""
-  qa_utils.GenericQueryFieldsTest("gnt-filter", query.FILTER_FIELDS.keys())
+  qa_utils.GenericQueryFieldsTest("gnt-filter", list(query.FILTER_FIELDS.keys()))
 
 
 def TestFilterAddRemove():

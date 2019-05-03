@@ -38,7 +38,7 @@ from ganeti import compat
 from ganeti import vcluster
 from ganeti import pathutils
 
-import testutils
+from . import testutils
 
 
 _ENV_DOES_NOT_EXIST = "GANETI_TEST_DOES_NOT_EXIST"

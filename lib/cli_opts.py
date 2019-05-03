@@ -505,7 +505,7 @@ def check_filteraction(option, opt, value): # pylint: disable=W0613
  OPT_COMPL_ONE_IALLOCATOR,
  OPT_COMPL_ONE_NETWORK,
  OPT_COMPL_INST_ADD_NODES,
- OPT_COMPL_ONE_NODEGROUP) = range(100, 110)
+ OPT_COMPL_ONE_NODEGROUP) = list(range(100, 110))
 
 OPT_COMPL_ALL = compat.UniqueFrozenset([
   OPT_COMPL_MANY_NODES,
@@ -1370,7 +1370,7 @@ def _PriorityOptionCb(option, _, value, parser):
 
 PRIORITY_OPT = cli_option("--priority", default=None, dest="priority",
                           metavar="|".join(name for name, _ in _PRIORITY_NAMES),
-                          choices=_PRIONAME_TO_VALUE.keys(),
+                          choices=list(_PRIONAME_TO_VALUE.keys()),
                           action="callback", type="choice",
                           callback=_PriorityOptionCb,
                           help="Priority for opcode processing")

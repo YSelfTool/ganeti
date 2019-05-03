@@ -37,11 +37,11 @@ import time
 from ganeti import utils
 from ganeti import pathutils
 
-import qa_config
-import qa_utils
-import qa_error
+from . import qa_config
+from . import qa_utils
+from . import qa_error
 
-from qa_utils import AssertMatch, AssertCommand, StartSSH, GetCommandOutput
+from .qa_utils import AssertMatch, AssertCommand, StartSSH, GetCommandOutput
 
 
 def _InstanceRunning(name):

@@ -36,7 +36,7 @@ from ganeti import constants
 from ganeti import utils
 from ganeti.objects import LvmPvInfo
 
-import testutils
+from . import testutils
 
 
 class TestLvmExclusiveCheckNodePvs(unittest.TestCase):

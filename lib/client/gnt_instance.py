@@ -410,7 +410,7 @@ def ReinstallInstance(opts, args):
 
   results = jex.WaitOrShow(not opts.submit_only)
 
-  if compat.all(map(compat.fst, results)):
+  if compat.all(list(map(compat.fst, results))):
     return constants.EXIT_SUCCESS
   else:
     return constants.EXIT_FAILURE
@@ -925,7 +925,7 @@ def _DoConsole(console, show_command, cluster_name, feedback_fn=ToStdout,
                 console.host, console.port)
   elif console.kind == constants.CONS_SSH:
     # Convert to string if not already one
-    if isinstance(console.command, basestring):
+    if isinstance(console.command, str):
       cmd = console.command
     else:
       cmd = utils.ShellQuoteArgs(console.command)
@@ -1239,7 +1239,7 @@ def ShowInstanceConfig(opts, args):
 
   PrintGenericInfo([
     _FormatInstanceInfo(instance, opts.roman_integers)
-    for instance in result.values()
+    for instance in list(result.values())
     ])
   return retcode
 
@@ -1297,14 +1297,14 @@ def _ConvertNicDiskModifications(mods):
         constants.DDM_MODIFY: modify,
       }
       count = 0
-      for op, param in ops.items():
+      for op, param in list(ops.items()):
         if param is not _MISSING:
           count += 1
           action = op
       if count > 1:
         raise errors.OpPrereqError(
           "Cannot do more than one of the following operations at the"
-          " same time: %s" % ", ".join(ops.keys()),
+          " same time: %s" % ", ".join(list(ops.keys())),
           errors.ECODE_INVAL)
 
       assert not (constants.DDMS_VALUES_WITH_MODIFY & set(params.keys()))
@@ -1328,7 +1328,7 @@ def _ParseExtStorageParams(params):
                                  " converting to an ExtStorage disk template" %
                                  constants.IDISK_PROVIDER, errors.ECODE_INVAL)
     else:
-      for param in params.keys():
+      for param in list(params.keys()):
         if (param != constants.IDISK_PROVIDER and
             param in constants.IDISK_PARAMS):
           raise errors.OpPrereqError("Invalid parameter '%s' when converting"
@@ -1377,7 +1377,7 @@ def SetInstanceParams(opts, args):
     return 1
 
   for param in opts.beparams:
-    if isinstance(opts.beparams[param], basestring):
+    if isinstance(opts.beparams[param], str):
       if opts.beparams[param].lower() == "default":
         opts.beparams[param] = constants.VALUE_DEFAULT
 
@@ -1385,7 +1385,7 @@ def SetInstanceParams(opts, args):
                       allowed_values=[constants.VALUE_DEFAULT])
 
   for param in opts.hvparams:
-    if isinstance(opts.hvparams[param], basestring):
+    if isinstance(opts.hvparams[param], str):
       if opts.hvparams[param].lower() == "default":
         opts.hvparams[param] = constants.VALUE_DEFAULT
 

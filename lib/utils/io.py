@@ -230,7 +230,7 @@ def WriteFile(file_name, fn=None, data=None,
       if callable(prewrite):
         prewrite(fd)
       if data is not None:
-        if isinstance(data, unicode):
+        if isinstance(data, str):
           data = data.encode()
         assert isinstance(data, str)
         to_write = len(data)
@@ -341,7 +341,7 @@ def ReadOneLineFile(file_name, strict=False):
 
   """
   file_lines = ReadFile(file_name).splitlines()
-  full_lines = filter(bool, file_lines)
+  full_lines = list(filter(bool, file_lines))
   if not file_lines or not full_lines:
     raise errors.GenericError("No data in one-liner file %s" % file_name)
   elif strict and len(full_lines) > 1:
@@ -584,7 +584,7 @@ def ListVisibleFiles(path, _is_mountpoint=os.path.ismount):
                 (mountpoint and name == _LOST_AND_FOUND and
                  os.path.isdir(os.path.join(path, name))))
 
-  return filter(fn, os.listdir(path))
+  return list(filter(fn, os.listdir(path)))
 
 
 def EnsureDirs(dirs):

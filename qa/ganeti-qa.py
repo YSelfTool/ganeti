@@ -40,25 +40,25 @@ import datetime
 import optparse
 import sys
 
-import colors
-import qa_cluster
-import qa_config
-import qa_daemon
-import qa_env
-import qa_error
-import qa_filters
-import qa_group
-import qa_instance
-import qa_iptables
-import qa_monitoring
-import qa_network
-import qa_node
-import qa_os
-import qa_performance
-import qa_job
-import qa_rapi
-import qa_tags
-import qa_utils
+from . import colors
+from . import qa_cluster
+from . import qa_config
+from . import qa_daemon
+from . import qa_env
+from . import qa_error
+from . import qa_filters
+from . import qa_group
+from . import qa_instance
+from . import qa_iptables
+from . import qa_monitoring
+from . import qa_network
+from . import qa_node
+from . import qa_os
+from . import qa_performance
+from . import qa_job
+from . import qa_rapi
+from . import qa_tags
+from . import qa_utils
 
 from ganeti import utils
 from ganeti import rapi # pylint: disable=W0611
@@ -105,21 +105,21 @@ def RunTest(fn, *args, **kwargs):
   desc = _DescriptionOf(fn)
 
   print()
-  print(_FormatHeader("%s start %s" % (tstart, desc),
-                      color=colors.YELLOW, mark="<"))
+  print((_FormatHeader("%s start %s" % (tstart, desc),
+                      color=colors.YELLOW, mark="<")))
 
   try:
     retval = fn(*args, **kwargs)
-    print(_FormatHeader("PASSED %s" % (desc, ), color=colors.GREEN))
+    print((_FormatHeader("PASSED %s" % (desc, ), color=colors.GREEN)))
     return retval
   except Exception as e:
-    print(_FormatHeader("FAILED %s: %s" % (desc, e), color=colors.RED))
+    print((_FormatHeader("FAILED %s: %s" % (desc, e), color=colors.RED)))
     raise
   finally:
     tstop = datetime.datetime.now()
     tdelta = tstop - tstart
-    print(_FormatHeader("%s time=%s %s" % (tstop, tdelta, desc),
-                        color=colors.MAGENTA, mark=">"))
+    print((_FormatHeader("%s time=%s %s" % (tstop, tdelta, desc),
+                        color=colors.MAGENTA, mark=">")))
 
 
 def ReportTestSkip(desc, testnames):
@@ -134,9 +134,9 @@ def ReportTestSkip(desc, testnames):
   """
   tstart = datetime.datetime.now()
   # TODO: Formatting test names when non-string names are involved
-  print(_FormatHeader("%s skipping %s, test(s) %s disabled" %
+  print((_FormatHeader("%s skipping %s, test(s) %s disabled" %
                       (tstart, desc, testnames),
-                      color=colors.BLUE, mark="*"))
+                      color=colors.BLUE, mark="*")))
 
 
 def RunTestIf(testnames, fn, *args, **kwargs):
@@ -162,20 +162,20 @@ def RunTestBlock(fn, *args, **kwargs):
   desc = _DescriptionOf(fn)
 
   print()
-  print(_FormatHeader("BLOCK %s start %s" % (tstart, desc),
-                      color=[colors.YELLOW, colors.BOLD], mark="v"))
+  print((_FormatHeader("BLOCK %s start %s" % (tstart, desc),
+                      color=[colors.YELLOW, colors.BOLD], mark="v")))
 
   try:
     return fn(*args, **kwargs)
   except Exception as e:
-    print(_FormatHeader("BLOCK FAILED %s: %s" % (desc, e),
-                        color=[colors.RED, colors.BOLD]))
+    print((_FormatHeader("BLOCK FAILED %s: %s" % (desc, e),
+                        color=[colors.RED, colors.BOLD])))
     raise
   finally:
     tstop = datetime.datetime.now()
     tdelta = tstop - tstart
-    print(_FormatHeader("BLOCK %s time=%s %s" % (tstop, tdelta, desc),
-                        color=[colors.MAGENTA, colors.BOLD], mark="^"))
+    print((_FormatHeader("BLOCK %s time=%s %s" % (tstop, tdelta, desc),
+                        color=[colors.MAGENTA, colors.BOLD], mark="^")))
 
 
 def RunEnvTests():
@@ -636,8 +636,8 @@ def RunCustomSshPortTests():
 
     for node in nodes:
       if qa_utils.UsesIPv6Connection(node.primary, std_port):
-        print("Node %s is likely to be reached using IPv6,"
-              "skipping the test" % (node.primary, ))
+        print(("Node %s is likely to be reached using IPv6,"
+              "skipping the test" % (node.primary, )))
         return
 
     for node in nodes:
@@ -704,7 +704,7 @@ def TestIPolicyPlainInstance():
   """Test instance policy interaction with instances"""
   params = ["memory-size", "cpu-count", "disk-count", "disk-size", "nic-count"]
   if not qa_config.IsTemplateSupported(constants.DT_PLAIN):
-    print("Template %s not supported" % constants.DT_PLAIN)
+    print(("Template %s not supported" % constants.DT_PLAIN))
     return
 
   # This test assumes that the group policy is empty
@@ -931,12 +931,12 @@ def RunPerformanceTests():
 
   # Preparations need to be made only if some of these tests are enabled
   if qa_config.IsTemplateSupported(constants.DT_DRBD8) and \
-     qa_config.TestEnabled(qa_config.Either(PARALLEL_TEST_DICT.keys())):
+     qa_config.TestEnabled(qa_config.Either(list(PARALLEL_TEST_DICT.keys()))):
     inodes = qa_config.AcquireManyNodes(2)
     try:
       instance = qa_instance.TestInstanceAddWithDrbdDisk(inodes)
       try:
-        for (test_name, test_fn) in PARALLEL_TEST_DICT.items():
+        for (test_name, test_fn) in list(PARALLEL_TEST_DICT.items()):
           RunTestIf(test_name, test_fn, instance)
       finally:
         instance.Release()
@@ -1122,10 +1122,10 @@ def main():
 
   primary = qa_config.GetMasterNode().primary
   qa_utils.StartMultiplexer(primary)
-  print("SSH command for primary node: %s" %
-        utils.ShellQuoteArgs(qa_utils.GetSSHCommand(primary, "")))
-  print("SSH command for other nodes: %s" %
-        utils.ShellQuoteArgs(qa_utils.GetSSHCommand("NODE", "")))
+  print(("SSH command for primary node: %s" %
+        utils.ShellQuoteArgs(qa_utils.GetSSHCommand(primary, ""))))
+  print(("SSH command for other nodes: %s" %
+        utils.ShellQuoteArgs(qa_utils.GetSSHCommand("NODE", ""))))
   try:
     RunQa()
   finally:

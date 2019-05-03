@@ -43,7 +43,7 @@ from ganeti import compat
 from qa import qa_config
 from qa import qa_error
 
-import testutils
+from . import testutils
 
 
 class TestTestEnabled(unittest.TestCase):
@@ -467,7 +467,7 @@ class TestRepresentation(unittest.TestCase):
       self._Check(node, "use_count=%s" % i)
 
     # Release node
-    for i in reversed(range(1, 5)):
+    for i in reversed(list(range(1, 5))):
       node.Release()
       self._Check(node, "use_count=%s" % (i - 1))
 

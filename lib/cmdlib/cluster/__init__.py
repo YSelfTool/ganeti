@@ -129,7 +129,7 @@ class LUClusterRenewCrypto(NoHooksLU):
     node_errors = {}
     nodes = self.cfg.GetAllNodesInfo()
     logging.debug("Renewing non-master nodes' node certificates.")
-    for (node_uuid, node_info) in nodes.items():
+    for (node_uuid, node_info) in list(nodes.items()):
       if node_info.offline:
         logging.info("* Skipping offline node %s", node_info.name)
         continue
@@ -159,7 +159,7 @@ class LUClusterRenewCrypto(NoHooksLU):
       msg = ("Some nodes' SSL client certificates could not be fetched."
              " Please make sure those nodes are reachable and rerun"
              " the operation. The affected nodes and their errors are:\n")
-      for uuid, e in node_errors.items():
+      for uuid, e in list(node_errors.items()):
         msg += "Node %s: %s\n" % (uuid, e)
       feedback_fn(msg)
 
@@ -176,7 +176,7 @@ class LUClusterRenewCrypto(NoHooksLU):
 
     nodes = self.cfg.GetAllNodesInfo()
     nodes_uuid_names = [(node_uuid, node_info.name) for (node_uuid, node_info)
-                        in nodes.items() if not node_info.offline]
+                        in list(nodes.items()) if not node_info.offline]
     node_names = [name for (_, name) in nodes_uuid_names]
     node_uuids = [uuid for (uuid, _) in nodes_uuid_names]
     potential_master_candidates = self.cfg.GetPotentialMasterCandidates()
@@ -453,9 +453,9 @@ class LUClusterQuery(NoHooksLU):
     os_hvp = {}
 
     # Filter just for enabled hypervisors
-    for os_name, hv_dict in cluster.os_hvp.items():
+    for os_name, hv_dict in list(cluster.os_hvp.items()):
       os_hvp[os_name] = {}
-      for hv_name, hv_params in hv_dict.items():
+      for hv_name, hv_params in list(hv_dict.items()):
         if hv_name in cluster.enabled_hypervisors:
           os_hvp[os_name][hv_name] = hv_params
 
@@ -707,16 +707,16 @@ class LUClusterRepairDiskSizes(NoHooksLU):
       for idx, disk in enumerate(self.cfg.GetInstanceDisks(instance.uuid)):
         per_node_disks[pnode].append((instance, idx, disk))
 
-    assert not (frozenset(per_node_disks.keys()) -
+    assert not (frozenset(list(per_node_disks.keys())) -
                 frozenset(self.owned_locks(locking.LEVEL_NODE_RES))), \
       "Not owning correct locks"
     assert not self.owned_locks(locking.LEVEL_NODE)
 
     es_flags = rpc.GetExclusiveStorageForNodes(self.cfg,
-                                               per_node_disks.keys())
+                                               list(per_node_disks.keys()))
 
     changed = []
-    for node_uuid, dskl in per_node_disks.items():
+    for node_uuid, dskl in list(per_node_disks.items()):
       if not dskl:
         # no disks on the node
         continue
@@ -746,7 +746,7 @@ class LUClusterRepairDiskSizes(NoHooksLU):
                           instance.name)
           continue
         (size, spindles) = dimensions
-        if not isinstance(size, (int, long)):
+        if not isinstance(size, int):
           self.LogWarning("Disk %d of instance %s did not return valid"
                           " size information, ignoring", idx, instance.name)
           continue
@@ -931,7 +931,7 @@ class LUClusterSetParams(LogicalUnit):
       _ValidateNetmask(self.cfg, self.op.master_netmask)
 
     if self.op.diskparams:
-      for dt_params in self.op.diskparams.values():
+      for dt_params in list(self.op.diskparams.values()):
         utils.ForceDictType(dt_params, constants.DISK_DT_TYPES)
       try:
         utils.VerifyDictOptions(self.op.diskparams, constants.DISK_DT_DEFAULTS)
@@ -1081,9 +1081,9 @@ class LUClusterSetParams(LogicalUnit):
       CheckIpolicyVsDiskTemplates(self.new_ipolicy,
                                   enabled_disk_templates)
 
-      all_instances = self.cfg.GetAllInstancesInfo().values()
+      all_instances = list(self.cfg.GetAllInstancesInfo().values())
       violations = set()
-      for group in self.cfg.GetAllNodeGroupsInfo().values():
+      for group in list(self.cfg.GetAllNodeGroupsInfo().values()):
         instances = frozenset(
           [inst for inst in all_instances
            if compat.any(nuuid in group.members
@@ -1192,7 +1192,7 @@ class LUClusterSetParams(LogicalUnit):
             errors.ECODE_STATE)
     if constants.DT_DISKLESS in disabled_disk_templates:
       instances = self.cfg.GetAllInstancesInfo()
-      for inst in instances.values():
+      for inst in list(instances.values()):
         if not inst.disks:
           raise errors.OpPrereqError(
               "Cannot disable disk template 'diskless', because there is at"
@@ -1248,7 +1248,7 @@ class LUClusterSetParams(LogicalUnit):
     self.cluster = cluster = self.cfg.GetClusterInfo()
 
     vm_capable_node_uuids = [node.uuid
-                             for node in self.cfg.GetAllNodesInfo().values()
+                             for node in list(self.cfg.GetAllNodesInfo().values())
                              if node.uuid in node_uuids and node.vm_capable]
 
     (enabled_disk_templates, new_enabled_disk_templates,
@@ -1292,15 +1292,15 @@ class LUClusterSetParams(LogicalUnit):
       new_hv_state = MergeAndVerifyHvState(self.op.hv_state,
                                            self.cluster.hv_state_static)
       self.new_hv_state = dict((hv, cluster.SimpleFillHvState(values))
-                               for hv, values in new_hv_state.items())
+                               for hv, values in list(new_hv_state.items()))
 
     if self.op.disk_state:
       new_disk_state = MergeAndVerifyDiskState(self.op.disk_state,
                                                self.cluster.disk_state_static)
       self.new_disk_state = \
         dict((storage, dict((name, cluster.SimpleFillDiskState(values))
-                            for name, values in svalues.items()))
-             for storage, svalues in new_disk_state.items())
+                            for name, values in list(svalues.items())))
+             for storage, svalues in list(new_disk_state.items()))
 
     self._CheckIpolicy(cluster, enabled_disk_templates)
 
@@ -1311,7 +1311,7 @@ class LUClusterSetParams(LogicalUnit):
       nic_errors = []
 
       # check all instances for consistency
-      for instance in self.cfg.GetAllInstancesInfo().values():
+      for instance in list(self.cfg.GetAllInstancesInfo().values()):
         for nic_idx, nic in enumerate(instance.nics):
           params_copy = copy.deepcopy(nic.nicparams)
           params_filled = objects.FillDict(self.new_nicparams, params_copy)
@@ -1335,7 +1335,7 @@ class LUClusterSetParams(LogicalUnit):
     # hypervisor list/parameters
     self.new_hvparams = new_hvp = objects.FillDict(cluster.hvparams, {})
     if self.op.hvparams:
-      for hv_name, hv_dict in self.op.hvparams.items():
+      for hv_name, hv_dict in list(self.op.hvparams.items()):
         if hv_name not in self.new_hvparams:
           self.new_hvparams[hv_name] = hv_dict
         else:
@@ -1344,7 +1344,7 @@ class LUClusterSetParams(LogicalUnit):
     # disk template parameters
     self.new_diskparams = objects.FillDict(cluster.diskparams, {})
     if self.op.diskparams:
-      for dt_name, dt_params in self.op.diskparams.items():
+      for dt_name, dt_params in list(self.op.diskparams.items()):
         if dt_name not in self.new_diskparams:
           self.new_diskparams[dt_name] = dt_params
         else:
@@ -1354,11 +1354,11 @@ class LUClusterSetParams(LogicalUnit):
     # os hypervisor parameters
     self.new_os_hvp = objects.FillDict(cluster.os_hvp, {})
     if self.op.os_hvp:
-      for os_name, hvs in self.op.os_hvp.items():
+      for os_name, hvs in list(self.op.os_hvp.items()):
         if os_name not in self.new_os_hvp:
           self.new_os_hvp[os_name] = hvs
         else:
-          for hv_name, hv_dict in hvs.items():
+          for hv_name, hv_dict in list(hvs.items()):
             if hv_dict is None:
               # Delete if it exists
               self.new_os_hvp[os_name].pop(hv_name, None)
@@ -1369,7 +1369,7 @@ class LUClusterSetParams(LogicalUnit):
 
       # Cleanup any OS that has an empty hypervisor parameter list, as we don't
       # need them in the cluster config anymore.
-      for os_name, hvs in self.new_os_hvp.items():
+      for os_name, hvs in list(self.new_os_hvp.items()):
         if not hvs:
           self.new_os_hvp.pop(os_name, None)
 
@@ -1391,7 +1391,7 @@ class LUClusterSetParams(LogicalUnit):
 
     if self.op.hvparams or self.op.enabled_hypervisors is not None:
       # either the enabled list has changed, or the parameters have, validate
-      for hv_name, hv_params in self.new_hvparams.items():
+      for hv_name, hv_params in list(self.new_hvparams.items()):
         if ((self.op.hvparams and hv_name in self.op.hvparams) or
             (self.op.enabled_hypervisors and
              hv_name in self.op.enabled_hypervisors)):
@@ -1404,8 +1404,8 @@ class LUClusterSetParams(LogicalUnit):
     if self.op.os_hvp:
       # no need to check any newly-enabled hypervisors, since the
       # defaults have already been checked in the above code-block
-      for os_name, os_hvp in self.new_os_hvp.items():
-        for hv_name, hv_params in os_hvp.items():
+      for os_name, os_hvp in list(self.new_os_hvp.items()):
+        for hv_name, hv_params in list(os_hvp.items()):
           utils.ForceDictType(hv_params, constants.HVS_PARAMETER_TYPES)
           # we need to fill in the new os_hvp on top of the actual hv_p
           cluster_defaults = self.new_hvparams.get(hv_name, {})
@@ -1664,12 +1664,12 @@ class LUClusterSetParams(LogicalUnit):
 
     active = constants.DATA_COLLECTOR_STATE_ACTIVE
     if self.op.enabled_data_collectors is not None:
-      for name, val in self.op.enabled_data_collectors.items():
+      for name, val in list(self.op.enabled_data_collectors.items()):
         self.cluster.data_collectors[name][active] = val
 
     if self.op.data_collector_interval:
       internal = constants.DATA_COLLECTOR_PARAMETER_INTERVAL
-      for name, val in self.op.data_collector_interval.items():
+      for name, val in list(self.op.data_collector_interval.items()):
         self.cluster.data_collectors[name][internal] = int(val)
 
     if self.op.hvparams:

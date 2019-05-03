@@ -30,7 +30,7 @@
 
 """Module with helper classes and functions for daemons"""
 
-from __future__  import print_function
+
 
 import asyncore
 import asynchat
@@ -463,7 +463,7 @@ class Mainloop(object):
     timed events
 
   """
-  _SHUTDOWN_TIMEOUT_PRIORITY = -(sys.maxint - 1)
+  _SHUTDOWN_TIMEOUT_PRIORITY = -(sys.maxsize - 1)
 
   def __init__(self):
     """Constructs a new Mainloop instance.
@@ -530,7 +530,7 @@ class Mainloop(object):
           pass
 
       # Check whether a signal was raised
-      for (sig, handler) in signal_handlers.items():
+      for (sig, handler) in list(signal_handlers.items()):
         if handler.called:
           self._CallSignalWaiters(sig)
           if sig in (signal.SIGTERM, signal.SIGINT):
@@ -742,7 +742,7 @@ def GenericMain(daemon_name, optionparser,
       "key": options.ssl_key,
       }
 
-    for name, path in ssl_paths.iteritems():
+    for name, path in ssl_paths.items():
       if not os.path.isfile(path):
         print("SSL %s file '%s' was not found" % (name, path), file=sys.stderr)
         sys.exit(constants.EXIT_FAILURE)

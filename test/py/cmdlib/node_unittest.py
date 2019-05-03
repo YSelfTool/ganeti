@@ -41,7 +41,7 @@ from ganeti import objects
 from ganeti import opcodes
 from ganeti.cmdlib import node
 
-from testsupport import *
+from .testsupport import *
 
 import testutils
 

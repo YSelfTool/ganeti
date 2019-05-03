@@ -39,11 +39,11 @@ from ganeti import utils
 from ganeti import constants
 from ganeti import pathutils
 
-import qa_config
-import qa_utils
-import qa_error
+from . import qa_config
+from . import qa_utils
+from . import qa_error
 
-from qa_utils import AssertCommand, AssertIn, AssertNotIn
+from .qa_utils import AssertCommand, AssertIn, AssertNotIn
 
 
 _TEMP_OS_NAME = "TEMP-Ganeti-QA-OS"
@@ -51,7 +51,7 @@ _TEMP_OS_PATH = os.path.join(pathutils.OS_SEARCH_PATH[0], _TEMP_OS_NAME)
 
 (_ALL_VALID,
  _ALL_INVALID,
- _PARTIALLY_VALID) = range(1, 4)
+ _PARTIALLY_VALID) = list(range(1, 4))
 
 
 def TestOsList():
@@ -68,10 +68,10 @@ def _TestOsModify(hvp_dict, fail=False):
   """gnt-os modify"""
   cmd = ["gnt-os", "modify"]
 
-  for hv_name, hv_params in hvp_dict.items():
+  for hv_name, hv_params in list(hvp_dict.items()):
     cmd.append("-H")
     options = []
-    for key, value in hv_params.items():
+    for key, value in list(hv_params.items()):
       options.append("%s=%s" % (key, value))
     cmd.append("%s:%s" % (hv_name, ",".join(options)))
 
@@ -117,9 +117,9 @@ def _SetupTempOs(node, dirname, variant, valid):
 
   cmd = " && ".join(parts)
 
-  print(qa_utils.FormatInfo("Setting up %s with %s OS definition" %
+  print((qa_utils.FormatInfo("Setting up %s with %s OS definition" %
                             (node.primary,
-                             ["an invalid", "a valid"][int(valid)])))
+                             ["an invalid", "a valid"][int(valid)]))))
 
   AssertCommand(cmd, node=node)
 

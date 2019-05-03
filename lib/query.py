@@ -84,7 +84,7 @@ from ganeti.constants import (QFT_UNKNOWN, QFT_TEXT, QFT_BOOL, QFT_NUMBER,
 (NETQ_CONFIG,
  NETQ_GROUP,
  NETQ_STATS,
- NETQ_INST) = range(300, 304)
+ NETQ_INST) = list(range(300, 304))
 
 # Constants for requesting data from the caller/data provider. Each property
 # collected/computed separately by the data provider should have its own to
@@ -94,29 +94,29 @@ from ganeti.constants import (QFT_UNKNOWN, QFT_TEXT, QFT_BOOL, QFT_NUMBER,
  NQ_INST,
  NQ_LIVE,
  NQ_GROUP,
- NQ_OOB) = range(1, 6)
+ NQ_OOB) = list(range(1, 6))
 
 (IQ_CONFIG,
  IQ_LIVE,
  IQ_DISKUSAGE,
  IQ_CONSOLE,
  IQ_NODES,
- IQ_NETWORKS) = range(100, 106)
+ IQ_NETWORKS) = list(range(100, 106))
 
 (LQ_MODE,
  LQ_OWNER,
- LQ_PENDING) = range(10, 13)
+ LQ_PENDING) = list(range(10, 13))
 
 (GQ_CONFIG,
  GQ_NODE,
  GQ_INST,
- GQ_DISKPARAMS) = range(200, 204)
+ GQ_DISKPARAMS) = list(range(200, 204))
 
 (CQ_CONFIG,
  CQ_QUEUE_DRAINED,
- CQ_WATCHER_PAUSE) = range(300, 303)
+ CQ_WATCHER_PAUSE) = list(range(300, 303))
 
-(JQ_ARCHIVED, ) = range(400, 401)
+(JQ_ARCHIVED, ) = list(range(400, 401))
 
 # Query field flags
 QFF_HOSTNAME = 0x01
@@ -412,7 +412,7 @@ class _FilterCompilerHelper(object):
   # Unique identifiers for operator groups
   (_OPTYPE_LOGIC,
    _OPTYPE_UNARY,
-   _OPTYPE_BINARY) = range(1, 4)
+   _OPTYPE_BINARY) = list(range(1, 4))
 
   """Functions for equality checks depending on field flags.
 
@@ -787,7 +787,7 @@ class Query(object):
 
     assert not result or (len(result[0]) == 3 and len(result[-1]) == 3)
 
-    return map(operator.itemgetter(2), result)
+    return list(map(operator.itemgetter(2), result))
 
   def OldStyleQuery(self, ctx, sort_by_name=True):
     """Query with "old" query result format.
@@ -894,7 +894,7 @@ def _PrepareFieldList(fields, aliases):
 
   assert len(result) == len(fields) + len(aliases)
   assert compat.all(name == fdef.name
-                    for (name, (fdef, _, _, _)) in result.items())
+                    for (name, (fdef, _, _, _)) in list(result.items()))
 
   return result
 
@@ -925,7 +925,7 @@ def QueryFields(fielddefs, selected):
   """
   if selected is None:
     # Client requests all fields, sort by name
-    fdefs = utils.NiceSort(GetAllFields(fielddefs.values()),
+    fdefs = utils.NiceSort(GetAllFields(list(fielddefs.values())),
                            key=operator.attrgetter("name"))
   else:
     # Keep order as requested by client
@@ -1036,7 +1036,7 @@ def _BuildNDFields(is_group):
                                                          "ndp/%s" % name),
                       _VTToQFT[kind], "The \"%s\" node parameter" % name),
            field_kind, 0, _GetNDParam(name))
-          for name, kind in constants.NDS_PARAMETER_TYPES.items()]
+          for name, kind in list(constants.NDS_PARAMETER_TYPES.items())]
 
 
 def _ConvWrapInner(convert, fn, ctx, item):
@@ -1319,7 +1319,7 @@ def _GetNodeHvState(_, node):
   if hv_state is None:
     return _FS_UNAVAIL
 
-  return dict((name, value.ToDict()) for (name, value) in hv_state.items())
+  return dict((name, value.ToDict()) for (name, value) in list(hv_state.items()))
 
 
 def _GetNodeDiskState(_, node):
@@ -1332,8 +1332,8 @@ def _GetNodeDiskState(_, node):
     return _FS_UNAVAIL
 
   return dict((disk_kind, dict((name, value.ToDict())
-                               for (name, value) in kind_state.items()))
-              for (disk_kind, kind_state) in disk_state.items())
+                               for (name, value) in list(kind_state.items())))
+              for (disk_kind, kind_state) in list(disk_state.items()))
 
 
 def _BuildNodeFields():
@@ -1407,13 +1407,13 @@ def _BuildNodeFields():
   # Add simple fields
   fields.extend([
     (_MakeField(name, title, kind, doc), NQ_CONFIG, flags, _GetItemAttr(name))
-    for (name, (title, kind, flags, doc)) in _NODE_SIMPLE_FIELDS.items()])
+    for (name, (title, kind, flags, doc)) in list(_NODE_SIMPLE_FIELDS.items())])
 
   # Add fields requiring live data
   fields.extend([
     (_MakeField(name, title, kind, doc), NQ_LIVE, 0,
      compat.partial(_GetLiveNodeField, nfield, kind))
-    for (name, (title, kind, nfield, doc)) in _NODE_LIVE_FIELDS.items()])
+    for (name, (title, kind, nfield, doc)) in list(_NODE_LIVE_FIELDS.items())])
 
   # Add timestamps
   fields.extend(_GetItemTimestampFields(NQ_CONFIG))
@@ -2093,7 +2093,7 @@ def _GetInstanceParameterFields():
                 constants.HVS_PARAMETER_TITLES.get(name, "hv/%s" % name),
                 _VTToQFT[kind], "The \"%s\" hypervisor parameter" % name),
      IQ_CONFIG, 0, _GetInstHvParam(name))
-    for name, kind in constants.HVS_PARAMETER_TYPES.items()
+    for name, kind in list(constants.HVS_PARAMETER_TYPES.items())
     if name not in constants.HVC_GLOBALS])
 
   # BE params
@@ -2105,7 +2105,7 @@ def _GetInstanceParameterFields():
                 constants.BES_PARAMETER_TITLES.get(name, "be/%s" % name),
                 _VTToQFT[kind], "The \"%s\" backend parameter" % name),
      IQ_CONFIG, 0, _GetInstBeParam(name))
-    for name, kind in constants.BES_PARAMETER_TYPES.items()])
+    for name, kind in list(constants.BES_PARAMETER_TYPES.items())])
 
   return fields
 
@@ -2240,7 +2240,7 @@ def _BuildInstanceFields():
   # Add simple fields
   fields.extend([
     (_MakeField(name, title, kind, doc), IQ_CONFIG, flags, _GetItemAttr(name))
-    for (name, (title, kind, flags, doc)) in _INST_SIMPLE_FIELDS.items()])
+    for (name, (title, kind, flags, doc)) in list(_INST_SIMPLE_FIELDS.items())])
 
   # Fields requiring talking to the node
   fields.extend([
@@ -2416,7 +2416,7 @@ def _BuildGroupFields():
   # Add simple fields
   fields = [(_MakeField(name, title, kind, doc), GQ_CONFIG, 0,
              _GetItemAttr(name))
-            for (name, (title, kind, doc)) in _GROUP_SIMPLE_FIELDS.items()]
+            for (name, (title, kind, doc)) in list(_GROUP_SIMPLE_FIELDS.items())]
 
   def _GetLength(getter):
     return lambda ctx, group: len(getter(ctx)[group.uuid])
@@ -2591,7 +2591,7 @@ def _PerJobOpInner(fn, job):
   """Executes a function per opcode in a job.
 
   """
-  return map(fn, job.ops)
+  return list(map(fn, job.ops))
 
 
 def _PerJobOp(fn):
@@ -2786,13 +2786,13 @@ def _BuildClusterFields():
   # Simple fields
   fields.extend([
     (_MakeField(name, title, kind, doc), CQ_CONFIG, flags, _GetItemAttr(name))
-    for (name, (title, kind, flags, doc)) in _CLUSTER_SIMPLE_FIELDS.items()
+    for (name, (title, kind, flags, doc)) in list(_CLUSTER_SIMPLE_FIELDS.items())
     ],)
 
   # Version fields
   fields.extend([
     (_MakeField(name, title, kind, doc), None, 0, _StaticValue(value))
-    for (name, (title, kind, value, doc)) in _CLUSTER_VERSION_FIELDS.items()])
+    for (name, (title, kind, value, doc)) in list(_CLUSTER_VERSION_FIELDS.items())])
 
   # Add timestamps
   fields.extend(_GetItemTimestampFields(CQ_CONFIG))
@@ -2881,7 +2881,7 @@ def _BuildNetworkFields():
   fields.extend([
     (_MakeField(name, title, kind, doc),
      NETQ_CONFIG, 0, _GetItemMaybeAttr(name))
-     for (name, (title, kind, _, doc)) in _NETWORK_SIMPLE_FIELDS.items()])
+     for (name, (title, kind, _, doc)) in list(_NETWORK_SIMPLE_FIELDS.items())])
 
   def _GetLength(getter):
     return lambda ctx, network: len(getter(ctx)[network.uuid])
@@ -2913,7 +2913,7 @@ def _BuildNetworkFields():
   fields.extend([
     (_MakeField(name, title, kind, doc), NETQ_STATS, 0,
      compat.partial(_GetNetworkStatsField, name, kind))
-    for (name, (title, kind, _, doc)) in _NETWORK_STATS_FIELDS.items()])
+    for (name, (title, kind, _, doc)) in list(_NETWORK_STATS_FIELDS.items())])
 
   # Add timestamps
   fields.extend(_GetItemTimestampFields(IQ_NETWORKS))
@@ -2937,7 +2937,7 @@ def _BuildFilterFields():
   """
   fields = [
     (_MakeField(name, title, kind, doc), None, 0, _GetItemMaybeAttr(name))
-    for (name, (title, kind, _, doc)) in _FILTER_SIMPLE_FIELDS.items()
+    for (name, (title, kind, _, doc)) in list(_FILTER_SIMPLE_FIELDS.items())
     ]
 
   return _PrepareFieldList(fields, [])
@@ -2991,4 +2991,4 @@ ALL_FIELDS = {
   }
 
 #: All available field lists
-ALL_FIELD_LISTS = ALL_FIELDS.values()
+ALL_FIELD_LISTS = list(ALL_FIELDS.values())

@@ -72,7 +72,7 @@ def ssynchronized(mylock, shared=0):
   """
   def wrap(fn):
     def sync_function(*args, **kwargs):
-      if isinstance(mylock, basestring):
+      if isinstance(mylock, str):
         assert args, "cannot ssynchronize on non-class method: self not found"
         # args[0] is "self"
         lock = getattr(args[0], mylock)
@@ -942,7 +942,7 @@ class _AcquireTimeout(Exception):
  LEVEL_NODEGROUP,
  LEVEL_NODE,
  LEVEL_NODE_RES,
- LEVEL_NETWORK) = range(0, 6)
+ LEVEL_NETWORK) = list(range(0, 6))
 
 LEVELS = [
   LEVEL_CLUSTER,

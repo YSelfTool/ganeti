@@ -519,7 +519,7 @@ class TLMigrateInstance(Tasklet):
       result = self.rpc.call_drbd_wait_sync(self.all_node_uuids,
                                             (disks, self.instance))
       min_percent = 100
-      for node_uuid, nres in result.items():
+      for node_uuid, nres in list(result.items()):
         nres.Raise("Cannot resync disks on node %s" %
                    self.cfg.GetNodeName(node_uuid))
         node_done, node_percent = nres.payload
@@ -578,7 +578,7 @@ class TLMigrateInstance(Tasklet):
     disks = self.cfg.GetInstanceDisks(self.instance.uuid)
     result = self.rpc.call_drbd_disconnect_net(
                self.all_node_uuids, (disks, self.instance))
-    for node_uuid, nres in result.items():
+    for node_uuid, nres in list(result.items()):
       nres.Raise("Cannot disconnect disks node %s" %
                  self.cfg.GetNodeName(node_uuid))
 
@@ -595,7 +595,7 @@ class TLMigrateInstance(Tasklet):
     result = self.rpc.call_drbd_attach_net(self.all_node_uuids,
                                            (disks, self.instance),
                                            multimaster)
-    for node_uuid, nres in result.items():
+    for node_uuid, nres in list(result.items()):
       nres.Raise("Cannot change disks config on node %s" %
                  self.cfg.GetNodeName(node_uuid))
 
@@ -617,7 +617,7 @@ class TLMigrateInstance(Tasklet):
         online_node_uuids, [self.instance.hypervisor], cluster_hvparams)
 
     # Verify each result and raise an exception if failed
-    for node_uuid, result in instance_list.items():
+    for node_uuid, result in list(instance_list.items()):
       result.Raise("Can't contact node %s" % self.cfg.GetNodeName(node_uuid))
 
     # Xen renames the instance during migration, unfortunately we don't have
@@ -638,7 +638,7 @@ class TLMigrateInstance(Tasklet):
     # finished:         <none>             $DOM
     variants = [
         name, 'migrating-' + name, name + '--incoming', name + '--migratedaway']
-    node_uuids = [node for node, data in instance_list.items()
+    node_uuids = [node for node, data in list(instance_list.items())
                   if any(var in data.payload for var in variants)]
     self.feedback_fn("* instance running on: %s" % ','.join(
         self.cfg.GetNodeName(uuid) for uuid in node_uuids))
@@ -826,7 +826,7 @@ class TLMigrateInstance(Tasklet):
                 self.cfg.GetClusterInfo().hvparams[self.instance.hypervisor])]
     nodeinfo = self.rpc.call_node_info(
                  [self.source_node_uuid, self.target_node_uuid], None, hvspecs)
-    for ninfo in nodeinfo.values():
+    for ninfo in list(nodeinfo.values()):
       ninfo.Raise("Unable to retrieve node information from node '%s'" %
                   ninfo.node)
     (_, _, (src_info, )) = nodeinfo[self.source_node_uuid].payload

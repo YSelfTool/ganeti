@@ -652,7 +652,7 @@ def InitCluster(cluster_name, mac_prefix, # pylint: disable=R0913, R0914
   # FIXME: Make utils.ForceDictType pure functional or write a wrapper
   # around it
   if hv_state:
-    for hvname, hvs_data in hv_state.items():
+    for hvname, hvs_data in list(hv_state.items()):
       utils.ForceDictType(hvs_data, constants.HVSTS_PARAMETER_TYPES)
       hv_state[hvname] = objects.Cluster.SimpleFillHvState(hvs_data)
   else:
@@ -661,22 +661,22 @@ def InitCluster(cluster_name, mac_prefix, # pylint: disable=R0913, R0914
 
   # FIXME: disk_state has no default values yet
   if disk_state:
-    for storage, ds_data in disk_state.items():
+    for storage, ds_data in list(disk_state.items()):
       if storage not in constants.DS_VALID_TYPES:
         raise errors.OpPrereqError("Invalid storage type in disk state: %s" %
                                    storage, errors.ECODE_INVAL)
-      for ds_name, state in ds_data.items():
+      for ds_name, state in list(ds_data.items()):
         utils.ForceDictType(state, constants.DSS_PARAMETER_TYPES)
         ds_data[ds_name] = objects.Cluster.SimpleFillDiskState(state)
 
   # hvparams is a mapping of hypervisor->hvparams dict
-  for hv_name, hv_params in hvparams.iteritems():
+  for hv_name, hv_params in hvparams.items():
     utils.ForceDictType(hv_params, constants.HVS_PARAMETER_TYPES)
     hv_class = hypervisor.GetHypervisor(hv_name)
     hv_class.CheckParameterSyntax(hv_params)
 
   # diskparams is a mapping of disk-template->diskparams dict
-  for template, dt_params in diskparams.items():
+  for template, dt_params in list(diskparams.items()):
     param_keys = set(dt_params.keys())
     default_param_keys = set(constants.DISK_DT_DEFAULTS[template].keys())
     if param_keys > default_param_keys:
@@ -1175,7 +1175,7 @@ def _GatherMasterVotes(node_names):
     return [(None, len(node_names))]
 
   votes = {}
-  for (node_name, nres) in results.iteritems():
+  for (node_name, nres) in results.items():
     msg = nres.fail_msg
     if msg:
       logging.warning("Error contacting node %s: %s", node_name, msg)
@@ -1189,7 +1189,7 @@ def _GatherMasterVotes(node_names):
     else:
       votes[node] += 1
 
-  vote_list = votes.items()
+  vote_list = list(votes.items())
   vote_list.sort(key=lambda x: x[1], reverse=True)
   return vote_list
 

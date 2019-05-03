@@ -41,7 +41,7 @@ from ganeti.utils import io
 from ganeti import utils
 from ganeti import constants
 
-import testutils
+from . import testutils
 
 
 class TestFileStorageSpaceInfo(unittest.TestCase):

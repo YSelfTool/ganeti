@@ -51,7 +51,7 @@ from ganeti.rapi import rlib2
 from ganeti.rapi import baserlib
 from ganeti.rapi import connector
 
-import testutils
+from . import testutils
 
 
 class _FakeRequestPrivateData:
@@ -160,7 +160,7 @@ class TestConstants(unittest.TestCase):
       constants.QR_GROUP: rlib2.G_FIELDS,
       }
 
-    for (qr, fields) in checks.items():
+    for (qr, fields) in list(checks.items()):
       self.assertFalse(set(fields) - set(query.ALL_FIELDS[qr].keys()))
 
 
@@ -881,8 +881,8 @@ class TestInstanceCreation(RAPITestCase):
       "mode": constants.INSTANCE_CREATE,
       }
 
-    for name in reqfields.keys():
-      data = dict(i for i in reqfields.iteritems() if i[0] != name)
+    for name in list(reqfields.keys()):
+      data = dict(i for i in reqfields.items() if i[0] != name)
 
       handler = _CreateHandler(rlib2.R_2_instances, [], {}, data,
                                self._clfactory)
@@ -1129,9 +1129,9 @@ class TestParseInstanceReinstallRequest(testutils.GanetiTestCase):
       opcodes.OpInstanceStartup,
       ]
 
-    self.assert_(compat.all(isinstance(op, exp)
+    self.assertTrue(compat.all(isinstance(op, exp)
                             for op, exp in zip(ops, expcls)))
-    self.assert_(compat.all(op.instance_name == name for op in ops))
+    self.assertTrue(compat.all(op.instance_name == name for op in ops))
 
   def test(self):
     name = "shoo0tihohma"
@@ -1206,7 +1206,7 @@ class TestInstanceReplaceDisks(RAPITestCase):
   def test(self):
     name = "inst22568"
 
-    for disks in [range(1, 4), "1,2,3", "1, 2, 3"]:
+    for disks in [list(range(1, 4)), "1,2,3", "1, 2, 3"]:
       data = {
         "mode": constants.REPLACE_DISK_SEC,
         "disks": disks,
@@ -1377,7 +1377,7 @@ class TestGroupAdd(RAPITestCase):
 
 class TestNodeRole(RAPITestCase):
   def test(self):
-    for role in rlib2._NR_MAP.values():
+    for role in list(rlib2._NR_MAP.values()):
       handler = _CreateHandler(rlib2.R_2_nodes_name_role,
                                ["node-z"], {}, role, self._clfactory)
       if role == rlib2._NR_MASTER:
@@ -1489,7 +1489,7 @@ class TestPermissions(unittest.TestCase):
                      rlib2.R_2_instances_name_console.GET_ACCESS)
 
   def testMethodAccess(self):
-    for handler in connector.CONNECTOR.values():
+    for handler in list(connector.CONNECTOR.values()):
       for method in baserlib._SUPPORTED_METHODS:
         access = baserlib.GetHandlerAccess(handler, method)
         self.assertFalse(access is None)
