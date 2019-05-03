@@ -31,6 +31,7 @@
 """Script for unittesting the http module"""
 
 
+import functools
 import os
 import unittest
 import time
@@ -664,7 +665,7 @@ class TestProcessRequests(unittest.TestCase):
 
     requests = \
       [http.client.HttpClientRequest("localhost", i, "POST", "/version%s" % i,
-                                     curl_config_fn=compat.partial(cfg_fn, i),
+                                     curl_config_fn=functools.partial(cfg_fn, i),
                                      completion_cb=NotImplementedError,
                                      nicename=_BuildNiceName(i))
        for i in range(15176, 15501)]
@@ -686,7 +687,7 @@ class TestProcessRequests(unittest.TestCase):
         assert req.completion_cb is NotImplementedError
         if use_monitor:
           req.completion_cb = \
-            compat.partial(_LockCheckReset, lock_monitor_cb.GetMonitor())
+            functools.partial(_LockCheckReset, lock_monitor_cb.GetMonitor())
 
       for idx, curl in enumerate(handles):
         try:

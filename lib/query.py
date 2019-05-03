@@ -61,6 +61,7 @@ How it works:
 
 """
 
+import functools
 import logging
 import operator
 import re
@@ -459,7 +460,7 @@ class _FilterCompilerHelper(object):
     qlang.OP_EQUAL: (_OPTYPE_BINARY, _EQUALITY_CHECKS),
     qlang.OP_EQUAL_LEGACY: (_OPTYPE_BINARY, _EQUALITY_CHECKS),
     qlang.OP_NOT_EQUAL:
-      (_OPTYPE_BINARY, [(flags, compat.partial(_WrapNot, fn), valprepfn)
+      (_OPTYPE_BINARY, [(flags, functools.partial(_WrapNot, fn), valprepfn)
                         for (flags, fn, valprepfn) in _EQUALITY_CHECKS]),
     qlang.OP_LT: (_OPTYPE_BINARY, _MakeComparisonChecks(operator.lt)),
     qlang.OP_LE: (_OPTYPE_BINARY, _MakeComparisonChecks(operator.le)),
@@ -566,7 +567,7 @@ class _FilterCompilerHelper(object):
     if hints_fn:
       hints_fn(op)
 
-    return compat.partial(_WrapLogicOp, op_fn,
+    return functools.partial(_WrapLogicOp, op_fn,
                           [self._Compile(op, level + 1) for op in operands])
 
   def _HandleUnaryOp(self, hints_fn, level, op, op_fn, operands):
@@ -607,7 +608,7 @@ class _FilterCompilerHelper(object):
     else:
       raise errors.ProgrammerError("Can't handle operator '%s'" % op)
 
-    return compat.partial(_WrapUnaryOp, op_fn, arg)
+    return functools.partial(_WrapUnaryOp, op_fn, arg)
 
   def _HandleBinaryOp(self, hints_fn, level, op, op_data, operands):
     """Handles binary operators.
@@ -652,7 +653,7 @@ class _FilterCompilerHelper(object):
         if valprepfn:
           value = valprepfn(value)
 
-        return compat.partial(_WrapBinaryOp, fn, retrieval_fn, value)
+        return functools.partial(_WrapBinaryOp, fn, retrieval_fn, value)
 
     raise errors.ProgrammerError("Unable to find operator implementation"
                                  " (op '%s', flags %s)" % (op, field_flags))
@@ -958,7 +959,7 @@ def _StaticValue(value):
   """Prepares a function to return a static value.
 
   """
-  return compat.partial(_StaticValueInner, value)
+  return functools.partial(_StaticValueInner, value)
 
 
 def _GetNodeRole(node, master_uuid):
@@ -1064,7 +1065,7 @@ def _ConvWrap(convert, fn):
   @param fn: Retrieval function
 
   """
-  return compat.partial(_ConvWrapInner, convert, fn)
+  return functools.partial(_ConvWrapInner, convert, fn)
 
 
 def _GetItemTimestamp(getter):
@@ -1412,7 +1413,7 @@ def _BuildNodeFields():
   # Add fields requiring live data
   fields.extend([
     (_MakeField(name, title, kind, doc), NQ_LIVE, 0,
-     compat.partial(_GetLiveNodeField, nfield, kind))
+     functools.partial(_GetLiveNodeField, nfield, kind))
     for (name, (title, kind, nfield, doc)) in list(_NODE_LIVE_FIELDS.items())])
 
   # Add timestamps
@@ -2517,7 +2518,7 @@ def _BuildOsFields():
      None, 0, _ConvWrap(sorted, _GetItemAttr("api_versions"))),
     (_MakeField("parameters", "Parameters", QFT_OTHER,
                 "Operating system parameters"),
-     None, 0, _ConvWrap(compat.partial(utils.NiceSort, key=compat.fst),
+     None, 0, _ConvWrap(functools.partial(utils.NiceSort, key=compat.fst),
                         _GetItemAttr("parameters"))),
     (_MakeField("node_status", "NodeStatus", QFT_OTHER,
                 "Status from node"),
@@ -2584,7 +2585,7 @@ def _JobUnavail(inner):
   """Wrapper for L{_JobUnavailInner}.
 
   """
-  return compat.partial(_JobUnavailInner, inner)
+  return functools.partial(_JobUnavailInner, inner)
 
 
 def _PerJobOpInner(fn, job):
@@ -2598,7 +2599,7 @@ def _PerJobOp(fn):
   """Wrapper for L{_PerJobOpInner}.
 
   """
-  return _JobUnavail(compat.partial(_PerJobOpInner, fn))
+  return _JobUnavail(functools.partial(_PerJobOpInner, fn))
 
 
 def _JobTimestampInner(fn, job):
@@ -2617,7 +2618,7 @@ def _JobTimestamp(fn):
   """Wrapper for L{_JobTimestampInner}.
 
   """
-  return _JobUnavail(compat.partial(_JobTimestampInner, fn))
+  return _JobUnavail(functools.partial(_JobTimestampInner, fn))
 
 
 def _BuildJobFields():
@@ -2912,7 +2913,7 @@ def _BuildNetworkFields():
   # Add fields for usage statistics
   fields.extend([
     (_MakeField(name, title, kind, doc), NETQ_STATS, 0,
-     compat.partial(_GetNetworkStatsField, name, kind))
+     functools.partial(_GetNetworkStatsField, name, kind))
     for (name, (title, kind, _, doc)) in list(_NETWORK_STATS_FIELDS.items())])
 
   # Add timestamps

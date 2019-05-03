@@ -36,7 +36,7 @@
 # C0103: Invalid name ganeti-watcher
 
 
-
+import functools
 import logging
 import optparse
 import sys
@@ -347,7 +347,7 @@ def PrepRapi(options, _):
 
   # Setup file watcher (it'll be driven by asyncore)
   SetupFileWatcher(pathutils.RAPI_USERS_FILE,
-                   compat.partial(users.Load, pathutils.RAPI_USERS_FILE))
+                   functools.partial(users.Load, pathutils.RAPI_USERS_FILE))
 
   users.Load(pathutils.RAPI_USERS_FILE)
 

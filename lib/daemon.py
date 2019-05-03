@@ -35,6 +35,7 @@
 import asyncore
 import asynchat
 import collections
+import functools
 import os
 import signal
 import logging
@@ -799,7 +800,7 @@ def GenericMain(daemon_name, optionparser,
 
   # Reopen log file(s) on SIGHUP
   signal.signal(signal.SIGHUP,
-                compat.partial(_HandleSigHup, [log_reopen_fn, stdio_reopen_fn]))
+                functools.partial(_HandleSigHup, [log_reopen_fn, stdio_reopen_fn]))
 
   try:
     utils.WritePidFile(utils.DaemonPidFileName(daemon_name))

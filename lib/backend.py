@@ -50,6 +50,7 @@ import base64
 import contextlib
 import collections
 import errno
+import functools
 import logging
 import os
 import os.path
@@ -337,7 +338,7 @@ def RunLocalHooks(hook_opcode, hooks_path, env_builder_fn):
       _, myself = ssconf.GetMasterAndMyself()
       nodes = ([myself], [myself])  # these hooks run locally
 
-      env_fn = compat.partial(env_builder_fn, *args, **kwargs)
+      env_fn = functools.partial(env_builder_fn, *args, **kwargs)
 
       cfg = _GetConfig()
       hr = HooksRunner()

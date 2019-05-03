@@ -40,6 +40,7 @@ import select
 import logging
 import signal
 import resource
+import functools
 
 from io import StringIO
 
@@ -953,7 +954,7 @@ def Daemonize(logfile):
       rcode = 0
     os._exit(rcode) # Exit parent of the first child.
 
-  reopen_fn = compat.partial(SetupDaemonFDs, logfile, None)
+  reopen_fn = functools.partial(SetupDaemonFDs, logfile, None)
 
   # Open logs for the first time
   reopen_fn()

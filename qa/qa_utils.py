@@ -37,6 +37,7 @@
 import contextlib
 import copy
 import datetime
+import functools
 import operator
 import os
 import random
@@ -46,11 +47,6 @@ import subprocess
 import sys
 import tempfile
 import yaml
-
-try:
-  import functools
-except ImportError as err:
-  raise ImportError("Python 2.5 or higher is required: %s" % err)
 
 from ganeti import utils
 from ganeti import compat
@@ -650,7 +646,7 @@ def GenericQueryTest(cmd, fields, namefield="name", test_unknown=True):
     AssertRedirectedCommand([cmd, "list", "--output", ",".join(testfields)])
 
   if namefield is not None:
-    namelist_fn = compat.partial(_List, cmd, [namefield])
+    namelist_fn = functools.partial(_List, cmd, [namefield])
 
     # When no names were requested, the list must be sorted
     names = namelist_fn(None)

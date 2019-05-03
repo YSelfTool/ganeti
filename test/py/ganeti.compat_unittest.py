@@ -31,6 +31,7 @@
 """Script for unittesting the compat module"""
 
 import inspect
+import functools
 import unittest
 
 from ganeti import compat
@@ -41,10 +42,7 @@ from . import testutils
 class TestPartial(testutils.GanetiTestCase):
   def test(self):
     # Test standard version
-    self._Test(compat.partial)
-
-    # Test our version
-    self._Test(compat._partial)
+    self._Test(functools.partial)
 
   def _Test(self, fn):
     def _TestFunc1(x, power=2):

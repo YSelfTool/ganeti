@@ -35,6 +35,7 @@
 # W0614: Unused import %s from wildcard import (since we need cli)
 # C0103: Invalid name gnt-cluster
 
+import functools
 import itertools
 import os
 import time
@@ -1673,7 +1674,7 @@ def _InstanceStart(opts, inst_list, start, no_remember=False):
     opcls = opcodes.OpInstanceStartup
     text_submit, text_success, text_failed = ("startup", "started", "starting")
   else:
-    opcls = compat.partial(opcodes.OpInstanceShutdown,
+    opcls = functools.partial(opcodes.OpInstanceShutdown,
                            timeout=opts.shutdown_timeout,
                            no_remember=no_remember)
     text_submit, text_success, text_failed = ("shutdown", "stopped", "stopping")
@@ -1836,7 +1837,7 @@ def _EpoOn(opts, full_node_list, node_list, inst_map):
              " manually if needed")
 
   # Wait for the nodes to be back up
-  action_cb = compat.partial(_MaybeInstanceStartup, opts, dict(inst_map))
+  action_cb = functools.partial(_MaybeInstanceStartup, opts, dict(inst_map))
 
   ToStdout("Waiting until all nodes are available again")
   if not _RunWhenNodesReachable(full_node_list, action_cb, _EPO_PING_INTERVAL):

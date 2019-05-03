@@ -30,6 +30,7 @@
 
 """Module implementing the parameter types code."""
 
+import functools
 import re
 import operator
 import ipaddr
@@ -108,7 +109,7 @@ def WithDesc(text):
   """
   assert text[0] == text[0].upper()
 
-  return compat.partial(_DescWrapper, text)
+  return functools.partial(_DescWrapper, text)
 
 
 def Comment(text):
@@ -121,7 +122,7 @@ def Comment(text):
   """
   assert not frozenset(text).intersection("[]")
 
-  return compat.partial(_CommentWrapper, text)
+  return functools.partial(_CommentWrapper, text)
 
 
 def CombinationDesc(op, args, fn):
@@ -395,7 +396,7 @@ TMaybePositiveInt = TMaybe(TPositiveInt)
 
 #: a negative integer (value < 0)
 TNegativeInt = \
-  TAnd(TInt, WithDesc("LessThanZero")(compat.partial(operator.gt, 0)))
+  TAnd(TInt, WithDesc("LessThanZero")(functools.partial(operator.gt, 0)))
 
 #: a positive float
 TNonNegativeFloat = \
@@ -544,7 +545,7 @@ def TStrictDict(require_all, exclusive, items):
   desc = WithDesc("".join(descparts))
 
   return desc(TAnd(TDict,
-                   compat.partial(_TStrictDictCheck, require_all, exclusive,
+                   functools.partial(_TStrictDictCheck, require_all, exclusive,
                                   items)))
 
 

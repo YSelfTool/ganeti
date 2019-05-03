@@ -30,6 +30,7 @@
 
 """Script for testing ganeti.utils.io"""
 
+import functools
 import os
 import tempfile
 import unittest
@@ -39,6 +40,7 @@ import time
 import signal
 import stat
 import errno
+import hashlib
 
 from ganeti import constants
 from ganeti import utils
@@ -53,7 +55,7 @@ class TestReadFile(testutils.GanetiTestCase):
     data = utils.ReadFile(testutils.TestDataFilename("cert1.pem"))
     self.assertEqual(len(data), 1229)
 
-    h = compat.md5_hash()
+    h = hashlib.md5()
     h.update(data)
     self.assertEqual(h.hexdigest(), "a02be485db0d82b70c0ae7913b26894e")
 
@@ -62,7 +64,7 @@ class TestReadFile(testutils.GanetiTestCase):
                           size=100)
     self.assertEqual(len(data), 100)
 
-    h = compat.md5_hash()
+    h = hashlib.md5()
     h.update(data)
     self.assertEqual(h.hexdigest(), "256d28505448898d4741b10c5f5dbc12")
 
@@ -249,7 +251,7 @@ class TestListVisibleFiles(unittest.TestCase):
                           "/bin/../tmp")
 
   def testMountpoint(self):
-    lvfmp_fn = compat.partial(utils.ListVisibleFiles,
+    lvfmp_fn = functools.partial(utils.ListVisibleFiles,
                               _is_mountpoint=lambda _: True)
     self.assertEqual(lvfmp_fn(self.path), [])
 

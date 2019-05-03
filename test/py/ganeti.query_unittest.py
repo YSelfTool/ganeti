@@ -30,6 +30,7 @@
 
 """Script for testing ganeti.query"""
 
+import functools
 import re
 import unittest
 import random
@@ -86,7 +87,7 @@ class TestQuery(unittest.TestCase):
       ] +
       [(query._MakeField("disk%s.size" % i, "DiskSize%s" % i,
                          constants.QFT_UNIT, "Disk size %s" % i),
-        DISK, 0, compat.partial(_GetDiskSize, i))
+        DISK, 0, functools.partial(_GetDiskSize, i))
        for i in range(4)], [])
 
     q = query.Query(fielddef, ["name"])

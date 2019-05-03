@@ -30,6 +30,7 @@
 
 """Support for mocking the netutils module"""
 
+import functools
 from unittest import mock
 
 from ganeti import compat
@@ -113,9 +114,9 @@ def SetupDefaultNetutilsMock(netutils_mod, cfg):
 
   """
   netutils_mod.GetHostname.side_effect = \
-    compat.partial(_GetHostnameMock, cfg, netutils_mod.GetHostname)
+    functools.partial(_GetHostnameMock, cfg, netutils_mod.GetHostname)
   netutils_mod.TcpPing.side_effect = \
-    compat.partial(_TcpPingMock, cfg, netutils_mod.TcpPing)
+    functools.partial(_TcpPingMock, cfg, netutils_mod.TcpPing)
   netutils_mod.GetDaemonPort.side_effect = netutils.GetDaemonPort
   netutils_mod.FormatAddress.side_effect = netutils.FormatAddress
   netutils_mod.Hostname.GetNormalizedName.side_effect = \

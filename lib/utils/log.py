@@ -31,6 +31,7 @@
 
 """
 
+import functools
 import os.path
 import logging
 import logging.handlers
@@ -278,7 +279,7 @@ def SetupLogging(logfile, program, debug=0, stderr_logging=False,
         # we need to re-raise the exception
         raise
 
-  return compat.partial(_ReopenLogFiles, reopen_handlers)
+  return functools.partial(_ReopenLogFiles, reopen_handlers)
 
 
 def SetupToolLogging(debug, verbose, threadname=False,

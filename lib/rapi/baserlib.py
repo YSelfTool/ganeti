@@ -36,6 +36,7 @@
 
 # C0103: Invalid name, since the R_* names are not conforming
 
+import functools
 import logging
 
 from ganeti import luxi
@@ -576,7 +577,7 @@ class _MetaOpcodeResource(type):
         # name
         if method == http.HTTP_GET and hasattr(obj, aliases_attr):
           setattr(obj, method,
-                  compat.partial(GetHandler, getattr(obj, method),
+                  functools.partial(GetHandler, getattr(obj, method),
                                  getattr(obj, aliases_attr)))
       else:
         # Try to generate handler method on handler instance
@@ -586,7 +587,7 @@ class _MetaOpcodeResource(type):
           pass
         else:
           setattr(obj, method,
-                  compat.partial(obj._GenericHandler, opcode,
+                  functools.partial(obj._GenericHandler, opcode,
                                  getattr(obj, rename_attr, None),
                                  getattr(obj, fn_attr, obj._GetDefaultData)))
 
@@ -597,7 +598,7 @@ class _MetaOpcodeResource(type):
           obj.__class__.__name__, method, getattr(obj, m_attrs.forbidden)
         )
         setattr(
-          obj, method, compat.partial(obj._ForbiddenHandler,
+          obj, method, functools.partial(obj._ForbiddenHandler,
                                       getattr(obj, method),
                                       forbidden_dict,
                                       getattr(obj, m_attrs.rename, None))

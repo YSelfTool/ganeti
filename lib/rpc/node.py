@@ -41,6 +41,7 @@
 
 import base64
 import copy
+import functools
 import logging
 import os
 import threading
@@ -481,8 +482,8 @@ class _RpcClientBase(object):
     proc = _RpcProcessor(resolver,
                          netutils.GetDaemonPort(constants.NODED),
                          lock_monitor_cb=lock_monitor_cb)
-    self._proc = compat.partial(proc, _req_process_fn=_req_process_fn)
-    self._encoder = compat.partial(self._EncodeArg, encoder_fn)
+    self._proc = functools.partial(proc, _req_process_fn=_req_process_fn)
+    self._encoder = functools.partial(self._EncodeArg, encoder_fn)
 
   @staticmethod
   def _EncodeArg(encoder_fn, node, arg):
@@ -829,13 +830,13 @@ class RpcRunner(_RpcClientBase,
       rpc_defs.ED_NODE_TO_DISK_DICT_DP: self._EncodeNodeToDiskDictDP,
 
       # Encoders with special requirements
-      rpc_defs.ED_FILE_DETAILS: compat.partial(_PrepareFileUpload, _getents),
+      rpc_defs.ED_FILE_DETAILS: functools.partial(_PrepareFileUpload, _getents),
 
       rpc_defs.ED_IMPEXP_IO: self._EncodeImportExportIO,
       })
 
     # Resolver using configuration
-    resolver = compat.partial(_NodeConfigResolver, cfg.GetNodeInfo,
+    resolver = functools.partial(_NodeConfigResolver, cfg.GetNodeInfo,
                               cfg.GetAllNodesInfo)
 
     # Pylint doesn't recognize multiple inheritance properly, see
@@ -995,7 +996,7 @@ class JobQueueRunner(_RpcClientBase, _generated_rpc.RpcClientJobQueue):
 
     """
     if address_list is None:
-      resolver = compat.partial(_SsconfResolver, True)
+      resolver = functools.partial(_SsconfResolver, True)
     else:
       # Caller provided an address list
       resolver = _StaticResolver(address_list)
@@ -1019,7 +1020,7 @@ class BootstrapRunner(_RpcClientBase,
     # <http://www.logilab.org/ticket/36586> and
     # <http://www.logilab.org/ticket/35642>
     # pylint: disable=W0233
-    _RpcClientBase.__init__(self, compat.partial(_SsconfResolver, True),
+    _RpcClientBase.__init__(self, functools.partial(_SsconfResolver, True),
                             _ENCODERS.get)
     _generated_rpc.RpcClientBootstrap.__init__(self)
     _generated_rpc.RpcClientDnsOnly.__init__(self)
@@ -1033,7 +1034,7 @@ class DnsOnlyRunner(_RpcClientBase, _generated_rpc.RpcClientDnsOnly):
     """Initialize this class.
 
     """
-    _RpcClientBase.__init__(self, compat.partial(_SsconfResolver, False),
+    _RpcClientBase.__init__(self, functools.partial(_SsconfResolver, False),
                             _ENCODERS.get)
     _generated_rpc.RpcClientDnsOnly.__init__(self)
 
@@ -1050,7 +1051,7 @@ class ConfigRunner(_RpcClientBase, _generated_rpc.RpcClientConfig):
     lock_monitor_cb = None
 
     if address_list is None:
-      resolver = compat.partial(_SsconfResolver, True)
+      resolver = functools.partial(_SsconfResolver, True)
     else:
       # Caller provided an address list
       resolver = _StaticResolver(address_list)
@@ -1058,7 +1059,7 @@ class ConfigRunner(_RpcClientBase, _generated_rpc.RpcClientConfig):
     encoders = _ENCODERS.copy()
 
     encoders.update({
-      rpc_defs.ED_FILE_DETAILS: compat.partial(_PrepareFileUpload, _getents),
+      rpc_defs.ED_FILE_DETAILS: functools.partial(_PrepareFileUpload, _getents),
       })
 
     _RpcClientBase.__init__(self, resolver, encoders.get,

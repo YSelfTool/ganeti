@@ -33,6 +33,7 @@
 """
 
 import base64
+import functools
 import logging
 import re
 
@@ -325,7 +326,7 @@ class _LuxiCallRecorder(object):
     retrieve them).
 
     """
-    return luxi.Client(transport=compat.partial(_TestLuxiTransport,
+    return luxi.Client(transport=functools.partial(_TestLuxiTransport,
                                                 self.Record),
                        address=address)
 
@@ -392,5 +393,5 @@ class InputTestClient(object):
     result.
 
     """
-    return _HideInternalErrors(compat.partial(_TestWrapper,
+    return _HideInternalErrors(functools.partial(_TestWrapper,
                                               getattr(self._client, name)))
