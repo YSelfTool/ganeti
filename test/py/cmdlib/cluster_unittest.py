@@ -1999,7 +1999,7 @@ class TestLUClusterVerifyGroupVerifyNodeOs(TestLUClusterVerifyGroupMethods):
     nimg_root.oslist = {
       "mock_os": [("/mocked/path", True, "", set(["default"]), set(),
                    set([constants.OS_API_V20]), True)],
-      "broken_base_os": [("/broken", False, "", set(), set(),
+      "broken_os": [("/broken", False, "", set(), set(),
                          set([constants.OS_API_V20]), True)],
       "only_on_root": [("/random", True, "", set(), set(), set(), True)],
       "diffing_os": [("/pinky", True, "", set(["var1", "var2"]),
@@ -2033,7 +2033,6 @@ class TestLUClusterVerifyGroupVerifyNodeOs(TestLUClusterVerifyGroupMethods):
       "OS variants list for diffing_os differs",
       "OS parameters for diffing_os differs",
       "Invalid OS broken_os",
-      "Extra OS broken_os not present on reference node",
       "OS 'multi_entries' has multiple entries",
       "Extra OS multi_entries not present on reference node",
       "OS trusted for trust_os differs from reference node "
