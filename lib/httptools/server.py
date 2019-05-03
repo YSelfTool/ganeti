@@ -33,6 +33,7 @@
 
 import http.server
 import cgi
+import functools
 import logging
 import os
 import socket
@@ -429,7 +430,7 @@ class HttpServerRequestExecutor(object):
             return
 
         (request_msg, request_msg_reader, force_close, response_msg) = \
-          responder(compat.partial(self._ReadRequest, sock, self.READ_TIMEOUT))
+          responder(functools.partial(self._ReadRequest, sock, self.READ_TIMEOUT))
         if response_msg:
           # HttpMessage.start_line can be of different types
           # Instance of 'HttpClientToServerStartLine' has no 'code' member

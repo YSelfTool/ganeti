@@ -33,6 +33,7 @@
 """
 
 
+import functools
 import logging
 import os
 import tempfile
@@ -109,7 +110,7 @@ def GetAllUserFiles(user, mkdir=False, dircheck=True, _homedir_fn=None):
     value)
 
   """
-  helper = compat.partial(GetUserFiles, user, mkdir=mkdir, dircheck=dircheck,
+  helper = functools.partial(GetUserFiles, user, mkdir=mkdir, dircheck=dircheck,
                           _homedir_fn=_homedir_fn)
   result = [(kind, helper(kind=kind)) for kind in constants.SSHK_ALL]
 

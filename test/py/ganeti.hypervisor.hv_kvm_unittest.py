@@ -30,6 +30,7 @@
 
 """Script for testing the hypervisor.hv_kvm module"""
 
+import functools
 import threading
 import tempfile
 import unittest
@@ -427,7 +428,7 @@ class TestGetTunFeatures(unittest.TestCase):
     fd = tmpfile.fileno()
 
     for features in [0, netdev.IFF_VNET_HDR]:
-      fn = compat.partial(self._FakeIoctl, features)
+      fn = functools.partial(self._FakeIoctl, features)
       result = netdev._GetTunFeatures(fd, _ioctl=fn)
       self.assertEqual(result, features)
 
@@ -442,7 +443,7 @@ class TestProbeTapVnetHdr(unittest.TestCase):
     fd = tmpfile.fileno()
 
     for flags in [0, netdev.IFF_VNET_HDR]:
-      fn = compat.partial(self._FakeTunFeatures, fd, flags)
+      fn = functools.partial(self._FakeTunFeatures, fd, flags)
 
       result = netdev._ProbeTapVnetHdr(fd, _features_fn=fn)
       if flags == 0:

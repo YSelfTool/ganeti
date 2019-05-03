@@ -30,6 +30,7 @@
 
 """Script for testing ganeti.client.gnt_job"""
 
+import functools
 import unittest
 import optparse
 
@@ -158,7 +159,7 @@ class TestCancelJob(unittest.TestCase):
 
     result = gnt_job.CancelJobs(opts, [], cl=cl,
                                 _stdout_fn=self._ToStdout,
-                                _ask_fn=compat.partial(self._Ask, False))
+                                _ask_fn=functools.partial(self._Ask, False))
     self.assertEqual(result, constants.EXIT_CONFIRMATION)
 
 

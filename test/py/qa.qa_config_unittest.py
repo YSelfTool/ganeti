@@ -30,6 +30,7 @@
 
 """Script for testing qa.qa_config"""
 
+import functools
 import unittest
 import tempfile
 import shutil
@@ -186,7 +187,7 @@ class TestQaConfigLoad(unittest.TestCase):
     filename = utils.PathJoin(self.tmpdir, "qa.json")
     testconfig = {}
 
-    check_fn = compat.partial(self._CheckLoadError, filename, testconfig)
+    check_fn = functools.partial(self._CheckLoadError, filename, testconfig)
 
     # No cluster name
     check_fn("Cluster name is required")

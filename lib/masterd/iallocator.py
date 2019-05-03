@@ -30,6 +30,7 @@
 
 """Module implementing the iallocator code."""
 
+import functools
 import logging
 
 from ganeti import compat
@@ -327,7 +328,7 @@ class IAReqRelocate(IARequestBase):
     node2group = dict((name, ndata["group"])
                       for (name, ndata) in list(ia.in_data["nodes"].items()))
 
-    fn = compat.partial(self._NodesToGroups, node2group,
+    fn = functools.partial(self._NodesToGroups, node2group,
                         ia.in_data["nodegroups"])
 
     instance = ia.cfg.GetInstanceInfo(self.inst_uuid)

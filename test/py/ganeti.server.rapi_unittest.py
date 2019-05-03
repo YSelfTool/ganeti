@@ -30,6 +30,7 @@
 
 """Script for testing ganeti.server.rapi"""
 
+import functools
 import re
 import unittest
 import random
@@ -174,7 +175,7 @@ class TestRemoteApiHandler(unittest.TestCase):
     username = "admin"
     password = "2046920054"
 
-    header_fn = compat.partial(self._MakeAuthHeaders, username, password)
+    header_fn = functools.partial(self._MakeAuthHeaders, username, password)
 
     def _LookupUserNoWrite(name):
       if name == username:

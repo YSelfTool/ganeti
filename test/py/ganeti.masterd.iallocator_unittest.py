@@ -30,6 +30,7 @@
 
 """Script for testing ganeti.masterd.iallocator"""
 
+import functools
 import unittest
 
 from ganeti import compat
@@ -105,7 +106,7 @@ class _FakeConfigWithNdParams:
 
 class TestComputeBasicNodeData(unittest.TestCase):
   def setUp(self):
-    self.fn = compat.partial(iallocator.IAllocator._ComputeBasicNodeData,
+    self.fn = functools.partial(iallocator.IAllocator._ComputeBasicNodeData,
                              _FakeConfigWithNdParams())
 
   def testEmpty(self):

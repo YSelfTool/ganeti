@@ -30,6 +30,7 @@
 
 """Script for testing ganeti.hypervisor.hv_xen"""
 
+import functools
 import string # pylint: disable=W0402
 import unittest
 import tempfile
@@ -252,7 +253,7 @@ class TestGetInstanceList(testutils.GanetiTestCase):
   def testSuccess(self):
     data = testutils.ReadTestData("xen-xm-list-4.0.1-four-instances.txt")
 
-    fn = testutils.CallCounter(compat.partial(self._Success, data))
+    fn = testutils.CallCounter(functools.partial(self._Success, data))
 
     result = hv_xen._GetRunningInstanceList(fn, True, delays=(0.02, 1.0, 0.03),
                                             timeout=0.1)
@@ -271,7 +272,7 @@ class TestGetInstanceList(testutils.GanetiTestCase):
   def testOmitCrashed(self):
     data = testutils.ReadTestData("xen-xl-list-4.4-crashed-instances.txt")
 
-    fn = testutils.CallCounter(compat.partial(self._Success, data))
+    fn = testutils.CallCounter(functools.partial(self._Success, data))
 
     result = hv_xen._GetAllInstanceList(fn, True, delays=(0.02, 1.0, 0.03),
                                         timeout=0.1)
@@ -811,7 +812,7 @@ class _TestXenHypervisor(object):
 
     for failcreate in [False, True]:
       for paused in [False, True]:
-        run_cmd = compat.partial(self._StartInstanceCommand,
+        run_cmd = functools.partial(self._StartInstanceCommand,
                                  inst, paused, failcreate)
 
         hv = self._GetHv(run_cmd=run_cmd)
@@ -875,7 +876,7 @@ class _TestXenHypervisor(object):
       for fail in [False, True]:
         utils.WriteFile(cfgfile, data=cfgdata)
 
-        run_cmd = compat.partial(self._StopInstanceCommand, name, force, fail)
+        run_cmd = functools.partial(self._StopInstanceCommand, name, force, fail)
 
         hv = self._GetHv(run_cmd=run_cmd)
 
@@ -945,7 +946,7 @@ class _TestXenHypervisor(object):
       else:
         try:
           hv._MigrateInstance(name, target, port, live, hvparams,
-                              _ping_fn=compat.partial(self._FakeTcpPing,
+                              _ping_fn=functools.partial(self._FakeTcpPing,
                                                       (target, port), False))
         except errors.HypervisorError as err:
           wanted = "Remote host %s not" % target
@@ -995,11 +996,11 @@ class _TestXenHypervisor(object):
     for live in [False, True]:
       for fail in [False, True]:
         ping_fn = \
-          testutils.CallCounter(compat.partial(self._FakeTcpPing,
+          testutils.CallCounter(functools.partial(self._FakeTcpPing,
                                                (target, port), True))
 
         run_cmd = \
-          compat.partial(self._MigrateInstanceCmd,
+          functools.partial(self._MigrateInstanceCmd,
                          instname, target, port, live, fail)
 
         hv = self._GetHv(run_cmd=run_cmd)
@@ -1040,7 +1041,7 @@ class _TestXenHypervisor(object):
     return self._SuccessCommand(output, cmd)
 
   def testGetNodeInfo(self):
-    run_cmd = compat.partial(self._GetNodeInfoCmd, False)
+    run_cmd = functools.partial(self._GetNodeInfoCmd, False)
     hv = self._GetHv(run_cmd=run_cmd)
     result = hv.GetNodeInfo()
 
@@ -1048,7 +1049,7 @@ class _TestXenHypervisor(object):
     self.assertEqual(result["memory_free"], 8004)
 
   def testGetNodeInfoFailing(self):
-    run_cmd = compat.partial(self._GetNodeInfoCmd, True)
+    run_cmd = functools.partial(self._GetNodeInfoCmd, True)
     hv = self._GetHv(run_cmd=run_cmd)
     self.assertTrue(hv.GetNodeInfo() is None)
 

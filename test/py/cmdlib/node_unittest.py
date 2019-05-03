@@ -33,6 +33,7 @@
 """
 
 from collections import defaultdict
+import functools
 from unittest import mock
 
 from ganeti import compat
@@ -263,7 +264,7 @@ class TestLUNodeAdd(CmdlibTestCase):
     self.netutils_mod.GetHostname.return_value = \
       HostnameMock(self.node_add.name, self.node_add.primary_ip)
     self.netutils_mod.TcpPing.side_effect = \
-      compat.partial(_TcpPingFailSecondary, self.cfg, self.netutils_mod.TcpPing)
+      functools.partial(_TcpPingFailSecondary, self.cfg, self.netutils_mod.TcpPing)
 
     op = self.CopyOpCode(self.op_add)
 

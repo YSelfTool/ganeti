@@ -30,6 +30,7 @@
 
 """Test logical units."""
 
+import functools
 import logging
 import shutil
 import socket
@@ -304,7 +305,7 @@ class LUTestJqueue(NoHooksLU):
     else:
       errcls = errors.OpExecError
 
-    return self._NotifyUsingSocket(compat.partial(self._SendNotification,
+    return self._NotifyUsingSocket(functools.partial(self._SendNotification,
                                                   test, arg),
                                    errcls)
 

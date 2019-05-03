@@ -35,6 +35,7 @@ import sys
 import unittest
 import random
 import tempfile
+import functools
 
 from ganeti import constants
 from ganeti import compat
@@ -197,7 +198,7 @@ class TestRpcProcessor(unittest.TestCase):
     proc = rpc._RpcProcessor(resolver, 5903)
     for errinfo in [None, "Unknown error"]:
       http_proc = \
-        _FakeRequestProcessor(compat.partial(self._GetVersionResponseFail,
+        _FakeRequestProcessor(functools.partial(self._GetVersionResponseFail,
                                              errinfo))
       host = "aef9ur4i.example.com"
       body = {host: ""}
@@ -249,7 +250,7 @@ class TestRpcProcessor(unittest.TestCase):
 
     proc = rpc._RpcProcessor(resolver, 15165)
     http_proc = \
-      _FakeRequestProcessor(compat.partial(self._GetHttpErrorResponse,
+      _FakeRequestProcessor(functools.partial(self._GetHttpErrorResponse,
                                            httperrnodes, failnodes))
     result = proc(nodes, "vg_list", body,
                   constants.RPC_TMO_URGENT, NotImplemented,
@@ -324,7 +325,7 @@ class TestRpcProcessor(unittest.TestCase):
       "xyz": list(range(10)),
       }
     resolver = rpc._StaticResolver(["192.0.2.84"])
-    http_proc = _FakeRequestProcessor(compat.partial(self._GetBodyTestResponse,
+    http_proc = _FakeRequestProcessor(functools.partial(self._GetBodyTestResponse,
                                                      test_data))
     proc = rpc._RpcProcessor(resolver, 18700)
     host = "node19759"
@@ -552,7 +553,7 @@ class TestRpcClientBase(unittest.TestCase):
         ("arg2", None, NotImplemented),
         ], None, None, NotImplemented)
 
-      http_proc = _FakeRequestProcessor(compat.partial(_VerifyRequest,
+      http_proc = _FakeRequestProcessor(functools.partial(_VerifyRequest,
                                                        exp_timeout))
       client = rpc._RpcClientBase(resolver, NotImplemented,
                                   _req_process_fn=http_proc)
@@ -632,7 +633,7 @@ class TestRpcClientBase(unittest.TestCase):
 
     for i in [0, 4, 74, 1391]:
       nums = [rnd.randint(0, 1000) for _ in range(i)]
-      http_proc = _FakeRequestProcessor(compat.partial(_VerifyRequest, nums))
+      http_proc = _FakeRequestProcessor(functools.partial(_VerifyRequest, nums))
       client = rpc._RpcClientBase(resolver, NotImplemented,
                                   _req_process_fn=http_proc)
       result = client._Call(cdef, nodes, [])
@@ -714,7 +715,7 @@ class TestRpcClientBase(unittest.TestCase):
 
       http_proc = _FakeRequestProcessor(_VerifyRequest)
 
-      client = rpc._RpcClientBase(compat.partial(_Resolver, expected),
+      client = rpc._RpcClientBase(functools.partial(_Resolver, expected),
                                   NotImplemented, _req_process_fn=http_proc)
       result = client._Call(cdef, nodes, [arg0])
       self.assertEqual(len(result), len(nodes))

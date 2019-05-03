@@ -33,6 +33,7 @@
 """
 
 import copy
+import functools
 import itertools
 import os.path
 import random
@@ -602,31 +603,31 @@ def TestRapiQuery():
     _DoTests([
       # Specify fields in query
       ("/2/query/%s?fields=%s" % (what, ",".join(all_fields)),
-       compat.partial(_Check, all_fields), "GET", None),
+       functools.partial(_Check, all_fields), "GET", None),
 
       ("/2/query/%s?fields=%s" % (what, namefield),
-       compat.partial(_Check, [namefield]), "GET", None),
+       functools.partial(_Check, [namefield]), "GET", None),
 
       # Note the spaces
       ("/2/query/%s?fields=%s,%%20%s%%09,%s%%20" %
        (what, namefield, namefield, namefield),
-       compat.partial(_Check, [namefield] * 3), "GET", None)])
+       functools.partial(_Check, [namefield] * 3), "GET", None)])
 
     if what in constants.QR_VIA_RAPI_PUT:
       _DoTests([
         # PUT with fields in query
         ("/2/query/%s?fields=%s" % (what, namefield),
-         compat.partial(_Check, [namefield]), "PUT", {}),
+         functools.partial(_Check, [namefield]), "PUT", {}),
 
-        ("/2/query/%s" % what, compat.partial(_Check, [namefield] * 4), "PUT", {
+        ("/2/query/%s" % what, functools.partial(_Check, [namefield] * 4), "PUT", {
            "fields": [namefield] * 4,
            }),
 
-        ("/2/query/%s" % what, compat.partial(_Check, all_fields), "PUT", {
+        ("/2/query/%s" % what, functools.partial(_Check, all_fields), "PUT", {
            "fields": all_fields,
            }),
 
-        ("/2/query/%s" % what, compat.partial(_Check, [namefield] * 4), "PUT", {
+        ("/2/query/%s" % what, functools.partial(_Check, [namefield] * 4), "PUT", {
            "fields": [namefield] * 4
          })])
 
@@ -637,7 +638,7 @@ def TestRapiQuery():
 
       _DoTests([
         # With filter
-        ("/2/query/%s" % what, compat.partial(_Check, all_fields), "PUT", {
+        ("/2/query/%s" % what, functools.partial(_Check, all_fields), "PUT", {
            "fields": all_fields,
            "filter": trivial_filter
            }),
@@ -647,7 +648,7 @@ def TestRapiQuery():
       # Test with filter
       (nodes, ) = _DoTests(
         [("/2/query/%s" % what,
-          compat.partial(_Check, ["name", "master"]), "PUT",
+          functools.partial(_Check, ["name", "master"]), "PUT",
           {"fields": ["name", "master"],
            "filter": [qlang.OP_TRUE, "master"],
            })])

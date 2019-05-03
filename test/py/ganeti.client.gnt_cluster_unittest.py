@@ -30,6 +30,7 @@
 
 """Script for testing ganeti.client.gnt_cluster"""
 
+import functools
 import unittest
 import optparse
 import os
@@ -225,10 +226,10 @@ class TestEpo(unittest.TestCase):
       if force:
         confirm_fn = self._ConfirmForce
       else:
-        confirm_fn = compat.partial(self._Confirm, ["node1.example.com"],
+        confirm_fn = functools.partial(self._Confirm, ["node1.example.com"],
                                     confirm_result)
 
-      off_fn = compat.partial(self._Off, ["node1.example.com"])
+      off_fn = functools.partial(self._Off, ["node1.example.com"])
 
       result = self._Test(opts, [], qcl=client, _off_fn=off_fn,
                           _confirm_fn=confirm_fn)

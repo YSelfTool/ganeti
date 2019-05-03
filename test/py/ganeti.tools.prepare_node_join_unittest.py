@@ -30,6 +30,7 @@
 
 """Script for testing ganeti.tools.prepare_node_join"""
 
+import functools
 import unittest
 import shutil
 import tempfile
@@ -167,7 +168,7 @@ class TestUpdateSshDaemon(unittest.TestCase):
       constants.SSHS_SSH_KEY_TYPE: "dsa",
       constants.SSHS_SSH_KEY_BITS: 1024,
       }
-    runcmd_fn = compat.partial(self._RunCmd, failcmd)
+    runcmd_fn = functools.partial(self._RunCmd, failcmd)
     if failcmd:
       self.assertRaises(_JoinError, prepare_node_join.UpdateSshDaemon,
                         data, False, _runcmd_fn=runcmd_fn,

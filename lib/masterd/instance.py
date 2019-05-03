@@ -32,6 +32,8 @@
 
 """
 
+import functools
+import hashlib
 import logging
 import time
 import OpenSSL
@@ -1007,7 +1009,7 @@ def _GetInstDiskMagic(base, instance_name, index):
   @param index: Disk index
 
   """
-  h = compat.sha1_hash()
+  h = hashlib.sha1()
   h.update(str(constants.RIE_VERSION))
   h.update(base)
   h.update(instance_name)
@@ -1307,7 +1309,7 @@ class ExportInstanceHelper(object):
       path = utils.PathJoin(pathutils.EXPORT_DIR, "%s.new" % instance.name,
                             dev.uuid)
 
-      finished_fn = compat.partial(self._TransferFinished, idx)
+      finished_fn = functools.partial(self._TransferFinished, idx)
 
       if instance.os:
         src_io = constants.IEIO_SCRIPT
@@ -1392,7 +1394,7 @@ class ExportInstanceHelper(object):
           src_ioargs = (dev, instance)
 
         self._feedback_fn("Sending disk %s to %s:%s" % (idx, host, port))
-        finished_fn = compat.partial(self._TransferFinished, idx)
+        finished_fn = functools.partial(self._TransferFinished, idx)
         ieloop.Add(DiskExport(self._lu, instance.primary_node,
                               opts, host, port, instance, "disk%d" % idx,
                               src_io, src_ioargs,
