@@ -748,7 +748,7 @@ class ImportExportLoop(object):
     """Adds all pending import/export objects to the internal queue.
 
     """
-    assert compat.all(diskie not in self._queue and diskie.loop == self
+    assert all(diskie not in self._queue and diskie.loop == self
                       for diskie in self._pending_add)
 
     self._queue.extend(self._pending_add)
@@ -813,7 +813,7 @@ class ImportExportLoop(object):
           logging.exception("%s failed", diskie.MODE_TEXT)
           diskie.Finalize(error=str(err))
 
-      if not compat.any(diskie.active for diskie in self._queue):
+      if not any(diskie.active for diskie in self._queue):
         break
 
       # Wait a bit
@@ -1084,7 +1084,7 @@ def TransferInstanceData(lu, feedback_fn, src_node_uuid, dest_node_uuid,
     ieloop.FinalizeAll()
 
   assert len(all_dtp) == len(all_transfers)
-  assert compat.all((dtp.src_export is None or
+  assert all((dtp.src_export is None or
                       dtp.src_export.success is not None) and
                      (dtp.dest_import is None or
                       dtp.dest_import.success is not None)
@@ -1462,7 +1462,7 @@ class _RemoteImportCb(ImportExportCbBase):
     If all daemons are listening, the information is sent to the client.
 
     """
-    if not compat.all(dp is not None for dp in self._daemon_port):
+    if not all(dp is not None for dp in self._daemon_port):
       return
 
     host = self._external_address

@@ -223,7 +223,7 @@ class TestRapiDocs(unittest.TestCase):
       re.compile(query_res): "lock",
       }
 
-    assert compat.all(VALID_URI_RE.match(value)
+    assert all(VALID_URI_RE.match(value)
                       for value in list(uri_check_fixup.values())), \
            "Fixup values must be valid URIs, too"
 

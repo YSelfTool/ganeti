@@ -242,7 +242,7 @@ class LUClusterVerifyDisks(NoHooksLU):
     group_names = self.owned_locks(locking.LEVEL_NODEGROUP)
     instances = self.cfg.GetInstanceList()
 
-    only_ext = compat.all(
+    only_ext = all(
         self.cfg.GetInstanceDiskTemplate(i) == constants.DT_EXT
         for i in instances)
 
@@ -1189,7 +1189,7 @@ class LUClusterVerifyGroup(LogicalUnit, _VerifyErrors):
         fileinfo[filename].setdefault(checksum, set()).add(node.uuid)
 
     for (filename, checksums) in list(fileinfo.items()):
-      assert compat.all(len(i) > 10 for i in checksums), "Invalid checksum"
+      assert all(len(i) > 10 for i in checksums), "Invalid checksum"
 
       # Nodes having the file
       with_file = frozenset(node_uuid
@@ -1350,7 +1350,7 @@ class LUClusterVerifyGroup(LogicalUnit, _VerifyErrors):
     """
     remote_os = nresult.get(constants.NV_OSLIST, None)
     test = (not isinstance(remote_os, list) or
-            not compat.all(isinstance(v, list) and len(v) == 8
+            not all(isinstance(v, list) and len(v) == 8
                            for v in remote_os))
 
     self._ErrorIf(test, constants.CV_ENODEOS, ninfo.name,
@@ -1723,10 +1723,10 @@ class LUClusterVerifyGroup(LogicalUnit, _VerifyErrors):
       assert inst_uuid not in instdisk
       instdisk[inst_uuid] = {}
 
-    assert compat.all(len(statuses) == len(instanceinfo[inst].disks) and
+    assert all(len(statuses) == len(instanceinfo[inst].disks) and
                       len(nuuids) <= len(
                         self.cfg.GetInstanceNodes(instanceinfo[inst].uuid)) and
-                      compat.all(isinstance(s, (tuple, list)) and
+                      all(isinstance(s, (tuple, list)) and
                                  len(s) == 2 for s in statuses)
                       for inst, nuuids in list(instdisk.items())
                       for nuuid, statuses in list(nuuids.items()))
@@ -2033,7 +2033,7 @@ class LUClusterVerifyGroup(LogicalUnit, _VerifyErrors):
                                                list(self.my_node_info.keys()))
     # The value of exclusive_storage should be the same across the group, so if
     # it's True for at least a node, we act as if it were set for all the nodes
-    self._exclusive_storage = compat.any(list(es_flags.values()))
+    self._exclusive_storage = any(list(es_flags.values()))
     if self._exclusive_storage:
       node_verify_param[constants.NV_EXCLUSIVEPVS] = True
 

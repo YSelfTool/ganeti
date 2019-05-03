@@ -1234,7 +1234,7 @@ class TestApplyContainerMods(unittest.TestCase):
       ("test/2", "detach"),
       ("test/0", "0x0"),
       ])
-    self.assertTrue(compat.all(op == private.data[0]
+    self.assertTrue(all(op == private.data[0]
                                for (op, _, _, private) in mods))
     self.assertEqual([private.data for (op, _, _, private) in mods], [
       ("add", 0, "Hello"),

@@ -1015,7 +1015,7 @@ class LUInstanceRecreateDisks(LogicalUnit):
       node_uuids = self.op.node_uuids
     else:
       node_uuids = self.cfg.GetInstanceNodes(instance.uuid)
-    excl_stor = compat.any(
+    excl_stor = any(
       list(rpc.GetExclusiveStorageForNodes(self.cfg, node_uuids).values())
       )
     for new_params in list(self.disks.values()):

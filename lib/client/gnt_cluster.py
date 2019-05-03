@@ -836,7 +836,7 @@ def VerifyDisks(opts, args):
 
     if missing:
       for iname, ival in missing.items():
-        all_missing = compat.all(x[0] in bad_nodes for x in ival)
+        all_missing = all(x[0] in bad_nodes for x in ival)
         if all_missing:
           ToStdout("Instance %s cannot be verified as it lives on"
                    " broken nodes", iname)

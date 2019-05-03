@@ -457,7 +457,7 @@ def GetDiskList(opts):
   """
   dlist = []
   for name in os.listdir("/sys/block"):
-    if not compat.any([name.startswith(pfx) for pfx in SUPPORTED_TYPES]):
+    if not any([name.startswith(pfx) for pfx in SUPPORTED_TYPES]):
       continue
 
     disksysfsname = "/sys/block/%s" % name

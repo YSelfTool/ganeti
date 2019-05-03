@@ -78,7 +78,7 @@ import ganeti.masterd.instance
 
 
 def _ValidateTrunkVLAN(vlan):
-  if not compat.all(vl.isdigit() for vl in vlan[1:].split(':')):
+  if not all(vl.isdigit() for vl in vlan[1:].split(':')):
     raise errors.OpPrereqError("Specified VLAN parameter is invalid"
                                " : %s" % vlan, errors.ECODE_INVAL)
 
@@ -973,7 +973,7 @@ class LUInstanceCreate(LogicalUnit):
     if self.op.disk_template in constants.DTS_INT_MIRROR:
       nodes.append(snode)
     has_es = lambda n: IsExclusiveStorageEnabledNode(self.cfg, n)
-    excl_stor = compat.any(list(map(has_es, nodes)))
+    excl_stor = any(list(map(has_es, nodes)))
     if excl_stor and not self.op.disk_template in constants.DTS_EXCL_STORAGE:
       raise errors.OpPrereqError("Disk template %s not supported with"
                                  " exclusive storage" % self.op.disk_template,
@@ -1271,7 +1271,7 @@ class LUInstanceCreate(LogicalUnit):
                                                 self.pnode.secondary_ip,
                                                 self.op.compress,
                                                 iobj, transfers)
-        if not compat.all(import_result):
+        if not all(import_result):
           self.LogWarning("Some disks for instance %s on node %s were not"
                           " imported successfully" % (self.op.instance_name,
                                                       self.pnode.name))
@@ -1293,7 +1293,7 @@ class LUInstanceCreate(LogicalUnit):
           masterd.instance.RemoteImport(self, feedback_fn, iobj, self.pnode,
                                         self.source_x509_ca,
                                         self._cds, self.op.compress, timeouts)
-        if not compat.all(disk_results):
+        if not all(disk_results):
           # TODO: Should the instance still be started, even if some disks
           # failed to import (valid for local imports, too)?
           self.LogWarning("Some disks for instance %s on node %s were not"

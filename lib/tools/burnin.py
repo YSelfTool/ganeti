@@ -1193,7 +1193,7 @@ class Burner(JobHandler):
         self.BurnReplaceDisks2()
 
       if (self.opts.disk_template in constants.DTS_GROWABLE and
-          compat.any(n > 0 for n in self.disk_growth)):
+          any(n > 0 for n in self.disk_growth)):
         self.BurnGrowDisks()
 
       if self.opts.do_failover and \

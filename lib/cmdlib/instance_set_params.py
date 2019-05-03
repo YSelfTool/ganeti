@@ -738,7 +738,7 @@ class LUInstanceSetParams(LogicalUnit):
         assert snode_info
         nodes.append(snode_info)
       has_es = lambda n: IsExclusiveStorageEnabledNode(self.cfg, n)
-      if compat.any(list(map(has_es, nodes))):
+      if any(list(map(has_es, nodes))):
         errmsg = ("Cannot convert disk template from %s to %s when exclusive"
                   " storage is enabled" % (
                       self.cfg.GetInstanceDiskTemplate(self.instance.uuid),
@@ -786,7 +786,7 @@ class LUInstanceSetParams(LogicalUnit):
     self.diskparams = self.cfg.GetInstanceDiskParams(self.instance)
 
     inst_nodes = self.cfg.GetInstanceNodes(self.instance.uuid)
-    excl_stor = compat.any(
+    excl_stor = any(
       list(rpc.GetExclusiveStorageForNodes(self.cfg, inst_nodes).values())
       )
 

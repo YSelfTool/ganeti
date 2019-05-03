@@ -134,7 +134,7 @@ class TestOpcodeResource(unittest.TestCase):
       obj = self._MakeClass(method, {
         method: lambda _: None,
         })(None, {}, None)
-      self.assertFalse(compat.all(hasattr(obj, attr)
+      self.assertFalse(all(hasattr(obj, attr)
                                   for i in baserlib._SUPPORTED_METHODS
                                   for attr in self._GetMethodAttributes(i)))
 
@@ -146,7 +146,7 @@ class TestOpcodeResource(unittest.TestCase):
         self.assertTrue(callable(getattr(obj, method)))
         self.assertEqual(getattr(obj, "%s_OPCODE" % method), opcls)
         self.assertFalse(hasattr(obj, "%s_RENAME" % method))
-        self.assertFalse(compat.any(hasattr(obj, attr)
+        self.assertFalse(any(hasattr(obj, attr)
                                     for i in baserlib._SUPPORTED_METHODS
                                       if i != method
                                     for attr in self._GetMethodAttributes(i)))

@@ -207,7 +207,7 @@ def GenericManyOps(operation, fn):
       op = fn(name, opts)
       jex.QueueJob(name, op)
     results = jex.WaitOrShow(not opts.submit_only)
-    rcode = compat.all(row[0] for row in results)
+    rcode = all(row[0] for row in results)
     return int(not rcode)
   return realfn
 
@@ -410,7 +410,7 @@ def ReinstallInstance(opts, args):
 
   results = jex.WaitOrShow(not opts.submit_only)
 
-  if compat.all(list(map(compat.fst, results))):
+  if all(list(map(compat.fst, results))):
     return constants.EXIT_SUCCESS
   else:
     return constants.EXIT_FAILURE

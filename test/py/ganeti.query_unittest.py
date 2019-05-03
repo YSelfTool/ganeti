@@ -259,7 +259,7 @@ class TestQuery(unittest.TestCase):
                      ["name1", "other", "foo"]]:
       q = query.Query(fielddef, selected)
       self.assertEqual(len(q._fields), len(selected))
-      self.assertTrue(compat.all(len(row) == len(selected)
+      self.assertTrue(all(len(row) == len(selected)
                               for row in q.Query(_QueryData(list(range(1, 10))))))
       self.assertEqual(q.Query(_QueryData(list(range(1, 10)))),
                        [[(constants.RS_UNKNOWN, None)] * len(selected)
@@ -496,7 +496,7 @@ class TestNodeQuery(unittest.TestCase):
                               inst_uuid_to_inst_name, groups, oob_support,
                               cluster)
     result = q.Query(nqd)
-    self.assertTrue(compat.all(len(row) == len(selected) for row in result))
+    self.assertTrue(all(len(row) == len(selected) for row in result))
     self.assertEqual([row[field_index["name"]] for row in result],
                      [(constants.RS_NORMAL, name) for name in node_names])
 
@@ -923,7 +923,7 @@ class TestInstanceQuery(unittest.TestCase):
                                   wrongnode_inst, consinfo, nodes, {}, {})
     result = q.Query(iqd)
     self.assertEqual(len(result), len(instances))
-    self.assertTrue(compat.all(len(row) == len(selected)
+    self.assertTrue(all(len(row) == len(selected)
                             for row in result))
 
     assert len(set(bad_nodes) & set(offline_nodes)) == len(offline_nodes), \

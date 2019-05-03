@@ -138,8 +138,8 @@ def _PreparePaths(rootdir, hostname):
                 _GetHostname(_HOSTNAME_ENVNAME))
 
 
-assert (compat.all([_VIRT_BASEDIR, _VIRT_NODEROOT, _VIRT_HOSTNAME]) or
-        not compat.any([_VIRT_BASEDIR, _VIRT_NODEROOT, _VIRT_HOSTNAME]))
+assert (all([_VIRT_BASEDIR, _VIRT_NODEROOT, _VIRT_HOSTNAME]) or
+        not any([_VIRT_BASEDIR, _VIRT_NODEROOT, _VIRT_HOSTNAME]))
 
 
 def GetVirtualHostname():

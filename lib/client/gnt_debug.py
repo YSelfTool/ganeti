@@ -243,7 +243,7 @@ def _TestJobDependency(opts):
     jex.AddJobId(None, status, job_id)
 
   job_results = jex.GetResults()
-  if not compat.all(row[0] for row in job_results):
+  if not all(row[0] for row in job_results):
     raise errors.OpExecError("At least one of the submitted jobs failed: %s" %
                              job_results)
 
@@ -255,7 +255,7 @@ def _TestJobDependency(opts):
   data_op = [[opcodes.OpCode.LoadOpCode(op) for op in ops]
              for (_, _, ops) in data]
 
-  assert compat.all(not op.depends or len(op.depends) == 1
+  assert all(not op.depends or len(op.depends) == 1
                     for ops in data_op
                     for op in ops)
 
@@ -273,7 +273,7 @@ def _TestJobDependency(opts):
           data_opexec[2] <= data_opexec[4]):
     raise errors.OpExecError("Jobs did not run in correct order: %s" % data)
 
-  assert len(jobs) == 5 and compat.all(len(ops) == 1 for ops in jobs)
+  assert len(jobs) == 5 and all(len(ops) == 1 for ops in jobs)
 
   ToStdout("Job dependency tests were successful")
 

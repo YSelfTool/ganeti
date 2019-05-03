@@ -1941,14 +1941,14 @@ def FormatQueryResult(result, unit=None, format_override=None, separator=None,
 
   # Collect statistics
   assert len(stats) == len(constants.RS_ALL)
-  assert compat.all(count >= 0 for count in list(stats.values()))
+  assert all(count >= 0 for count in list(stats.values()))
 
   # Determine overall status. If there was no data, unknown fields must be
   # detected via the field definitions.
   if (stats[constants.RS_UNKNOWN] or
       (not result.data and _GetUnknownFields(result.fields))):
     status = QR_UNKNOWN
-  elif compat.any(count > 0 for key, count in list(stats.items())
+  elif any(count > 0 for key, count in list(stats.items())
                   if key != constants.RS_NORMAL):
     status = QR_INCOMPLETE
   else:

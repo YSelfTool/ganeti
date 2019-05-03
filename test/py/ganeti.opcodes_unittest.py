@@ -58,7 +58,7 @@ class TestOpcodes(unittest.TestCase):
       self.assertEqual(cls.OP_ID, cls.OP_ID.upper())
       self.assertEqual(cls.OP_ID, opcodes_base._NameToId(cls.__name__))
       self.assertFalse(
-        compat.any(cls.OP_ID.startswith(prefix)
+        any(cls.OP_ID.startswith(prefix)
                    for prefix in list(opcodes_base.SUMMARY_PREFIX.keys())))
       self.assertTrue(callable(cls.OP_RESULT),
                       msg=("%s should have a result check" % cls.OP_ID))
@@ -130,7 +130,7 @@ class TestOpcodes(unittest.TestCase):
   def testTinySummary(self):
     self.assertFalse(
       utils.FindDuplicates(list(opcodes_base.SUMMARY_PREFIX.values())))
-    self.assertTrue(compat.all(prefix.endswith("_") and supplement.endswith("_")
+    self.assertTrue(all(prefix.endswith("_") and supplement.endswith("_")
                                for (prefix, supplement) in
                                  list(opcodes_base.SUMMARY_PREFIX.items())))
 
@@ -211,7 +211,7 @@ class TestOpcodes(unittest.TestCase):
 
       # If any parameter has documentation, all others need to have it as well
       has_doc = [doc is not None for (_, _, _, doc) in cls.OP_PARAMS]
-      self.assertTrue(not compat.any(has_doc) or compat.all(has_doc),
+      self.assertTrue(not any(has_doc) or all(has_doc),
                       msg="%s does not document all parameters" % cls)
 
   def testValidateNoModification(self):

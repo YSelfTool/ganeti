@@ -273,8 +273,8 @@ class TestExclusiveStoragePvs(unittest.TestCase):
         pvlist = [self._GenerateRandomPvInfo(rnd, "disk", "myvg")
                   for _ in range(0, length)]
         std_size = bdev.LogicalVolume._GetStdPvSize(pvlist)
-        self.assertTrue(compat.all(std_size <= pvi.size for pvi in pvlist))
-        self.assertTrue(compat.any(std_size > pvi.size * (1 - self._MARGIN)
+        self.assertTrue(all(std_size <= pvi.size for pvi in pvlist))
+        self.assertTrue(any(std_size > pvi.size * (1 - self._MARGIN)
                                    for pvi in pvlist))
         pvlist.append(pvlist[0])
         p1_size = bdev.LogicalVolume._GetStdPvSize(pvlist)
