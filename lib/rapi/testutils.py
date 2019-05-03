@@ -42,7 +42,7 @@ import pycurl
 
 from ganeti import errors
 from ganeti import opcodes
-from ganeti import http
+from ganeti import httptools as http
 from ganeti import server
 from ganeti import utils
 from ganeti import compat
@@ -50,7 +50,7 @@ from ganeti import luxi
 import ganeti.rpc.client as rpccl
 from ganeti import rapi
 
-import ganeti.http.server # pylint: disable=W0611
+import ganeti.httptools.server # pylint: disable=W0611
 import ganeti.server.rapi # pylint: disable=W0611
 import ganeti.rapi.client # pylint: disable=W0611
 

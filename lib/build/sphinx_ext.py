@@ -62,7 +62,7 @@ from ganeti import ht
 from ganeti import rapi
 from ganeti import luxi
 from ganeti import objects
-from ganeti import http
+from ganeti import httptools as http
 from ganeti import pathutils
 
 import ganeti.rapi.rlib2 # pylint: disable=W0611

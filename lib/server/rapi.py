@@ -51,7 +51,7 @@ except ImportError:
 
 from ganeti import asyncnotifier
 from ganeti import constants
-from ganeti import http
+from ganeti import httptools as http
 from ganeti import daemon
 from ganeti import ssconf
 import ganeti.rpc.errors as rpcerr
@@ -62,8 +62,8 @@ from ganeti import pathutils
 from ganeti.rapi import connector
 from ganeti.rapi import baserlib
 
-import ganeti.http.auth   # pylint: disable=W0611
-import ganeti.http.server # pylint: disable=W0611
+import ganeti.httptools.auth   # pylint: disable=W0611
+import ganeti.httptools.server # pylint: disable=W0611
 
 
 class RemoteApiRequestContext(object):

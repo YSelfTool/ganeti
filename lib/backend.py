@@ -65,7 +65,7 @@ import zlib
 import pycurl
 
 from ganeti import errors
-from ganeti import http
+from ganeti import httptools as http
 from ganeti import utils
 from ganeti import ssh
 from ganeti import hypervisor

@@ -41,7 +41,7 @@ from ganeti import constants
 from ganeti import opcodes
 from ganeti import compat
 from ganeti import ht
-from ganeti import http
+from ganeti import httptools as http
 from ganeti import query
 import ganeti.rpc.errors as rpcerr
 from ganeti import errors

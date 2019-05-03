@@ -38,7 +38,7 @@ from io import StringIO
 
 import pycurl
 
-from ganeti import http
+from ganeti import httptools as http
 from ganeti import compat
 from ganeti import netutils
 from ganeti import locking

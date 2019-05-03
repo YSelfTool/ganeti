@@ -39,7 +39,7 @@ import binascii
 from io import StringIO
 
 from ganeti import compat
-from ganeti import http
+from ganeti import httptools as http
 from ganeti import utils
 
 # Digest types from RFC2617
