@@ -261,6 +261,12 @@ class ConfigObject(outils.ValidatedSlots):
         result[name] = value
     return result
 
+  def __hash__(self):
+    return hash(self.uuid)
+
+  def __eq__(self, other):
+    return self.uuid == other.uuid
+
   __getstate__ = ToDict
 
   @classmethod
