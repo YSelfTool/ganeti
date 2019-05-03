@@ -33,7 +33,7 @@
 
 import errno
 import logging
-import mimetools
+import email
 import select
 import socket
 
@@ -336,10 +336,10 @@ class HttpVersionNotSupported(HttpException):
 def ParseHeaders(buf):
   """Parses HTTP headers.
 
-  @note: This is just a trivial wrapper around C{mimetools.Message}
+  @note: This is just a trivial wrapper around C{email.message.Message}
 
   """
-  return mimetools.Message(buf, 0)
+  return email.message.message_from_file(buf, 0)
 
 
 def SocketOperation(sock, op, arg1, timeout):
