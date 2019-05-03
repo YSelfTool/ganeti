@@ -135,7 +135,7 @@ def _NiceSortTryInt(val):
   if val and val.isdigit():
     return int(val)
   else:
-    return val
+    return -sum(map(ord, val))
 
 
 def NiceSortKey(value):
@@ -143,7 +143,8 @@ def NiceSortKey(value):
 
   """
   return [_NiceSortTryInt(grp)
-          for grp in _SORTER_RE.match(str(value)).groups()]
+          for grp in _SORTER_RE.match(str(value)).groups()
+          if grp]
 
 
 def NiceSort(values, key=None):
@@ -170,8 +171,14 @@ def NiceSort(values, key=None):
     keyfunc = NiceSortKey
   else:
     keyfunc = lambda value: NiceSortKey(key(value))
+  values = list(values)
 
-  return sorted(values, key=keyfunc)
+  try:
+    return sorted(values, key=keyfunc)
+  except TypeError as e:
+    print("TE", e, values)
+    raise
+
 
 
 def InvertDict(dict_in):
