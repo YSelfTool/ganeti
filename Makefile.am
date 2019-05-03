@@ -2669,7 +2669,7 @@ hs-tests: test/hs/htest
 py-tests: $(python_tests) ganeti $(built_python_sources)
 	error=; \
 	for file in $(python_tests); \
-	  do if ! $(TESTS_ENVIRONMENT) $$file; then error=1; fi; \
+	  do if ! $(TESTS_ENVIRONMENT) $$file; then error=1; break; fi; \
 	done; \
 	test -z "$$error"
 
