@@ -2062,7 +2062,7 @@ TESTS = $(dist_TESTS) $(nodist_TESTS)
 
 # Environment for all tests
 PLAIN_TESTS_ENVIRONMENT = \
-	PYTHONPATH=.:./test/py \
+	PYTHONPATH=.:./test/py:./test/py/cmdlib \
 	TOP_SRCDIR=$(abs_top_srcdir) TOP_BUILDDIR=$(abs_top_builddir) \
 	PYTHON=$(PYTHON) FAKEROOT=$(FAKEROOT_PATH) \
 	$(RUN_IN_TEMPDIR)
@@ -2759,7 +2759,7 @@ pylint-qa: $(GENERATED_FILES)
 pylint-test: $(GENERATED_FILES)
 	@test -n "$(PYLINT)" || { echo 'pylint' not found during configure; exit 1; }
 	cd $(top_srcdir) && \
-		PYTHONPATH=.:./test/py $(PYLINT) $(LINT_OPTS_ALL) \
+		PYTHONPATH=.:./test/py:./test/py/cmdlib $(PYLINT) $(LINT_OPTS_ALL) \
 		--rcfile=pylintrc-test  $(python_test_support) $(python_test_utils)
 
 .PHONY: pep8

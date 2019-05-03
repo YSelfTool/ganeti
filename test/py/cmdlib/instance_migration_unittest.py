@@ -36,7 +36,7 @@ from ganeti import constants
 from ganeti import objects
 from ganeti import opcodes
 
-from .testsupport import *
+from testsupport import *
 
 import testutils
 

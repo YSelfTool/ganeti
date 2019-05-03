@@ -57,7 +57,7 @@ from ganeti.cmdlib import instance_utils
 
 from cmdlib.cmdlib_unittest import _FakeLU
 
-from .testsupport import *
+from testsupport import *
 
 import testutils
 from testutils.config_mock import _UpdateIvNames

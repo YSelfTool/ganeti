@@ -35,7 +35,7 @@ import mock
 from ganeti import constants
 from ganeti import opcodes
 
-from .testsupport import *
+from testsupport import *
 
 import testutils
 

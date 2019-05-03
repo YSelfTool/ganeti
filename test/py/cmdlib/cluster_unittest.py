@@ -52,7 +52,7 @@ from ganeti import pathutils
 from ganeti import query
 from ganeti.hypervisor import hv_xen
 
-from .testsupport import *
+from testsupport import *
 
 import testutils
 
