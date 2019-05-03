@@ -207,7 +207,7 @@ class FakeCurl(object):
                                      " and password")
 
       headers[http.HTTP_AUTHORIZATION] = \
-        "%s %s" % (http.auth.HTTP_BASIC_AUTH, base64.b64encode(userpwd))
+        "%s %s" % (http.auth.HTTP_BASIC_AUTH, base64.b64encode(userpwd.encode("utf-8")).decode("utf-8"))
 
     path = _GetPathFromUri(url)
     (code, _, resp_body) = \
