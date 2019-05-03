@@ -48,7 +48,7 @@ from ganeti.utils import version
 from ganeti.tools.cfgupgrade import CfgUpgrade, ParseOptions, Error
 
 from . import testutils
-import mock
+from unittest import mock
 
 
 def GetMinimalConfig():

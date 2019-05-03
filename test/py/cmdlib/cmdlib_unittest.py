@@ -31,7 +31,7 @@
 """Script for unittesting the cmdlib module"""
 
 
-import mock
+from unittest import mock
 import unittest
 import itertools
 import copy

@@ -32,7 +32,7 @@
 
 import collections
 import copy
-import mock
+from unittest import mock
 import os
 import shutil
 import tempfile

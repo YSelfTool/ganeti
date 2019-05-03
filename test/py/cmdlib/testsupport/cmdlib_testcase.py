@@ -32,7 +32,7 @@
 
 
 import inspect
-import mock
+from unittest import mock
 import re
 import traceback
 import functools

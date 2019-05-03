@@ -50,7 +50,7 @@ from ganeti.config import TemporaryReservationManager
 
 from . import testutils
 from . import mocks
-import mock
+from unittest import mock
 from .testutils.config_mock import ConfigMock, _UpdateIvNames
 
 

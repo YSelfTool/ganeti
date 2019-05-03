@@ -41,7 +41,7 @@ from ganeti import errors
 from ganeti import pathutils
 
 from . import testutils
-import mock
+from unittest import mock
 
 
 class TestPrepareFileStorage(unittest.TestCase):
