@@ -417,8 +417,8 @@ def SafeEncode(text):
     # only if unicode; if str already, we handle it below
     text = text.encode("ascii", "backslashreplace")
   resu = ""
-  for char in text:
-    c = ord(char)
+  for c in text:
+    char = chr(c)
     if char == "\t":
       resu += r"\t"
     elif char == "\n":
