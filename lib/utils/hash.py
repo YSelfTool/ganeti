@@ -42,11 +42,17 @@ def Sha1Hmac(key, text, salt=None):
 
   HMAC is defined in RFC2104.
 
-  @type key: string
+  @type key: bytes or string
   @param key: Secret key
-  @type text: string
+  @type text: bytes or string
 
   """
+  if isinstance(key, str):
+    key = key.encode("utf-8")
+  if isinstance(salt, str):
+    salt = salt.encode("utf-8")
+  if isinstance(text, str):
+    text = text.encode("utf-8")
   if salt:
     salted_text = salt + text
   else:
