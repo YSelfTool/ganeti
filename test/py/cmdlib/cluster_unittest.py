@@ -2404,7 +2404,7 @@ class TestLUClusterRenewCrypto(CmdlibTestCase):
     self._client_node_cert = self._CreateTempFile()
     shutil.copy(testutils.TestDataFilename("cert2.pem"), self._client_node_cert)
     self._client_node_cert_digest = \
-        "30:AF:82:D0:00:1C:F2:99:DE:A8:6D:31:7F:C9:D5:46:70:07:EC:4F"
+        b"30:AF:82:D0:00:1C:F2:99:DE:A8:6D:31:7F:C9:D5:46:70:07:EC:4F"
 
   def tearDown(self):
     super(TestLUClusterRenewCrypto, self).tearDown()
