@@ -41,7 +41,7 @@ import logging
 from ganeti import luxi
 import ganeti.rpc.errors as rpcerr
 from ganeti import rapi
-from ganeti import http
+from ganeti import httptools as http
 from ganeti import errors
 from ganeti import compat
 from ganeti import constants

@@ -770,7 +770,7 @@ def GenericMain(daemon_name, optionparser,
   if options.fork:
     # Newer GnuTLS versions (>= 3.3.0) use a library constructor for
     # initialization and open /dev/urandom on library load time, way before we
-    # fork(). Closing /dev/urandom causes subsequent ganeti.http.client
+    # fork(). Closing /dev/urandom causes subsequent ganeti.httptools.client
     # requests to fail and the process to receive a SIGABRT. As we cannot
     # reliably detect GnuTLS's socket, we work our way around this by keeping
     # all fds referring to /dev/urandom open.

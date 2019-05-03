@@ -43,13 +43,13 @@ from ganeti import compat
 from ganeti import errors
 from ganeti import serializer
 from ganeti import rapi
-from ganeti import http
+from ganeti import httptools as http
 from ganeti import objects
 
 import ganeti.rapi.baserlib
 import ganeti.rapi.testutils
 import ganeti.rapi.rlib2
-import ganeti.http.auth
+import ganeti.httptools.auth
 
 from . import testutils
 

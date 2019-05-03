@@ -39,7 +39,7 @@ import re
 import urllib.parse
 
 from ganeti import constants
-from ganeti import http
+from ganeti import httptools as http
 from ganeti import utils
 
 from ganeti.rapi import rlib2

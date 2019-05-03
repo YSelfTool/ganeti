@@ -40,12 +40,12 @@ import itertools
 import threading
 from io import StringIO
 
-from ganeti import http
+from ganeti import httptools as http
 from ganeti import compat
 
-import ganeti.http.server
-import ganeti.http.client
-import ganeti.http.auth
+import ganeti.httptools.server
+import ganeti.httptools.client
+import ganeti.httptools.auth
 
 from . import testutils
 
@@ -71,7 +71,7 @@ class TestMisc(unittest.TestCase):
     self.assertEqual(http.server._DateTimeHeader(gmnow=gmnow), expected)
 
   def testDateTimeHeader(self):
-    """Test ganeti.http._DateTimeHeader"""
+    """Test ganeti.httptools._DateTimeHeader"""
     self._TestDateTimeHeader((2008, 1, 2, 3, 4, 5, 3, 0, 0),
                              "Thu, 02 Jan 2008 03:04:05 GMT")
     self._TestDateTimeHeader((2008, 1, 1, 0, 0, 0, 0, 0, 0),
@@ -84,7 +84,7 @@ class TestMisc(unittest.TestCase):
                              "Sun, 31 Dec 2008 00:00:00 GMT")
 
   def testHttpServerRequest(self):
-    """Test ganeti.http.server._HttpServerRequest"""
+    """Test ganeti.httptools.server._HttpServerRequest"""
     server_request = \
         http.server._HttpServerRequest("GET", "/", None, None, None)
 

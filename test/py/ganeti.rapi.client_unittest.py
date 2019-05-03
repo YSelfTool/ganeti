@@ -37,7 +37,7 @@ import pycurl
 
 from ganeti import opcodes
 from ganeti import constants
-from ganeti import http
+from ganeti import httptools as http
 from ganeti import serializer
 from ganeti import utils
 from ganeti import query

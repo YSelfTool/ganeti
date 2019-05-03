@@ -40,7 +40,7 @@ import time
 import signal
 import asyncore
 
-from ganeti import http
+from ganeti import httptools
 from ganeti import utils
 from ganeti import netutils
 from ganeti import compat
@@ -110,7 +110,7 @@ class _HttpServerRequest(object):
     return "<%s at %#x>" % (" ".join(status), id(self))
 
 
-class _HttpServerToClientMessageWriter(http.HttpMessageWriter):
+class _HttpServerToClientMessageWriter(httptools.HttpMessageWriter):
   """Writes an HTTP response to client.
 
   """
@@ -119,10 +119,10 @@ class _HttpServerToClientMessageWriter(http.HttpMessageWriter):
 
     @type sock: socket
     @param sock: Target socket
-    @type request_msg: http.HttpMessage
+    @type request_msg: httptools.HttpMessage
     @param request_msg: Request message, required to determine whether
         response may have a message body
-    @type response_msg: http.HttpMessage
+    @type response_msg: httptools.HttpMessage
     @param response_msg: Response message
     @type write_timeout: float
     @param write_timeout: Write timeout for socket
@@ -130,7 +130,7 @@ class _HttpServerToClientMessageWriter(http.HttpMessageWriter):
     """
     self._request_msg = request_msg
     self._response_msg = response_msg
-    http.HttpMessageWriter.__init__(self, sock, response_msg, write_timeout)
+    httptools.HttpMessageWriter.__init__(self, sock, response_msg, write_timeout)
 
   def HasMessageBody(self):
     """Logic to detect whether response should contain a message body.
@@ -156,15 +156,15 @@ class _HttpServerToClientMessageWriter(http.HttpMessageWriter):
     # RFC2616, section 10.3.5: "The 304 response MUST NOT contain a
     # message-body, [...]"
 
-    return (http.HttpMessageWriter.HasMessageBody(self) and
+    return (httptools.HttpMessageWriter.HasMessageBody(self) and
             (request_method is not None and
-             request_method != http.HTTP_HEAD) and
-            response_code >= http.HTTP_OK and
-            response_code not in (http.HTTP_NO_CONTENT,
-                                  http.HTTP_NOT_MODIFIED))
+             request_method != httptools.HTTP_HEAD) and
+            response_code >= httptools.HTTP_OK and
+            response_code not in (httptools.HTTP_NO_CONTENT,
+                                  httptools.HTTP_NOT_MODIFIED))
 
 
-class _HttpClientToServerMessageReader(http.HttpMessageReader):
+class _HttpClientToServerMessageReader(httptools.HttpMessageReader):
   """Reads an HTTP request sent by client.
 
   """
@@ -191,7 +191,7 @@ class _HttpClientToServerMessageReader(http.HttpMessageReader):
     if len(words) == 3:
       [method, path, version] = words
       if version[:5] != "HTTP/":
-        raise http.HttpBadRequest("Bad request version (%r)" % version)
+        raise httptools.HttpBadRequest("Bad request version (%r)" % version)
 
       try:
         base_version_number = version.split("/", 1)[1]
@@ -204,26 +204,26 @@ class _HttpClientToServerMessageReader(http.HttpMessageReader):
         #      turn is lower than HTTP/12.3;
         #   - Leading zeros MUST be ignored by recipients.
         if len(version_number) != 2:
-          raise http.HttpBadRequest("Bad request version (%r)" % version)
+          raise httptools.HttpBadRequest("Bad request version (%r)" % version)
 
         version_number = (int(version_number[0]), int(version_number[1]))
       except (ValueError, IndexError):
-        raise http.HttpBadRequest("Bad request version (%r)" % version)
+        raise httptools.HttpBadRequest("Bad request version (%r)" % version)
 
       if version_number >= (2, 0):
-        raise http.HttpVersionNotSupported("Invalid HTTP Version (%s)" %
+        raise httptools.HttpVersionNotSupported("Invalid HTTP Version (%s)" %
                                            base_version_number)
 
     elif len(words) == 2:
-      version = http.HTTP_0_9
+      version = httptools.HTTP_0_9
       [method, path] = words
-      if method != http.HTTP_GET:
-        raise http.HttpBadRequest("Bad HTTP/0.9 request type (%r)" % method)
+      if method != httptools.HTTP_GET:
+        raise httptools.HttpBadRequest("Bad HTTP/0.9 request type (%r)" % method)
 
     else:
-      raise http.HttpBadRequest("Bad request syntax (%r)" % start_line)
+      raise httptools.HttpBadRequest("Bad request syntax (%r)" % start_line)
 
-    return http.HttpClientToServerStartLine(method, path, version)
+    return httptools.HttpClientToServerStartLine(method, path, version)
 
 
 def _HandleServerRequestInner(handler, req_msg, reader):
@@ -245,20 +245,20 @@ def _HandleServerRequestInner(handler, req_msg, reader):
 
       # Call actual request handler
       result = handler.HandleRequest(handler_context)
-    except (http.HttpException, errors.RapiTestResult,
+    except (httptools.HttpException, errors.RapiTestResult,
             KeyboardInterrupt, SystemExit):
       raise
     except Exception as err:
       logging.exception("Caught exception")
-      raise http.HttpInternalServerError(message=str(err))
+      raise httptools.HttpInternalServerError(message=str(err))
     except:
       logging.exception("Unknown exception")
-      raise http.HttpInternalServerError(message="Unknown error")
+      raise httptools.HttpInternalServerError(message="Unknown error")
 
     if not isinstance(result, str):
-      raise http.HttpError("Handler function didn't return string type")
+      raise httptools.HttpError("Handler function didn't return string type")
 
-    return (http.HTTP_OK, handler_context.resp_headers, result)
+    return (httptools.HTTP_OK, handler_context.resp_headers, result)
   finally:
     # No reason to keep this any longer, even for exceptions
     handler_context.private = None
@@ -269,7 +269,7 @@ class HttpResponder(object):
   # the point where the request line is parsed, so it mainly decides what
   # the client gets back when sending a malformed request line.
   # Most web servers default to HTTP 0.9, i.e. don't send a status line.
-  default_request_version = http.HTTP_0_9
+  default_request_version = httptools.HTTP_0_9
 
   responses = http.server.BaseHTTPRequestHandler.responses
 
@@ -284,13 +284,13 @@ class HttpResponder(object):
 
     @type fn: callable
     @param fn: Callback for retrieving HTTP request, must return a tuple
-      containing request message (L{http.HttpMessage}) and C{None} or the
+      containing request message (L{httptools.HttpMessage}) and C{None} or the
       message reader (L{_HttpClientToServerMessageReader})
 
     """
-    response_msg = http.HttpMessage()
+    response_msg = httptools.HttpMessage()
     response_msg.start_line = \
-      http.HttpServerToClientStartLine(version=self.default_request_version,
+      httptools.HttpServerToClientStartLine(version=self.default_request_version,
                                        code=None, reason=None)
 
     force_close = True
@@ -303,15 +303,15 @@ class HttpResponder(object):
       # RFC2616, 14.23: All Internet-based HTTP/1.1 servers MUST respond
       # with a 400 (Bad Request) status code to any HTTP/1.1 request
       # message which lacks a Host header field.
-      if (request_msg.start_line.version == http.HTTP_1_1 and
+      if (request_msg.start_line.version == httptools.HTTP_1_1 and
           not (request_msg.headers and
-               http.HTTP_HOST in request_msg.headers)):
-        raise http.HttpBadRequest(message="Missing Host header")
+               httptools.HTTP_HOST in request_msg.headers)):
+        raise httptools.HttpBadRequest(message="Missing Host header")
 
       (response_msg.start_line.code, response_msg.headers,
        response_msg.body) = \
         _HandleServerRequestInner(self._handler, request_msg, req_msg_reader)
-    except http.HttpException as err:
+    except httptools.HttpException as err:
       self._SetError(self.responses, self._handler, response_msg, err)
     else:
       # Only wait for client to close if we didn't have any exception.
@@ -347,7 +347,7 @@ class HttpResponder(object):
     (content_type, body) = handler.FormatErrorMessage(values)
 
     headers = {
-      http.HTTP_CONTENT_TYPE: content_type,
+      httptools.HTTP_CONTENT_TYPE: content_type,
       }
 
     if err.headers:
@@ -366,9 +366,9 @@ class HttpResponder(object):
 
     msg.headers.update({
       # TODO: Keep-alive is not supported
-      http.HTTP_CONNECTION: "close",
-      http.HTTP_DATE: _DateTimeHeader(),
-      http.HTTP_SERVER: http.HTTP_GANETI_VERSION,
+      httptools.HTTP_CONNECTION: "close",
+      httptools.HTTP_DATE: _DateTimeHeader(),
+      httptools.HTTP_SERVER: httptools.HTTP_GANETI_VERSION,
       })
 
     # Get response reason based on code
@@ -421,8 +421,8 @@ class HttpServerRequestExecutor(object):
         if server.using_ssl:
           sock.set_accept_state()
           try:
-            http.Handshake(sock, self.WRITE_TIMEOUT)
-          except http.HttpSessionHandshakeUnexpectedEOF:
+            httptools.Handshake(sock, self.WRITE_TIMEOUT)
+          except httptools.HttpSessionHandshakeUnexpectedEOF:
             logging.debug("Unexpected EOF from %s:%s",
                           client_addr[0], client_addr[1])
             # Ignore rest
@@ -439,7 +439,7 @@ class HttpServerRequestExecutor(object):
           self._SendResponse(sock, request_msg, response_msg,
                              self.WRITE_TIMEOUT)
       finally:
-        http.ShutdownConnection(sock, self.CLOSE_TIMEOUT, self.WRITE_TIMEOUT,
+        httptools.ShutdownConnection(sock, self.CLOSE_TIMEOUT, self.WRITE_TIMEOUT,
                                 request_msg_reader, force_close)
 
       sock.close()
@@ -451,14 +451,14 @@ class HttpServerRequestExecutor(object):
     """Reads a request sent by client.
 
     """
-    msg = http.HttpMessage()
+    msg = httptools.HttpMessage()
 
     try:
       reader = _HttpClientToServerMessageReader(sock, msg, timeout)
-    except http.HttpSocketTimeout:
-      raise http.HttpError("Timeout while reading request")
+    except httptools.HttpSocketTimeout:
+      raise httptools.HttpError("Timeout while reading request")
     except socket.error as err:
-      raise http.HttpError("Error reading request: %s" % err)
+      raise httptools.HttpError("Error reading request: %s" % err)
 
     return (msg, reader)
 
@@ -469,13 +469,13 @@ class HttpServerRequestExecutor(object):
     """
     try:
       _HttpServerToClientMessageWriter(sock, req_msg, msg, timeout)
-    except http.HttpSocketTimeout:
-      raise http.HttpError("Timeout while sending response")
+    except httptools.HttpSocketTimeout:
+      raise httptools.HttpError("Timeout while sending response")
     except socket.error as err:
-      raise http.HttpError("Error sending response: %s" % err)
+      raise httptools.HttpError("Error sending response: %s" % err)
 
 
-class HttpServer(http.HttpBase, asyncore.dispatcher):
+class HttpServer(httptools.HttpBase, asyncore.dispatcher):
   """Generic HTTP server class
 
   """
@@ -506,7 +506,7 @@ class HttpServer(http.HttpBase, asyncore.dispatcher):
         HttpServerRequestExecutor class
 
     """
-    http.HttpBase.__init__(self)
+    httptools.HttpBase.__init__(self)
     asyncore.dispatcher.__init__(self)
 
     if request_executor_class is None:

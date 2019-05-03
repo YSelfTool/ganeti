@@ -50,7 +50,7 @@ import pycurl
 
 from ganeti import utils
 from ganeti import objects
-from ganeti import http
+from ganeti import httptools as http
 from ganeti import serializer
 from ganeti import constants
 from ganeti import errors
@@ -66,7 +66,7 @@ from ganeti import vcluster
 from ganeti import _generated_rpc
 
 # pylint has a bug here, doesn't see this import
-import ganeti.http.client  # pylint: disable=W0611
+import ganeti.httptools.client  # pylint: disable=W0611
 
 
 _RPC_CLIENT_HEADERS = [

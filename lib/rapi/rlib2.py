@@ -70,7 +70,7 @@ import socket
 
 from ganeti import opcodes
 from ganeti import objects
-from ganeti import http
+from ganeti import httptools as http
 from ganeti import constants
 from ganeti import cli
 from ganeti import rapi

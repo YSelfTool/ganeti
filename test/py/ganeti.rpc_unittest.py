@@ -40,7 +40,7 @@ from ganeti import constants
 from ganeti import compat
 from ganeti.rpc import node as rpc
 from ganeti import rpc_defs
-from ganeti import http
+from ganeti import httptools as http
 from ganeti import errors
 from ganeti import serializer
 from ganeti import objects

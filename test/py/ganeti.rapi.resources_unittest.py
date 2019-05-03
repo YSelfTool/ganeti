@@ -35,7 +35,7 @@ import unittest
 import tempfile
 
 from ganeti import errors
-from ganeti import http
+from ganeti import httptools as http
 
 from ganeti.rapi import connector
 from ganeti.rapi import rlib2

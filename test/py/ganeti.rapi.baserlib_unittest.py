@@ -36,7 +36,7 @@ import itertools
 from ganeti import errors
 from ganeti import opcodes
 from ganeti import ht
-from ganeti import http
+from ganeti import httptools as http
 from ganeti import compat
 from ganeti.rapi import baserlib
 

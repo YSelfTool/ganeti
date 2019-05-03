@@ -51,7 +51,7 @@ from ganeti import objects
 from ganeti import errors
 from ganeti import jstore
 from ganeti import daemon
-from ganeti import http
+from ganeti import httptools as http
 from ganeti import utils
 from ganeti.storage import container
 from ganeti import serializer
@@ -59,7 +59,7 @@ from ganeti import netutils
 from ganeti import pathutils
 from ganeti import ssconf
 
-import ganeti.http.server # pylint: disable=W0611
+import ganeti.httptools.server # pylint: disable=W0611
 
 
 queue_lock = None
