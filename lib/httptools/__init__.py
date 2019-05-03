@@ -339,7 +339,7 @@ def ParseHeaders(buf):
   @note: This is just a trivial wrapper around C{email.message.Message}
 
   """
-  return email.message.message_from_file(buf, 0)
+  return email.message_from_file(buf)
 
 
 def SocketOperation(sock, op, arg1, timeout):
