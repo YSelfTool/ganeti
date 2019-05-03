@@ -42,7 +42,7 @@ from ganeti import errors
 from ganeti import ssconf
 
 from . import testutils
-import mock
+from unittest import mock
 
 
 class TestReadSsconfFile(unittest.TestCase):

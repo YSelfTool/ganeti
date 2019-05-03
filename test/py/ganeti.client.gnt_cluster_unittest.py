@@ -44,7 +44,7 @@ from ganeti import constants
 from ganeti import ssh
 from ganeti import cli
 
-import mock
+from unittest import mock
 from . import testutils
 
 

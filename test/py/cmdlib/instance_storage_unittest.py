@@ -40,7 +40,7 @@ from ganeti import objects
 from ganeti import opcodes
 
 import testutils
-import mock
+from unittest import mock
 import time
 
 from testsupport import CmdlibTestCase

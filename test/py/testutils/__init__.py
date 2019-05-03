@@ -44,7 +44,7 @@ import logging
 # Different Python Mock versions provide incompatible versions of patching an
 # object. More recent versions use _patch_object, older ones used patch_object.
 # This unifies the different variations.
-import mock
+from unittest import mock
 
 try:
   # pylint: disable=W0212

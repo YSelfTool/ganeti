@@ -50,7 +50,7 @@ from ganeti.hypervisor import hv_kvm
 import ganeti.hypervisor.hv_kvm.netdev as netdev
 import ganeti.hypervisor.hv_kvm.monitor as monitor
 
-import mock
+from unittest import mock
 from . import testutils
 
 from .testutils.config_mock import ConfigMock

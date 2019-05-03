@@ -36,7 +36,7 @@ import copy
 import itertools
 import re
 import unittest
-import mock
+from unittest import mock
 import os
 
 from ganeti import backend

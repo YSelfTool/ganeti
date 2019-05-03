@@ -33,7 +33,7 @@
 import errno
 import fcntl
 import glob
-import mock
+from unittest import mock
 import os
 import os.path
 import random
