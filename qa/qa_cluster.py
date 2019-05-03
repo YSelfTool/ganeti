@@ -43,16 +43,16 @@ from ganeti import compat
 from ganeti import utils
 from ganeti import pathutils
 
-import qa_config
-import qa_daemon
-import qa_error
-import qa_instance
-import qa_job_utils
-import qa_logging
-import qa_rapi
-import qa_utils
+from . import qa_config
+from . import qa_daemon
+from . import qa_error
+from . import qa_instance
+from . import qa_job_utils
+from . import qa_logging
+from . import qa_rapi
+from . import qa_utils
 
-from qa_utils import AssertEqual, AssertCommand, AssertRedirectedCommand, \
+from .qa_utils import AssertEqual, AssertCommand, AssertRedirectedCommand, \
   GetCommandOutput, CheckFileUnmodified
 
 
@@ -289,7 +289,7 @@ def TestClusterInit():
 
   # hypervisor parameter modifications
   hvp = qa_config.get("hypervisor-parameters", {})
-  for k, v in hvp.items():
+  for k, v in list(hvp.items()):
     cmd.extend(["-H", "%s:%s" % (k, v)])
   # backend parameter modifications
   bep = qa_config.get("backend-parameters", "")
@@ -301,13 +301,13 @@ def TestClusterInit():
 
   # OS parameters
   osp = qa_config.get("os-parameters", {})
-  for k, v in osp.items():
+  for k, v in list(osp.items()):
     AssertCommand(["gnt-os", "modify", "-O", v, k])
 
   # OS hypervisor parameters
   os_hvp = qa_config.get("os-hvp", {})
   for os_name in os_hvp:
-    for hv, hvp in os_hvp[os_name].items():
+    for hv, hvp in list(os_hvp[os_name].items()):
       AssertCommand(["gnt-os", "modify", "-H", "%s:%s" % (hv, hvp), os_name])
 
 
@@ -318,7 +318,7 @@ def TestClusterRename():
   original_name = qa_config.get("name")
   rename_target = qa_config.get("rename", None)
   if rename_target is None:
-    print(qa_logging.FormatError('"rename" entry is missing'))
+    print((qa_logging.FormatError('"rename" entry is missing')))
     return
 
   for data in [
@@ -923,7 +923,7 @@ def TestClusterModifyIPolicy():
       AssertEqual(float(eff_policy[par]), curr_val)
       # Check everything else
       AssertEqual(eff_specs, old_specs)
-      for p in eff_policy.keys():
+      for p in list(eff_policy.keys()):
         if p == par:
           continue
         AssertEqual(eff_policy[p], old_policy[p])
@@ -955,7 +955,7 @@ def TestClusterModifyIPolicy():
     AssertEqual(eff_policy[disp_str].replace(" ", ""), curr_val)
     # Check everything else
     AssertEqual(eff_specs, old_specs)
-    for p in eff_policy.keys():
+    for p in list(eff_policy.keys()):
       if p == disp_str:
         continue
       AssertEqual(eff_policy[p], old_policy[p])
@@ -1139,8 +1139,8 @@ def TestClusterModifyUserShutdown():
       fn(nodes)
       qa_daemon.TestResumeWatcher()
     else:
-      print("%s hypervisor is not enabled, skipping test for this hypervisor" \
-          % hv)
+      print(("%s hypervisor is not enabled, skipping test for this hypervisor" \
+          % hv))
 
 
 def TestClusterInfo():
@@ -1176,7 +1176,7 @@ def _AssertSsconfCertFiles():
   ssconf_content = {}
   for node in nodes:
     cmd = ["cat", ssconf_file]
-    print("Ssconf Master Certificates of node '%s'." % node.primary)
+    print(("Ssconf Master Certificates of node '%s'." % node.primary))
     result_output = GetCommandOutput(node.primary, utils.ShellQuoteArgs(cmd))
     ssconf_content[node] = result_output
 
@@ -1407,7 +1407,7 @@ def TestClusterMasterFailover():
 
   # Flush the configuration to prevent race conditions when loading it
   # on another node
-  print(qa_logging.FormatInfo("Flushing the configuration on the master node"))
+  print((qa_logging.FormatInfo("Flushing the configuration on the master node")))
   AssertCommand(["gnt-debug", "wconfd", "flushconfig"])
 
   cmd = ["gnt-cluster", "master-failover"]
@@ -1434,7 +1434,7 @@ def TestUpgrade():
   this_version = qa_config.get("dir-version")
   other_version = qa_config.get("other-dir-version")
   if this_version is None or other_version is None:
-    print(qa_utils.FormatInfo("Test not run, as versions not specified"))
+    print((qa_utils.FormatInfo("Test not run, as versions not specified")))
     return
 
   inst_creates = []

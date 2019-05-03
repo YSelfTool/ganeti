@@ -43,7 +43,7 @@ import testutils
 import mock
 import time
 
-from testsupport import CmdlibTestCase
+from .testsupport import CmdlibTestCase
 
 
 class TestCheckNodesFreeDiskOnVG(unittest.TestCase):

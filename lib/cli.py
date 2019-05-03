@@ -40,7 +40,7 @@ import errno
 import itertools
 import shlex
 
-from cStringIO import StringIO
+from io import StringIO
 from optparse import (OptionParser, TitledHelpFormatter)
 
 from ganeti import utils
@@ -134,7 +134,7 @@ __all__ = [
 # Query result status for clients
 (QR_NORMAL,
  QR_UNKNOWN,
- QR_INCOMPLETE) = range(3)
+ QR_INCOMPLETE) = list(range(3))
 
 #: Maximum batch size for ChooseJob
 _CHOOSE_BATCH = 25
@@ -480,7 +480,7 @@ def _FormatUsage(binary, commands):
 
   """
   # compute the max line length for cmd + usage
-  mlen = min(60, max(map(len, commands)))
+  mlen = min(60, max(list(map(len, commands))))
 
   yield "Usage: %s {command} [options...] [argument...]" % binary
   yield "%s <command> --help to see details, or man %s" % (binary, binary)
@@ -1241,7 +1241,7 @@ def GenericMain(commands, override=None, aliases=None,
     return 1
 
   if override is not None:
-    for key, val in override.iteritems():
+    for key, val in override.items():
       setattr(options, key, val)
 
   utils.SetupLogging(pathutils.LOG_COMMANDS, logname, debug=options.debug,
@@ -1524,7 +1524,7 @@ class _RunWhileDaemonsStoppedHelper(object):
     self.cluster_name = cluster_name
     self.master_node = master_node
     self.online_nodes = online_nodes
-    self.ssh_ports = dict(zip(online_nodes, ssh_ports))
+    self.ssh_ports = dict(list(zip(online_nodes, ssh_ports)))
 
     self.ssh = ssh.SshRunner(self.cluster_name)
 
@@ -1941,14 +1941,14 @@ def FormatQueryResult(result, unit=None, format_override=None, separator=None,
 
   # Collect statistics
   assert len(stats) == len(constants.RS_ALL)
-  assert compat.all(count >= 0 for count in stats.values())
+  assert compat.all(count >= 0 for count in list(stats.values()))
 
   # Determine overall status. If there was no data, unknown fields must be
   # detected via the field definitions.
   if (stats[constants.RS_UNKNOWN] or
       (not result.data and _GetUnknownFields(result.fields))):
     status = QR_UNKNOWN
-  elif compat.any(count > 0 for key, count in stats.items()
+  elif compat.any(count > 0 for key, count in list(stats.items())
                   if key != constants.RS_NORMAL):
     status = QR_INCOMPLETE
   else:
@@ -2098,7 +2098,7 @@ def GenericListFields(resource, fields, separator, header, cl=None):
     TableColumn("Description", str, False),
     ]
 
-  rows = map(_FieldDescValues, response.fields)
+  rows = list(map(_FieldDescValues, response.fields))
 
   for line in FormatTable(rows, columns, header, separator):
     ToStdout(line)
@@ -2320,14 +2320,14 @@ def GetOnlineNodes(nodes, cl=None, nowarn=False, secondary_ips=False,
 
   if offline and not nowarn:
     ToStderr("Note: skipping offline node(s): %s" %
-             utils.CommaJoin(map(_GetName, offline)))
+             utils.CommaJoin(list(map(_GetName, offline))))
 
   if secondary_ips:
     fn = _GetSip
   else:
     fn = _GetName
 
-  return map(fn, online)
+  return list(map(fn, online))
 
 
 def GetNodesSshPorts(nodes, cl):
@@ -2582,7 +2582,7 @@ def FormatParamsDictInfo(param_dict, actual, roman=False):
 
   """
   ret = {}
-  for (key, data) in actual.items():
+  for (key, data) in list(actual.items()):
     if isinstance(data, dict) and data:
       ret[key] = FormatParamsDictInfo(param_dict.get(key, {}), data, roman)
     else:
@@ -2742,7 +2742,7 @@ def _MaybeParseUnit(elements):
 
   """
   parsed = {}
-  for k, v in elements.items():
+  for k, v in list(elements.items()):
     if v == constants.VALUE_DEFAULT:
       parsed[k] = v
     else:
@@ -2778,7 +2778,7 @@ def _InitISpecsFromSplitOpts(ipolicy, ispecs_mem_size, ispecs_cpu_count,
     forced_type = TISPECS_GROUP_TYPES
   else:
     forced_type = TISPECS_CLUSTER_TYPES
-  for specs in ispecs_transposed.values():
+  for specs in list(ispecs_transposed.values()):
     assert isinstance(specs, dict)
     utils.ForceDictType(specs, forced_type)
 
@@ -2788,9 +2788,9 @@ def _InitISpecsFromSplitOpts(ipolicy, ispecs_mem_size, ispecs_cpu_count,
     constants.ISPECS_MAX: {},
     constants.ISPECS_STD: {},
     }
-  for (name, specs) in ispecs_transposed.iteritems():
+  for (name, specs) in ispecs_transposed.items():
     assert name in constants.ISPECS_PARAMETERS
-    for key, val in specs.items(): # {min: .. ,max: .., std: ..}
+    for key, val in list(specs.items()): # {min: .. ,max: .., std: ..}
       assert key in ispecs
       ispecs[key][name] = val
   minmax_out = {}
@@ -2825,7 +2825,7 @@ def _ParseSpecUnit(spec, keyname):
 def _ParseISpec(spec, keyname, required):
   ret = _ParseSpecUnit(spec, keyname)
   utils.ForceDictType(ret, constants.ISPECS_PARAMETER_TYPES)
-  missing = constants.ISPECS_PARAMETERS - frozenset(ret.keys())
+  missing = constants.ISPECS_PARAMETERS - frozenset(list(ret.keys()))
   if required and missing:
     raise errors.OpPrereqError("Missing parameters in ipolicy spec %s: %s" %
                                (keyname, utils.CommaJoin(missing)),
@@ -2837,7 +2837,7 @@ def _GetISpecsInAllowedValues(minmax_ispecs, allowed_values):
   ret = None
   if (minmax_ispecs and allowed_values and len(minmax_ispecs) == 1 and
       len(minmax_ispecs[0]) == 1):
-    for (key, spec) in minmax_ispecs[0].items():
+    for (key, spec) in list(minmax_ispecs[0].items()):
       # This loop is executed exactly once
       if key in allowed_values and not spec:
         ret = key
@@ -2853,7 +2853,7 @@ def _InitISpecsFromFullOpts(ipolicy_out, minmax_ispecs, std_ispecs,
     minmax_out = []
     for mmpair in minmax_ispecs:
       mmpair_out = {}
-      for (key, spec) in mmpair.items():
+      for (key, spec) in list(mmpair.items()):
         if key not in constants.ISPECS_MINMAX_KEYS:
           msg = "Invalid key in bounds instance specifications: %s" % key
           raise errors.OpPrereqError(msg, errors.ECODE_INVAL)
@@ -2913,7 +2913,7 @@ def CreateIPolicyFromOpts(ispecs_mem_size=None,
   if ipolicy_spindle_ratio is not None:
     ipolicy_out[constants.IPOLICY_SPINDLE_RATIO] = ipolicy_spindle_ratio
 
-  assert not (frozenset(ipolicy_out.keys()) - constants.IPOLICY_ALL_KEYS)
+  assert not (frozenset(list(ipolicy_out.keys())) - constants.IPOLICY_ALL_KEYS)
 
   if not group_ipolicy and fill_all:
     ipolicy_out = objects.FillIPolicy(constants.IPOLICY_DEFAULTS, ipolicy_out)

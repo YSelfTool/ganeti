@@ -33,7 +33,7 @@
 import copy
 import math
 import os
-import urllib2
+import urllib.request, urllib.error, urllib.parse
 
 from ganeti import constants
 from ganeti import errors
@@ -318,7 +318,7 @@ def UploadHelper(lu, node_uuids, fname):
   """
   if os.path.exists(fname):
     result = lu.rpc.call_upload_file(node_uuids, fname)
-    for to_node_uuids, to_result in result.items():
+    for to_node_uuids, to_result in list(result.items()):
       msg = to_result.fail_msg
       if msg:
         msg = ("Copy of file %s to node %s failed: %s" %
@@ -366,7 +366,7 @@ def MergeAndVerifyDiskState(op_input, obj_input):
       obj_input = {}
     return dict((key, _UpdateAndVerifySubDict(obj_input.get(key, {}), value,
                                               type_check))
-                for key, value in op_input.items())
+                for key, value in list(op_input.items()))
 
   return None
 
@@ -399,7 +399,7 @@ def CheckOSParams(lu, required, node_uuids, osname, osparams, force_variant):
     result = lu.rpc.call_os_validate(node_uuids, required, osname,
                                      [constants.OS_VALIDATE_PARAMETERS],
                                      osparams, force_variant)
-    for node_uuid, nres in result.items():
+    for node_uuid, nres in list(result.items()):
       # we don't check for offline cases since this should be run only
       # against the master node and/or an instance's nodes
       nres.Raise("OS Parameters validation failed on node %s" %
@@ -529,7 +529,7 @@ def CheckNodePVs(nresult, exclusive_storage):
   pvlist_dict = nresult.get(constants.NV_PVLIST, None)
   if pvlist_dict is None:
     return (["Can't get PV list from node"], None)
-  pvlist = map(objects.LvmPvInfo.FromDict, pvlist_dict)
+  pvlist = list(map(objects.LvmPvInfo.FromDict, pvlist_dict))
   errlist = []
   # check that ':' is not present in PV names, since it's a
   # special character for lvcreate (denotes the range of PEs to
@@ -629,9 +629,8 @@ def ComputeIPolicySpecViolation(ipolicy, mem_size, cpu_count, disk_count,
 
   min_errs = None
   for minmax in ipolicy[constants.ISPECS_MINMAX]:
-    errs = filter(None,
-                  (_compute_fn(name, qualifier, minmax, value)
-                   for (name, qualifier, value) in test_settings))
+    errs = [_f for _f in (_compute_fn(name, qualifier, minmax, value)
+                   for (name, qualifier, value) in test_settings) if _f]
     if min_errs is None or len(errs) < len(min_errs):
       min_errs = errs
   assert min_errs is not None
@@ -761,7 +760,7 @@ def GetUpdatedParams(old_params, update_dict,
 
   """
   params_copy = copy.deepcopy(old_params)
-  for key, val in update_dict.iteritems():
+  for key, val in update_dict.items():
     if ((use_default and val == constants.VALUE_DEFAULT) or
           (use_none and val is None)):
       try:
@@ -781,7 +780,7 @@ def GetUpdatedIPolicy(old_ipolicy, new_ipolicy, group_policy=False):
 
   """
   ipolicy = copy.deepcopy(old_ipolicy)
-  for key, value in new_ipolicy.items():
+  for key, value in list(new_ipolicy.items()):
     if key not in constants.IPOLICY_ALL_KEYS:
       raise errors.OpPrereqError("Invalid key in new ipolicy: %s" % key,
                                  errors.ECODE_INVAL)
@@ -805,7 +804,7 @@ def GetUpdatedIPolicy(old_ipolicy, new_ipolicy, group_policy=False):
                                      (key, value, err), errors.ECODE_INVAL)
       elif key == constants.ISPECS_MINMAX:
         for minmax in value:
-          for k in minmax.keys():
+          for k in list(minmax.keys()):
             utils.ForceDictType(minmax[k], constants.ISPECS_PARAMETER_TYPES)
         ipolicy[key] = value
       elif key == constants.ISPECS_STD:
@@ -870,7 +869,7 @@ def _UpdateAndVerifySubDict(base, updates, type_check):
 
   ret = copy.deepcopy(base)
   ret.update(dict((key, fn(base.get(key, {}), value))
-                  for key, value in updates.items()))
+                  for key, value in list(updates.items())))
   return ret
 
 
@@ -928,7 +927,7 @@ def CheckInstancesNodeGroups(cfg, instances, owned_groups, owned_node_uuids,
   @param cur_group_uuid: Optional group UUID to check against instance's groups
 
   """
-  for (uuid, inst) in instances.items():
+  for (uuid, inst) in list(instances.items()):
     inst_nodes = cfg.GetInstanceNodes(inst.uuid)
     assert owned_node_uuids.issuperset(inst_nodes), \
       "Instance %s's nodes changed while we kept the lock" % inst.name
@@ -1042,7 +1041,7 @@ def MapInstanceLvsToNodes(cfg, instances):
   return dict(
     ((node_uuid, vol), inst)
      for inst in instances
-     for (node_uuid, vols) in cfg.GetInstanceLVsByNode(inst.uuid).items()
+     for (node_uuid, vols) in list(cfg.GetInstanceLVsByNode(inst.uuid).items())
      for vol in vols)
 
 
@@ -1504,14 +1503,14 @@ def DetermineImageSize(lu, image, node_uuid):
 
   """
   # Check if we are dealing with a URL first
-  class _HeadRequest(urllib2.Request):
+  class _HeadRequest(urllib.request.Request):
     def get_method(self):
       return "HEAD"
 
   if utils.IsUrl(image):
     try:
-      response = urllib2.urlopen(_HeadRequest(image))
-    except urllib2.URLError:
+      response = urllib.request.urlopen(_HeadRequest(image))
+    except urllib.error.URLError:
       raise errors.OpExecError("Could not retrieve image from given url '%s'" %
                                image)
 

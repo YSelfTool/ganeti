@@ -193,7 +193,7 @@ def _ComputeDispatchTable():
 
   """
   return dict((op, getattr(cmdlib, _LUNameForOpName(op.__name__)))
-              for op in opcodes.OP_MAPPING.values()
+              for op in list(opcodes.OP_MAPPING.values())
               if op.WITH_LU)
 
 
@@ -269,7 +269,7 @@ def _LockList(names):
   """
   if names == locking.ALL_SET:
     return names
-  elif isinstance(names, basestring):
+  elif isinstance(names, str):
     return [names]
   else:
     return list(names)

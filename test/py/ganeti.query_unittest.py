@@ -46,7 +46,7 @@ from ganeti import cmdlib
 import ganeti.masterd.instance as gmi
 from ganeti.hypervisor import hv_base
 
-import testutils
+from . import testutils
 
 
 class TestConstants(unittest.TestCase):
@@ -59,7 +59,7 @@ class _QueryData:
   def __init__(self, data, **kwargs):
     self.data = data
 
-    for name, value in kwargs.items():
+    for name, value in list(kwargs.items()):
       setattr(self, name, value)
 
   def __iter__(self):
@@ -76,7 +76,7 @@ def _GetDiskSize(nr, ctx, item):
 
 class TestQuery(unittest.TestCase):
   def test(self):
-    (STATIC, DISK) = range(10, 12)
+    (STATIC, DISK) = list(range(10, 12))
 
     fielddef = query._PrepareFieldList([
       (query._MakeField("name", "Name", constants.QFT_TEXT, "Name"),
@@ -259,9 +259,9 @@ class TestQuery(unittest.TestCase):
                      ["name1", "other", "foo"]]:
       q = query.Query(fielddef, selected)
       self.assertEqual(len(q._fields), len(selected))
-      self.assert_(compat.all(len(row) == len(selected)
-                              for row in q.Query(_QueryData(range(1, 10)))))
-      self.assertEqual(q.Query(_QueryData(range(1, 10))),
+      self.assertTrue(compat.all(len(row) == len(selected)
+                              for row in q.Query(_QueryData(list(range(1, 10))))))
+      self.assertEqual(q.Query(_QueryData(list(range(1, 10)))),
                        [[(constants.RS_UNKNOWN, None)] * len(selected)
                         for i in range(1, 10)])
       self.assertEqual([fdef.ToDict() for fdef in q.GetFields()],
@@ -272,14 +272,14 @@ class TestQuery(unittest.TestCase):
 
     q = query.Query(fielddef, ["name", "other0", "nodata", "unavail"])
     self.assertEqual(len(q._fields), 4)
-    self.assertEqual(q.OldStyleQuery(_QueryData(range(1, 10))), [
+    self.assertEqual(q.OldStyleQuery(_QueryData(list(range(1, 10)))), [
                      ["name%s" % i, 1234, None, None]
                      for i in range(1, 10)
                      ])
 
     q = query.Query(fielddef, ["name", "other0", "nodata", "unavail", "unk"])
     self.assertEqual(len(q._fields), 5)
-    self.assertEqual(q.Query(_QueryData(range(1, 10))),
+    self.assertEqual(q.Query(_QueryData(list(range(1, 10)))),
                      [[(constants.RS_NORMAL, "name%s" % i),
                        (constants.RS_NORMAL, 1234),
                        (constants.RS_NODATA, None),
@@ -389,7 +389,7 @@ class TestNodeQuery(unittest.TestCase):
                        ])
 
   def test(self):
-    selected = query.NODE_FIELDS.keys()
+    selected = list(query.NODE_FIELDS.keys())
     field_index = dict((field, idx) for idx, field in enumerate(selected))
 
     q = self._Create(selected)
@@ -461,7 +461,7 @@ class TestNodeQuery(unittest.TestCase):
     live_data = dict.fromkeys([node.uuid for node in nodes], {})
     live_data[live_data_node.uuid] = \
       dict((query._NODE_LIVE_FIELDS[name][2], value)
-           for name, value in fake_live_data.items())
+           for name, value in list(fake_live_data.items()))
 
     node_to_primary_uuid = dict((node.uuid, set()) for node in nodes)
     node_to_primary_uuid[master_node.uuid].update(["inst1", "inst2"])
@@ -496,7 +496,7 @@ class TestNodeQuery(unittest.TestCase):
                               inst_uuid_to_inst_name, groups, oob_support,
                               cluster)
     result = q.Query(nqd)
-    self.assert_(compat.all(len(row) == len(selected) for row in result))
+    self.assertTrue(compat.all(len(row) == len(selected) for row in result))
     self.assertEqual([row[field_index["name"]] for row in result],
                      [(constants.RS_NORMAL, name) for name in node_names])
 
@@ -504,8 +504,8 @@ class TestNodeQuery(unittest.TestCase):
                        for idx, row in enumerate(result))
 
     master_row = result[node_to_row[master_name]]
-    self.assert_(master_row[field_index["master"]])
-    self.assert_(master_row[field_index["role"]], "M")
+    self.assertTrue(master_row[field_index["master"]])
+    self.assertTrue(master_row[field_index["role"]], "M")
     self.assertEqual(master_row[field_index["group"]],
                      (constants.RS_NORMAL, "ng1"))
     self.assertEqual(master_row[field_index["group.uuid"]],
@@ -515,7 +515,7 @@ class TestNodeQuery(unittest.TestCase):
     self.assertEqual(master_row[field_index["mtime"]],
                      (constants.RS_UNAVAIL, None))
 
-    self.assert_(row[field_index["pip"]] == node.primary_ip and
+    self.assertTrue(row[field_index["pip"]] == node.primary_ip and
                  row[field_index["sip"]] == node.secondary_ip and
                  set(row[field_index["tags"]]) == node.GetTags() and
                  row[field_index["serial_no"]] == node.serial_no and
@@ -538,7 +538,7 @@ class TestNodeQuery(unittest.TestCase):
 
     live_data_row = result[node_to_row[live_data_node.name]]
 
-    for (field, value) in fake_live_data.items():
+    for (field, value) in list(fake_live_data.items()):
       self.assertEqual(live_data_row[field_index[field]],
                        (constants.RS_NORMAL, value))
 
@@ -668,7 +668,7 @@ class TestInstanceQuery(unittest.TestCase):
        ["inst3", 128, "192.0.2.99"]])
 
   def test(self):
-    selected = query.INSTANCE_FIELDS.keys()
+    selected = list(query.INSTANCE_FIELDS.keys())
     fieldidx = dict((field, idx) for idx, field in enumerate(selected))
 
     macs = ["00:11:22:%02x:%02x:%02x" % (i % 255, i % 3, (i * 123) % 255)
@@ -923,7 +923,7 @@ class TestInstanceQuery(unittest.TestCase):
                                   wrongnode_inst, consinfo, nodes, {}, {})
     result = q.Query(iqd)
     self.assertEqual(len(result), len(instances))
-    self.assert_(compat.all(len(row) == len(selected)
+    self.assertTrue(compat.all(len(row) == len(selected)
                             for row in result))
 
     assert len(set(bad_nodes) & set(offline_nodes)) == len(offline_nodes), \
@@ -1269,11 +1269,11 @@ class TestQueryFields(unittest.TestCase):
   def testAllFields(self):
     for fielddefs in query.ALL_FIELD_LISTS:
       result = query.QueryFields(fielddefs, None)
-      self.assert_(isinstance(result, dict))
+      self.assertTrue(isinstance(result, dict))
       response = objects.QueryFieldsResponse.FromDict(result)
       self.assertEqual([(fdef.name, fdef.title) for fdef in response.fields],
         [(fdef2.name, fdef2.title)
-         for (fdef2, _, _, _) in utils.NiceSort(fielddefs.values(),
+         for (fdef2, _, _, _) in utils.NiceSort(list(fielddefs.values()),
                                                 key=lambda x: x[0].name)])
 
   def testSomeFields(self):
@@ -1285,10 +1285,10 @@ class TestQueryFields(unittest.TestCase):
           sample_size = rnd.randint(5, 20)
         else:
           sample_size = rnd.randint(1, max(1, len(fielddefs) - 1))
-        fields = [fdef for (fdef, _, _, _) in rnd.sample(fielddefs.values(),
+        fields = [fdef for (fdef, _, _, _) in rnd.sample(list(fielddefs.values()),
                                                          sample_size)]
         result = query.QueryFields(fielddefs, [fdef.name for fdef in fields])
-        self.assert_(isinstance(result, dict))
+        self.assertTrue(isinstance(result, dict))
         response = objects.QueryFieldsResponse.FromDict(result)
         self.assertEqual([(fdef.name, fdef.title) for fdef in response.fields],
                          [(fdef2.name, fdef2.title) for fdef2 in fields])
@@ -1296,7 +1296,7 @@ class TestQueryFields(unittest.TestCase):
 
 class TestQueryFilter(unittest.TestCase):
   def testRequestedNames(self):
-    for (what, fielddefs) in query.ALL_FIELDS.items():
+    for (what, fielddefs) in list(query.ALL_FIELDS.items()):
       if what == constants.QR_JOB:
         namefield = "id"
         nameval = 123
@@ -1386,7 +1386,7 @@ class TestQueryFilter(unittest.TestCase):
   def testCompileFilter(self):
     levels_max = query._FilterCompilerHelper._LEVELS_MAX
 
-    for (what, fielddefs) in query.ALL_FIELDS.items():
+    for (what, fielddefs) in list(query.ALL_FIELDS.items()):
       namefield, nameval = {
         constants.QR_JOB: ("id", 123),
         constants.QR_EXPORT: ("export", "value"),
@@ -1559,7 +1559,7 @@ class TestQueryFilter(unittest.TestCase):
        [(constants.RS_NORMAL, "nodeM"), (constants.RS_NORMAL, 10)]])
 
   def testFilter(self):
-    (DK_A, DK_B) = range(1000, 1002)
+    (DK_A, DK_B) = list(range(1000, 1002))
 
     fielddefs = query._PrepareFieldList([
       (query._MakeField("name", "Name", constants.QFT_TEXT, "Name"),
@@ -1909,7 +1909,7 @@ class TestQueryFilter(unittest.TestCase):
        None, 0, lambda ctx, item: item),
       ], [])
 
-    data = range(100)
+    data = list(range(100))
 
     q = query.Query(fielddefs, ["value"],
                     qfilter=["<", "value", 20])

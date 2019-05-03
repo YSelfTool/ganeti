@@ -58,7 +58,7 @@ X509_SIGNATURE = re.compile(r"^%s:\s*(?P<salt>%s+)/(?P<sign>%s+)$" %
 
 # Certificate verification results
 (CERT_WARNING,
- CERT_ERROR) = range(1, 3)
+ CERT_ERROR) = list(range(1, 3))
 
 #: ASN1 time regexp
 _ASN1_TIME_REGEX = re.compile(r"^(\d+)([-+]\d\d)(\d\d)$")

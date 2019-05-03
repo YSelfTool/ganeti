@@ -159,7 +159,7 @@ def FormatUnit(value, units, roman=False):
   if units not in ("m", "g", "t", "h"):
     raise errors.ProgrammerError("Invalid unit specified '%s'" % str(units))
 
-  if not isinstance(value, (int, long, float)):
+  if not isinstance(value, (int, float)):
     raise errors.ProgrammerError("Invalid value specified '%s (%s)'" % (
         value, type(value)))
 
@@ -413,7 +413,7 @@ def SafeEncode(text):
   @return: a safe version of text
 
   """
-  if isinstance(text, unicode):
+  if isinstance(text, str):
     # only if unicode; if str already, we handle it below
     text = text.encode("ascii", "backslashreplace")
   resu = ""
@@ -667,7 +667,7 @@ def Truncate(text, length):
   assert length > len(_ASCII_ELLIPSIS)
 
   # Serialize if necessary
-  if not isinstance(text, basestring):
+  if not isinstance(text, str):
     text = str(text)
 
   if len(text) <= length:

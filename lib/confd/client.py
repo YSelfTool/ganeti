@@ -196,7 +196,7 @@ class ConfdClient(object):
 
     """
     now = time.time()
-    for rsalt, rq in self._requests.items():
+    for rsalt, rq in list(self._requests.items()):
       if now >= rq.expiry:
         del self._requests[rsalt]
         client_reply = ConfdUpcallPayload(salt=rsalt,
@@ -606,7 +606,7 @@ class ConfdCountingCallback(object):
     """Have all the registered queries received at least an answer?
 
     """
-    return compat.all(self._answers.values())
+    return compat.all(list(self._answers.values()))
 
   def _HandleExpire(self, up):
     # if we have no answer we have received none, before the expiration.

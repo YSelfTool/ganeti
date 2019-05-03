@@ -41,7 +41,7 @@ import time
 import logging
 import pwd
 import shutil
-import urllib2
+import urllib.request, urllib.error, urllib.parse
 from bitarray import bitarray
 try:
   import psutil   # pylint: disable=F0401
@@ -243,7 +243,7 @@ def _GenerateDeviceHVInfoStr(hvinfo):
   # work on a copy
   d = dict(hvinfo)
   hvinfo_str = d.pop("driver")
-  for k, v in d.items():
+  for k, v in list(d.items()):
     hvinfo_str += ",%s=%s" % (k, v)
 
   return hvinfo_str
@@ -456,7 +456,7 @@ def _AnalyzeSerializedRuntime(serialized_runtime):
   return (kvm_cmd, kvm_nics, hvparams, kvm_disks)
 
 
-class HeadRequest(urllib2.Request):
+class HeadRequest(urllib.request.Request):
   def get_method(self):
     return "HEAD"
 
@@ -466,9 +466,9 @@ def _CheckUrl(url):
 
   """
   try:
-    urllib2.urlopen(HeadRequest(url))
+    urllib.request.urlopen(HeadRequest(url))
     return True
-  except urllib2.URLError:
+  except urllib.error.URLError:
     return False
 
 
@@ -970,7 +970,7 @@ class KVMHypervisor(hv_base.BaseHypervisor):
     if cpus == constants.CPU_PINNING_OFF:
       # we checked this at import time
       # pylint: disable=E1101
-      target_process.cpu_affinity(range(psutil.cpu_count()))
+      target_process.cpu_affinity(list(range(psutil.cpu_count())))
     else:
       target_process.cpu_affinity(cpus)
 
@@ -1024,7 +1024,7 @@ class KVMHypervisor(hv_base.BaseHypervisor):
       match = self._CPU_INFO_RE.search(line)
       if not match:
         continue
-      grp = map(int, match.groups())
+      grp = list(map(int, match.groups()))
       result[grp[0]] = grp[1]
 
     return result

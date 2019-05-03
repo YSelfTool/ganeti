@@ -51,9 +51,9 @@ import ganeti.hypervisor.hv_kvm.netdev as netdev
 import ganeti.hypervisor.hv_kvm.monitor as monitor
 
 import mock
-import testutils
+from . import testutils
 
-from testutils.config_mock import ConfigMock
+from .testutils.config_mock import ConfigMock
 
 
 class QmpStub(threading.Thread):
@@ -154,7 +154,7 @@ class TestQmpMessage(testutils.GanetiTestCase):
       }
     message = hv_kvm.QmpMessage(test_data)
 
-    for k, v in test_data.items():
+    for k, v in list(test_data.items()):
       self.assertEqual(message[k], v)
 
     serialized = str(message)

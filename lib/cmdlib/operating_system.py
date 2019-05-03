@@ -81,7 +81,7 @@ class OsQuery(QueryBase):
     # make all OSes invalid
     good_node_uuids = [node_uuid for node_uuid in rlist
                        if not rlist[node_uuid].fail_msg]
-    for node_uuid, nr in rlist.items():
+    for node_uuid, nr in list(rlist.items()):
       if nr.fail_msg or not nr.payload:
         continue
       for (name, path, status, diagnose, variants,
@@ -103,14 +103,14 @@ class OsQuery(QueryBase):
 
     """
     valid_node_uuids = [node.uuid
-                        for node in lu.cfg.GetAllNodesInfo().values()
+                        for node in list(lu.cfg.GetAllNodesInfo().values())
                         if not node.offline and node.vm_capable]
     pol = self._DiagnoseByOS(lu.rpc.call_os_diagnose(valid_node_uuids))
     cluster = lu.cfg.GetClusterInfo()
 
     data = {}
 
-    for (os_name, os_data) in pol.items():
+    for (os_name, os_data) in list(pol.items()):
       info = query.OsInfo(name=os_name, valid=True, node_status=os_data,
                           hidden=(os_name in cluster.hidden_os),
                           blacklisted=(os_name in cluster.blacklisted_os),
@@ -148,15 +148,15 @@ class OsQuery(QueryBase):
 
       for variant in variants:
         name = "+".join([os_name, variant])
-        if name in cluster.os_hvp.keys():
+        if name in list(cluster.os_hvp.keys()):
           info.os_hvp[name] = cluster.os_hvp.get(name)
-        if name in cluster.osparams.keys():
+        if name in list(cluster.osparams.keys()):
           info.osparams[name] = cluster.osparams.get(name)
 
       data[os_name] = info
 
     # Prepare data in requested order
-    return [data[name] for name in self._GetNames(lu, pol.keys(), None)
+    return [data[name] for name in self._GetNames(lu, list(pol.keys()), None)
             if name in data]
 
 

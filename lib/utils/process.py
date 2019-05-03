@@ -41,7 +41,7 @@ import logging
 import signal
 import resource
 
-from cStringIO import StringIO
+from io import StringIO
 
 from ganeti import errors
 from ganeti import constants
@@ -59,7 +59,7 @@ _no_fork = False
 
 (_TIMEOUT_NONE,
  _TIMEOUT_TERM,
- _TIMEOUT_KILL) = range(3)
+ _TIMEOUT_KILL) = list(range(3))
 
 
 def DisableFork():
@@ -207,7 +207,7 @@ def RunCmd(cmd, env=None, output=None, cwd="/", reset_env=False,
     raise errors.ProgrammerError("Parameters 'output' and 'input_fd' can"
                                  " not be used at the same time")
 
-  if isinstance(cmd, basestring):
+  if isinstance(cmd, str):
     strcmd = cmd
     shell = True
   else:
@@ -337,7 +337,7 @@ def StartDaemon(cmd, env=None, cwd="/", output=None, output_fd=None,
     raise errors.ProgrammerError("Only one of 'output' and 'output_fd' can be"
                                  " specified")
 
-  if isinstance(cmd, basestring):
+  if isinstance(cmd, str):
     cmd = ["/bin/sh", "-c", cmd]
 
   strcmd = utils_text.ShellQuoteArgs(cmd)

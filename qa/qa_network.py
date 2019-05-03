@@ -32,23 +32,23 @@
 
 """
 
-import qa_config
-import qa_tags
-import qa_utils
+from . import qa_config
+from . import qa_tags
+from . import qa_utils
 
 from ganeti import query
 
-from qa_utils import AssertCommand
+from .qa_utils import AssertCommand
 
 
 def TestNetworkList():
   """gnt-network list"""
-  qa_utils.GenericQueryTest("gnt-network", query.NETWORK_FIELDS.keys())
+  qa_utils.GenericQueryTest("gnt-network", list(query.NETWORK_FIELDS.keys()))
 
 
 def TestNetworkListFields():
   """gnt-network list-fields"""
-  qa_utils.GenericQueryFieldsTest("gnt-network", query.NETWORK_FIELDS.keys())
+  qa_utils.GenericQueryFieldsTest("gnt-network", list(query.NETWORK_FIELDS.keys()))
 
 
 def GetNonexistentNetworks(count):

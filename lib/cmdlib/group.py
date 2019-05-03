@@ -314,7 +314,7 @@ class LUGroupAssignNodes(NoHooksLU):
     all_split_instances = set()
     previously_split_instances = set()
 
-    for inst in instance_data.values():
+    for inst in list(instance_data.values()):
       inst_disks = self.cfg.GetInstanceDisks(inst.uuid)
       if not utils.AnyDiskOfType(inst_disks, constants.DTS_INT_MIRROR):
         continue
@@ -410,7 +410,7 @@ class LUGroupSetParams(LogicalUnit):
       violations = \
           ComputeNewInstanceViolations(gmi.CalculateGroupIPolicy(cluster,
                                                                  self.group),
-                                       new_ipolicy, instances.values(),
+                                       new_ipolicy, list(instances.values()),
                                        self.cfg)
 
       if violations:
@@ -539,7 +539,7 @@ class LUGroupRemove(LogicalUnit):
     """
     # Verify that the group is empty.
     group_nodes = [node.uuid
-                   for node in self.cfg.GetAllNodesInfo().values()
+                   for node in list(self.cfg.GetAllNodesInfo().values())
                    if node.group == self.group_uuid]
 
     if group_nodes:
@@ -629,7 +629,7 @@ class LUGroupRename(LogicalUnit):
     all_nodes.pop(mn, None)
 
     run_nodes = [mn]
-    run_nodes.extend(node.uuid for node in all_nodes.values()
+    run_nodes.extend(node.uuid for node in list(all_nodes.values())
                      if node.group == self.group_uuid)
 
     return (run_nodes, run_nodes)
@@ -660,8 +660,8 @@ class LUGroupEvacuate(LogicalUnit):
     self.group_uuid = self.cfg.LookupNodeGroup(self.op.group_name)
 
     if self.op.target_groups:
-      self.req_target_uuids = map(self.cfg.LookupNodeGroup,
-                                  self.op.target_groups)
+      self.req_target_uuids = list(map(self.cfg.LookupNodeGroup,
+                                  self.op.target_groups))
     else:
       self.req_target_uuids = []
 
@@ -907,14 +907,14 @@ class LUGroupVerifyDisks(NoHooksLU):
                          missing_disks):
     node_lv_to_inst = MapInstanceLvsToNodes(
       self.cfg,
-      [inst for inst in self.instances.values() if inst.disks_active])
+      [inst for inst in list(self.instances.values()) if inst.disks_active])
     if node_lv_to_inst:
       node_uuids = utils.NiceSort(set(self.owned_locks(locking.LEVEL_NODE)) &
                                   set(self.cfg.GetVmCapableNodeList()))
 
       node_lvs = self.rpc.call_lv_list(node_uuids, [])
 
-      for (node_uuid, node_res) in node_lvs.items():
+      for (node_uuid, node_res) in list(node_lvs.items()):
         if node_res.offline:
           continue
 
@@ -925,19 +925,19 @@ class LUGroupVerifyDisks(NoHooksLU):
           node_errors[node_uuid] = msg
           continue
 
-        for lv_name, (_, _, lv_online) in node_res.payload.items():
+        for lv_name, (_, _, lv_online) in list(node_res.payload.items()):
           inst = node_lv_to_inst.pop((node_uuid, lv_name), None)
           if not lv_online and inst is not None:
             offline_disk_instance_names.add(inst.name)
 
       # any leftover items in nv_dict are missing LVs, let's arrange the data
       # better
-      for key, inst in node_lv_to_inst.iteritems():
+      for key, inst in node_lv_to_inst.items():
         missing_disks.setdefault(inst.name, []).append(list(key))
 
   def _VerifyDrbdStates(self, node_errors, offline_disk_instance_names):
     node_to_inst = {}
-    for inst in self.instances.values():
+    for inst in list(self.instances.values()):
       disks = self.cfg.GetInstanceDisks(inst.uuid)
       if not (inst.disks_active and
               utils.AnyDiskOfType(disks, [constants.DT_DRBD8])):
@@ -948,7 +948,7 @@ class LUGroupVerifyDisks(NoHooksLU):
                                        secondary_nodes):
         node_to_inst.setdefault(node_uuid, []).append(inst)
 
-    for (node_uuid, insts) in node_to_inst.items():
+    for (node_uuid, insts) in list(node_to_inst.items()):
       node_disks = [(self.cfg.GetInstanceDisks(inst.uuid), inst)
                     for inst in insts]
       node_res = self.rpc.call_drbd_needs_activation(node_uuid, node_disks)
@@ -960,7 +960,7 @@ class LUGroupVerifyDisks(NoHooksLU):
         continue
 
       faulty_disk_uuids = set(node_res.payload)
-      for inst in self.instances.values():
+      for inst in list(self.instances.values()):
         disks = self.cfg.GetInstanceDisks(inst.uuid)
         inst_disk_uuids = set([disk.uuid for disk in disks])
         if inst_disk_uuids.intersection(faulty_disk_uuids):

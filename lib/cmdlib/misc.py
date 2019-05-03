@@ -270,7 +270,7 @@ class ExtStorageQuery(QueryBase):
     # make all OSes invalid
     good_nodes = [node_uuid for node_uuid in rlist
                   if not rlist[node_uuid].fail_msg]
-    for node_uuid, nr in rlist.items():
+    for node_uuid, nr in list(rlist.items()):
       if nr.fail_msg or not nr.payload:
         continue
       for (name, path, status, diagnose, params) in nr.payload:
@@ -290,7 +290,7 @@ class ExtStorageQuery(QueryBase):
 
     """
     valid_nodes = [node.uuid
-                   for node in lu.cfg.GetAllNodesInfo().values()
+                   for node in list(lu.cfg.GetAllNodesInfo().values())
                    if not node.offline and node.vm_capable]
     pol = self._DiagnoseByProvider(lu.rpc.call_extstorage_diagnose(valid_nodes))
 
@@ -298,7 +298,7 @@ class ExtStorageQuery(QueryBase):
 
     nodegroup_list = lu.cfg.GetNodeGroupList()
 
-    for (es_name, es_data) in pol.items():
+    for (es_name, es_data) in list(pol.items()):
       # For every provider compute the nodegroup validity.
       # To do this we need to check the validity of each node in es_data
       # and then construct the corresponding nodegroup dict:
@@ -351,7 +351,7 @@ class ExtStorageQuery(QueryBase):
       data[es_name] = info
 
     # Prepare data in requested order
-    return [data[name] for name in self._GetNames(lu, pol.keys(), None)
+    return [data[name] for name in self._GetNames(lu, list(pol.keys()), None)
             if name in data]
 
 

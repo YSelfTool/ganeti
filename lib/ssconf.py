@@ -157,7 +157,7 @@ class SimpleStore(object):
     # Get lock while writing files
     ssconf_lock.Exclusive(blocking=True, timeout=SSCONF_LOCK_TIMEOUT)
     try:
-      for name, value in values.iteritems():
+      for name, value in values.items():
         if isinstance(value, (list, tuple)):
           value = "\n".join(value)
         if value and not value.endswith("\n"):
@@ -262,7 +262,7 @@ class SimpleStore(object):
     """
     return dict([(node_name, int(ssh_port)) for
                   node_name, ssh_port in
-                  self._GetDictOfSsconfMap(constants.SS_SSH_PORTS).items()])
+                  list(self._GetDictOfSsconfMap(constants.SS_SSH_PORTS).items())])
 
   def GetMasterIP(self):
     """Get the IP of the master node for this cluster.
@@ -476,7 +476,7 @@ def CheckMaster(debug, ss=None):
   try:
     master_name, myself = GetMasterAndMyself(ss)
   except errors.ConfigurationError as err:
-    print("Cluster configuration incomplete: '%s'" % str(err))
+    print(("Cluster configuration incomplete: '%s'" % str(err)))
     sys.exit(constants.EXIT_NODESETUP_ERROR)
   except errors.ResolverError as err:
     sys.stderr.write("Cannot resolve my own name (%s)\n" % err.args[0])

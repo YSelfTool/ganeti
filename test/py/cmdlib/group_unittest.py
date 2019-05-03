@@ -38,7 +38,7 @@ from ganeti import constants
 from ganeti import opcodes
 from ganeti import query
 
-from testsupport import *
+from .testsupport import *
 
 import testutils
 

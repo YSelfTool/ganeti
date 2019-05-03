@@ -42,7 +42,7 @@ import logging
 import optparse
 import time
 import functools
-from cStringIO import StringIO
+from io import StringIO
 
 from ganeti import cli
 from ganeti import constants
@@ -71,7 +71,7 @@ DOWNGRADE_MINOR = 16
 # (mapping differing old LD_* constants to new DT_* constants)
 DEV_TYPE_OLD_NEW = {"lvm": constants.DT_PLAIN, "drbd8": constants.DT_DRBD8}
 # (mapping differing new DT_* constants to old LD_* constants)
-DEV_TYPE_NEW_OLD = dict((v, k) for k, v in DEV_TYPE_OLD_NEW.items())
+DEV_TYPE_NEW_OLD = dict((v, k) for k, v in list(DEV_TYPE_OLD_NEW.items()))
 
 
 class Error(Exception):
@@ -116,7 +116,7 @@ def OrFail(description=None):
       try:
         f(self)
       except BaseException as e:
-        msg = "%s failed:\n%s" % (description or f.func_name, e)
+        msg = "%s failed:\n%s" % (description or f.__name__, e)
         logging.exception(msg)
         self.config_data = safety
         self.errors.append(msg)
@@ -273,8 +273,8 @@ class CfgUpgrade(object):
   @staticmethod
   def _FillIPolicySpecs(default_ipolicy, ipolicy):
     if "minmax" in ipolicy:
-      for (key, spec) in ipolicy["minmax"][0].items():
-        for (par, val) in default_ipolicy["minmax"][0][key].items():
+      for (key, spec) in list(ipolicy["minmax"][0].items()):
+        for (par, val) in list(default_ipolicy["minmax"][0][key].items()):
           if par not in spec:
             spec[par] = val
 
@@ -355,7 +355,7 @@ class CfgUpgrade(object):
   @OrFail("Upgrading groups")
   def UpgradeGroups(self):
     cl_ipolicy = self.config_data["cluster"].get("ipolicy")
-    for group in self.config_data["nodegroups"].values():
+    for group in list(self.config_data["nodegroups"].values()):
       networks = group.get("networks", None)
       if not networks:
         group["networks"] = {}
@@ -377,7 +377,7 @@ class CfgUpgrade(object):
     ndparams = cluster.get("ndparams")
     if ndparams is not None and ndparams.get("exclusive_storage"):
       ret = True
-    for group in self.config_data["nodegroups"].values():
+    for group in list(self.config_data["nodegroups"].values()):
       ndparams = group.get("ndparams")
       if ndparams is not None and ndparams.get("exclusive_storage"):
         ret = True
@@ -412,8 +412,8 @@ class CfgUpgrade(object):
       if name:
         uuid = network2uuid.get(name, None)
         if uuid:
-          print("NIC with network name %s found."
-                " Substituting with uuid %s." % (name, uuid))
+          print(("NIC with network name %s found."
+                " Substituting with uuid %s." % (name, uuid)))
           nic["network"] = uuid
 
   @classmethod
@@ -456,12 +456,12 @@ class CfgUpgrade(object):
     """Upgrades the instances' configuration."""
 
     network2uuid = dict((n["name"], n["uuid"])
-                        for n in self.config_data["networks"].values())
+                        for n in list(self.config_data["networks"].values()))
     if "instances" not in self.config_data:
       raise Error("Can't find the 'instances' key in the configuration!")
 
     missing_spindles = False
-    for instance, iobj in self.config_data["instances"].items():
+    for instance, iobj in list(self.config_data["instances"].items()):
       self._ConvertNicNameToUuid(iobj, network2uuid)
       if self._ConvertDiskAndCheckMissingSpindles(iobj, instance):
         missing_spindles = True
@@ -567,7 +567,7 @@ class CfgUpgrade(object):
 
     nodes_by_old_key = {}
     nodes_by_new_key = {}
-    for (_, node) in config_data["nodes"].items():
+    for (_, node) in list(config_data["nodes"].items()):
       nodes_by_old_key[node[old_key_field]] = node
       nodes_by_new_key[node[new_key_field]] = node
 
@@ -578,19 +578,19 @@ class CfgUpgrade(object):
                                                   cluster["master_node"],
                                                   new_key_field)
 
-    for inst in config_data["instances"].values():
+    for inst in list(config_data["instances"].values()):
       inst["primary_node"] = self.GetNewNodeIndex(nodes_by_old_key,
                                                   inst["primary_node"],
                                                   new_key_field)
 
-    for disk in config_data["disks"].values():
+    for disk in list(config_data["disks"].values()):
       ChangeDiskNodeIndices(disk)
 
   @staticmethod
   def ChangeInstanceIndices(config_data, old_key_field, new_key_field):
     insts_by_old_key = {}
     insts_by_new_key = {}
-    for (_, inst) in config_data["instances"].items():
+    for (_, inst) in list(config_data["instances"].items()):
       insts_by_old_key[inst[old_key_field]] = inst
       insts_by_new_key[inst[new_key_field]] = inst
 
@@ -623,7 +623,7 @@ class CfgUpgrade(object):
       return
 
     self.config_data["disks"] = dict()
-    for iobj in self.config_data["instances"].values():
+    for iobj in list(self.config_data["instances"].values()):
       disk_uuids = []
       for disk in iobj["disks"]:
         duuid = disk["uuid"]
@@ -640,7 +640,7 @@ class CfgUpgrade(object):
     if "instances" not in self.config_data:
       raise Error("Can't find the 'instances' dictionary in the configuration.")
     instances = self.config_data["instances"]
-    for inst in instances.values():
+    for inst in list(instances.values()):
       if "disk_template" in inst:
         del inst["disk_template"]
 
@@ -678,7 +678,7 @@ class CfgUpgrade(object):
     consist only of the primary instance node.
     """
     disks = self.config_data["disks"]
-    for instance in self.config_data["instances"].itervalues():
+    for instance in self.config_data["instances"].values():
       # Get all disk nodes for an instance
       instance_node = set([instance["primary_node"]])
       disk_nodes = set()

@@ -105,7 +105,7 @@ def VerifyIpolicy(owner, ipolicy, iscluster, callback):
     objects.InstancePolicy.CheckParameterSyntax(ipolicy, iscluster)
   except errors.ConfigurationError as err:
     callback("%s has invalid instance policy: %s" % (owner, err))
-  for key, value in ipolicy.items():
+  for key, value in list(ipolicy.items()):
     if key == constants.ISPECS_MINMAX:
       for i, val in enumerate(value):
         VerifyIspecs(owner, "ipolicy/%s[%s]" % (key, i), val, callback)
@@ -147,7 +147,7 @@ def VerifyIspecs(owner, parentkey, params, callback):
   @param callback: will be called if there is an error
 
   """
-  for (key, value) in params.items():
+  for (key, value) in list(params.items()):
     fullkey = "/".join([parentkey, key])
     VerifyType(owner, fullkey, value, constants.ISPECS_PARAMETER_TYPES,
                callback)

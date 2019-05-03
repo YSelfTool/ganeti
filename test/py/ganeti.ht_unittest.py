@@ -35,7 +35,7 @@ import unittest
 from ganeti import constants
 from ganeti import ht
 
-import testutils
+from . import testutils
 
 
 class TestTypeChecks(unittest.TestCase):
@@ -43,7 +43,7 @@ class TestTypeChecks(unittest.TestCase):
     self.assertFalse(ht.TNotNone(None))
     self.assertTrue(ht.TNone(None))
 
-    for val in [0, True, "", "Hello World", [], range(5)]:
+    for val in [0, True, "", "Hello World", [], list(range(5))]:
       self.assertTrue(ht.TNotNone(val))
       self.assertFalse(ht.TNone(val))
 
@@ -102,14 +102,14 @@ class TestTypeChecks(unittest.TestCase):
 
   def testString(self):
     for val in ["", "abc", "Hello World", "123",
-                u"", u"\u272C", u"abc"]:
+                "", "\u272C", "abc"]:
       self.assertTrue(ht.TString(val))
 
     for val in [False, True, None, [], 0, 1, 5, -193, 93.8582]:
       self.assertFalse(ht.TString(val))
 
   def testElemOf(self):
-    fn = ht.TElemOf(range(10))
+    fn = ht.TElemOf(list(range(10)))
     self.assertTrue(fn(0))
     self.assertTrue(fn(3))
     self.assertTrue(fn(9))
@@ -127,14 +127,14 @@ class TestTypeChecks(unittest.TestCase):
     self.assertFalse(fn("e"))
 
   def testList(self):
-    for val in [[], range(10), ["Hello", "World", "!"]]:
+    for val in [[], list(range(10)), ["Hello", "World", "!"]]:
       self.assertTrue(ht.TList(val))
 
     for val in [False, True, None, {}, 0, 1, 5, -193, 93.8582]:
       self.assertFalse(ht.TList(val))
 
   def testDict(self):
-    for val in [{}, dict.fromkeys(range(10)), {"Hello": [], "World": "!"}]:
+    for val in [{}, dict.fromkeys(list(range(10))), {"Hello": [], "World": "!"}]:
       self.assertTrue(ht.TDict(val))
 
     for val in [False, True, None, [], 0, 1, 5, -193, 93.8582]:
@@ -142,9 +142,9 @@ class TestTypeChecks(unittest.TestCase):
 
   def testIsLength(self):
     fn = ht.TIsLength(10)
-    self.assertTrue(fn(range(10)))
-    self.assertFalse(fn(range(1)))
-    self.assertFalse(fn(range(100)))
+    self.assertTrue(fn(list(range(10))))
+    self.assertFalse(fn(list(range(1))))
+    self.assertFalse(fn(list(range(100))))
 
   def testAnd(self):
     fn = ht.TAnd(ht.TNotNone, ht.TString)
@@ -194,7 +194,7 @@ class TestTypeChecks(unittest.TestCase):
     self.assertTrue(fn(["Hello", "World"]))
     self.assertFalse(fn(None))
     self.assertFalse(fn(False))
-    self.assertFalse(fn(range(3)))
+    self.assertFalse(fn(list(range(3))))
     self.assertFalse(fn(["x", None]))
 
   def testDictOf(self):
@@ -229,7 +229,7 @@ class TestTypeChecks(unittest.TestCase):
     fn = ht.TStrictDict(False, True, { "a": ht.TInt, "b": ht.TList, })
     self.assertTrue(fn({}))
     self.assertTrue(fn({"a": 123, }))
-    self.assertTrue(fn({"b": range(4), }))
+    self.assertTrue(fn({"b": list(range(4)), }))
     self.assertFalse(fn({"b": 123, }))
 
     self.assertFalse(fn({"foo": {}, }))

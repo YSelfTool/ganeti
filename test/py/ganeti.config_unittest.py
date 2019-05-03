@@ -48,10 +48,10 @@ from ganeti import serializer
 
 from ganeti.config import TemporaryReservationManager
 
-import testutils
-import mocks
+from . import testutils
+from . import mocks
 import mock
-from testutils.config_mock import ConfigMock, _UpdateIvNames
+from .testutils.config_mock import ConfigMock, _UpdateIvNames
 
 
 def _StubGetEntResolver():
@@ -136,8 +136,8 @@ class TestConfigRunner(unittest.TestCase):
   def testInit(self):
     """Test initialize the config file"""
     cfg = self._get_object()
-    self.failUnlessEqual(1, len(cfg.GetNodeList()))
-    self.failUnlessEqual(0, len(cfg.GetInstanceList()))
+    self.assertEqual(1, len(cfg.GetNodeList()))
+    self.assertEqual(0, len(cfg.GetInstanceList()))
 
   def _GenericNodesCheck(self, iobj, all_nodes, secondary_nodes):
     for i in [all_nodes, secondary_nodes]:
@@ -417,7 +417,7 @@ class TestConfigRunner(unittest.TestCase):
     cfg = self._get_object()
     group = objects.NodeGroup(name="test", members=[])
     cfg.AddNodeGroup(group, "my-job")
-    self.assert_(utils.UUID_RE.match(group.uuid))
+    self.assertTrue(utils.UUID_RE.match(group.uuid))
     self.assertEqual(constants.ALLOC_POLICY_PREFERRED, group.alloc_policy)
 
   def testAddGroupPreservesFields(self):
@@ -433,8 +433,8 @@ class TestConfigRunner(unittest.TestCase):
                               serial_no=17, ctime=123, mtime=456)
     cfg.AddNodeGroup(group, "my-job")
     self.assertEqual(1, group.serial_no)
-    self.assert_(group.ctime > 1200000000)
-    self.assert_(group.mtime > 1200000000)
+    self.assertTrue(group.ctime > 1200000000)
+    self.assertTrue(group.mtime > 1200000000)
 
   def testAddGroupCanSkipUUIDCheck(self):
     cfg = self._get_object()
@@ -462,7 +462,7 @@ class TestConfigRunner(unittest.TestCase):
                              uuid="798d0de3-680f-4a0e-b29a-0f54f693b3f1")
     grp2_serial = 1
     cfg.AddNodeGroup(grp2, "job")
-    self.assertEqual(set(ng.name for ng in cfg.GetAllNodeGroupsInfo().values()),
+    self.assertEqual(set(ng.name for ng in list(cfg.GetAllNodeGroupsInfo().values())),
                      set(["grp1", "grp2", constants.INITIAL_NODE_GROUP_NAME]))
 
     # No-op
@@ -577,7 +577,7 @@ class TestConfigRunner(unittest.TestCase):
 
     self.assertTrue("a=A" in result)
     lines = [line for line in result.split('\n') if line != '']
-    self.assertEqual(len(hvparams.keys()), len(lines))
+    self.assertEqual(len(list(hvparams.keys())), len(lines))
 
   def testExtendByAllHvparamsStrings(self):
     all_hvparams = {constants.HT_XEN_PVM: "foo"}

@@ -43,7 +43,7 @@ from ganeti import utils
 from ganeti import compat
 from ganeti import errors
 
-import testutils
+from . import testutils
 
 
 class TestWriteFile(testutils.GanetiTestCase):

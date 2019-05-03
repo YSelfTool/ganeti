@@ -35,7 +35,7 @@ conditions.
 
 import uuid
 
-from qa_utils import AssertCommand
+from .qa_utils import AssertCommand
 
 # String used as a comment for produced `iptables` results
 IPTABLES_COMMENT_MARKER = "ganeti_qa_script"

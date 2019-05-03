@@ -288,7 +288,7 @@ class Private(object):
   def __getnewargs__(self):
     return tuple()
 
-  def __nonzero__(self):
+  def __bool__(self):
     return bool(self._item)
 
   # Get in the way of Pickle by implementing __slots__ but not __getstate__
@@ -334,10 +334,10 @@ class PrivateDict(dict):
     if other is None:
       pass
     elif hasattr(other, 'iteritems'):  # iteritems saves memory and lookups
-      for k, v in other.iteritems():
+      for k, v in other.items():
         self[k] = v
     elif hasattr(other, 'keys'):
-      for k in other.keys():
+      for k in list(other.keys()):
         self[k] = other[k]
     else:
       for k, v in other:

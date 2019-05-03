@@ -740,7 +740,7 @@ def _GetNamedNodeInfo(names, fn):
   if names is None:
     return None
   else:
-    return map(fn, names)
+    return list(map(fn, names))
 
 
 def GetNodeInfo(storage_units, hv_specs):
@@ -1049,7 +1049,7 @@ def _VerifySshSetup(node_status_list, my_name, ssh_key_type,
       result.append("There is more than one key for node %s in the node public"
                     " key file %s." % (my_name, node_pub_key_path))
   else:
-    if len(pub_keys.keys()) > 0:
+    if len(list(pub_keys.keys())) > 0:
       result.append("The public key file %s is not empty, although"
                     " the node is not a potential master candidate." %
                     node_pub_key_path)
@@ -1104,7 +1104,7 @@ def _VerifySshClutter(node_status_list, my_name):
           " due to an unsuccessful operation which cluttered up the" \
           " 'authorized_keys' file. We recommend to clean this up manually. " \
           % my_name
-    for host, occ in multiple_occurrences.items():
+    for host, occ in list(multiple_occurrences.items()):
       msg += "Entry for '%s' in lines %s. " % (host, utils.CommaJoin(occ))
     result.append(msg)
 
@@ -1220,11 +1220,11 @@ def VerifyNode(what, cluster_name, all_hvparams):
   _VerifyHvparams(what, vm_capable, result)
 
   if constants.NV_FILELIST in what:
-    fingerprints = utils.FingerprintFiles(map(vcluster.LocalizeVirtualPath,
-                                              what[constants.NV_FILELIST]))
+    fingerprints = utils.FingerprintFiles(list(map(vcluster.LocalizeVirtualPath,
+                                              what[constants.NV_FILELIST])))
     result[constants.NV_FILELIST] = \
       dict((vcluster.MakeVirtualPath(key), value)
-           for (key, value) in fingerprints.items())
+           for (key, value) in list(fingerprints.items()))
 
   if constants.NV_CLIENT_CERT in what:
     result[constants.NV_CLIENT_CERT] = _VerifyClientCertificate()
@@ -1296,7 +1296,7 @@ def VerifyNode(what, cluster_name, all_hvparams):
 
   if constants.NV_LVLIST in what and vm_capable:
     try:
-      val = GetVolumeList(utils.ListVolumeGroups().keys())
+      val = GetVolumeList(list(utils.ListVolumeGroups().keys()))
     except RPCFail as err:
       val = str(err)
     result[constants.NV_LVLIST] = val
@@ -1316,7 +1316,7 @@ def VerifyNode(what, cluster_name, all_hvparams):
       for pvi in val:
         # Avoid sending useless data on the wire
         pvi.lv_list = []
-    result[constants.NV_PVLIST] = map(objects.LvmPvInfo.ToDict, val)
+    result[constants.NV_PVLIST] = list(map(objects.LvmPvInfo.ToDict, val))
 
   if constants.NV_VERSION in what:
     result[constants.NV_VERSION] = (constants.PROTOCOL_VERSION,
@@ -1858,7 +1858,7 @@ def RemoveNodeSshKeyBulk(node_list,
             node_info.uuid for node_info in node_list
             if node_info.from_authorized_keys]
         keys_to_remove_from_authorized_keys = dict([
-            (uuid, keys) for (uuid, keys) in all_keys_to_remove.items()
+            (uuid, keys) for (uuid, keys) in list(all_keys_to_remove.items())
             if uuid in nodes_remove_from_authorized_keys])
         base_data[constants.SSHS_SSH_AUTHORIZED_KEYS] = \
           (constants.SSHS_REMOVE, keys_to_remove_from_authorized_keys)
@@ -1877,7 +1877,7 @@ def RemoveNodeSshKeyBulk(node_list,
             node_info.uuid for node_info in node_list
             if node_info.from_public_keys]
         keys_to_remove_from_public_keys = dict([
-            (uuid, keys) for (uuid, keys) in all_keys_to_remove.items()
+            (uuid, keys) for (uuid, keys) in list(all_keys_to_remove.items())
             if uuid in nodes_remove_from_public_keys])
         pot_mc_data[constants.SSHS_SSH_PUBLIC_KEYS] = \
           (constants.SSHS_REMOVE, keys_to_remove_from_public_keys)
@@ -2051,7 +2051,7 @@ def _GetOldMasterKeys(master_node_uuid, pub_key_file):
 
 def _GetNewMasterKey(root_keyfiles, master_node_uuid):
   new_master_keys = []
-  for (_, (_, public_key_file)) in root_keyfiles.items():
+  for (_, (_, public_key_file)) in list(root_keyfiles.items()):
     public_key_dir = os.path.dirname(public_key_file)
     public_key_file_tmp_filename = \
         os.path.splitext(os.path.basename(public_key_file))[0] \
@@ -2069,7 +2069,7 @@ def _GetNewMasterKey(root_keyfiles, master_node_uuid):
 
 def _ReplaceMasterKeyOnMaster(root_keyfiles):
   number_of_moves = 0
-  for (_, (private_key_file, public_key_file)) in root_keyfiles.items():
+  for (_, (private_key_file, public_key_file)) in list(root_keyfiles.items()):
     key_dir = os.path.dirname(public_key_file)
     private_key_file_tmp = \
       os.path.basename(private_key_file) + constants.SSHS_MASTER_SUFFIX
@@ -2144,7 +2144,7 @@ def RenewSshKeys(node_uuids, node_names, master_candidate_uuids,
   (_, new_pub_keyfile) = root_keyfiles[new_key_type]
   old_master_key = utils.ReadFile(old_pub_keyfile)
 
-  node_uuid_name_map = zip(node_uuids, node_names)
+  node_uuid_name_map = list(zip(node_uuids, node_names))
 
   master_node_name = ssconf_store.GetMasterNode()
   master_node_uuid = _GetMasterNodeUUID(node_uuid_name_map, master_node_name)
@@ -3964,7 +3964,7 @@ def UploadFile(file_name, data, mode, uid, gid, atime, mtime):
 
   raw_data = _Decompress(data)
 
-  if not (isinstance(uid, basestring) and isinstance(gid, basestring)):
+  if not (isinstance(uid, str) and isinstance(gid, str)):
     _Fail("Invalid username/groupname type")
 
   getents = runtime.GetEnts()
@@ -4134,7 +4134,7 @@ def _TryOSFromDisk(name, base_dir=None):
   else:
     del os_files[constants.OS_SCRIPT_VERIFY]
 
-  for (filename, required) in os_files.items():
+  for (filename, required) in list(os_files.items()):
     os_files[filename] = utils.PathJoin(os_dir, filename)
 
     try:
@@ -4261,7 +4261,7 @@ def OSCoreEnv(os_name, inst_os, os_params, debug=0):
   result["OS_VARIANT"] = variant
 
   # OS params
-  for pname, pvalue in os_params.items():
+  for pname, pvalue in list(os_params.items()):
     result["OSP_%s" % pname.upper().replace("-", "_")] = pvalue
 
   # Set a default path otherwise programs called by OS scripts (or
@@ -4342,7 +4342,7 @@ def OSEnvironment(instance, inst_os, debug=0):
 
   # HV/BE params
   for source, kind in [(instance.beparams, "BE"), (instance.hvparams, "HV")]:
-    for key, value in source.items():
+    for key, value in list(source.items()):
       result["INSTANCE_%s_%s" % (kind, key)] = str(value)
 
   return result
@@ -4563,20 +4563,20 @@ def FinalizeExport(instance, snap_disks):
   # New-style hypervisor/backend parameters
 
   config.add_section(constants.INISECT_HYP)
-  for name, value in instance.hvparams.items():
+  for name, value in list(instance.hvparams.items()):
     if name not in constants.HVC_GLOBALS:
       config.set(constants.INISECT_HYP, name, str(value))
 
   config.add_section(constants.INISECT_BEP)
-  for name, value in instance.beparams.items():
+  for name, value in list(instance.beparams.items()):
     config.set(constants.INISECT_BEP, name, str(value))
 
   config.add_section(constants.INISECT_OSP)
-  for name, value in instance.osparams.items():
+  for name, value in list(instance.osparams.items()):
     config.set(constants.INISECT_OSP, name, str(value))
 
   config.add_section(constants.INISECT_OSP_PRIVATE)
-  for name, value in instance.osparams_private.items():
+  for name, value in list(instance.osparams_private.items()):
     config.set(constants.INISECT_OSP_PRIVATE, name, str(value.Get()))
 
   utils.WriteFile(utils.PathJoin(destdir, constants.EXPORT_CONF_FILE),
@@ -4997,7 +4997,7 @@ def ValidateOS(required, osname, checks, osparams, force_variant):
     return True
 
   if constants.OS_VALIDATE_PARAMETERS in checks:
-    _CheckOSPList(tbv, osparams.keys())
+    _CheckOSPList(tbv, list(osparams.keys()))
 
   validate_env = OSCoreEnv(osname, tbv, osparams)
   result = utils.RunCmd([tbv.verify_script] + checks, env=validate_env,
@@ -5212,7 +5212,7 @@ def _GetImportExportIoCommand(instance, mode, ieio, ieargs):
   elif ieio == constants.IEIO_SCRIPT:
     (disk, disk_index, ) = ieargs
 
-    assert isinstance(disk_index, (int, long))
+    assert isinstance(disk_index, int)
 
     inst_os = OSFromDisk(instance.os)
     env = OSEnvironment(instance, inst_os)

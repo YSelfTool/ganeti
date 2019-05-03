@@ -191,7 +191,7 @@ class LUTestDelay(NoHooksLU):
     """
     if self.op.on_node_uuids:
       result = self.rpc.call_test_delay(self.op.on_node_uuids, self.op.duration)
-      for node_uuid, node_result in result.items():
+      for node_uuid, node_result in list(result.items()):
         node_result.Raise("Failure during rpc call to node %s" %
                           self.cfg.GetNodeName(node_uuid))
     else:

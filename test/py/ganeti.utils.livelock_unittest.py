@@ -38,7 +38,7 @@ import unittest
 from ganeti.utils.livelock import LiveLock
 from ganeti import pathutils
 
-import testutils
+from . import testutils
 
 
 class TestLiveLock(unittest.TestCase):

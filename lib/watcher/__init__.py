@@ -239,11 +239,11 @@ def _CheckInstances(cl, notepad, instances, locks):
   """Make a pass over the list of instances, restarting downed ones.
 
   """
-  notepad.MaintainInstanceList(instances.keys())
+  notepad.MaintainInstanceList(list(instances.keys()))
 
   started = set()
 
-  for inst in instances.values():
+  for inst in list(instances.values()):
     if inst.NeedsCleanup():
       _CleanupInstance(cl, notepad, inst, locks)
     elif inst.status in BAD_STATES:
@@ -286,7 +286,7 @@ def _CheckDisks(cl, notepad, nodes, instances, started):
   """
   check_nodes = []
 
-  for node in nodes.values():
+  for node in list(nodes.values()):
     old = notepad.GetNodeBootID(node.name)
     if not node.bootid:
       # Bad node, not returning a boot id
@@ -586,7 +586,7 @@ def _MergeInstanceStatus(filename, pergroup_filename, groups):
 
   # Select last update based on file mtime
   inststatus = [(instance_name, sorted(status, reverse=True)[0][1])
-                for (instance_name, status) in data.items()]
+                for (instance_name, status) in list(data.items())]
 
   # Write the global status file. Don't touch file after it's been
   # updated--there is no lock anymore.
@@ -771,7 +771,7 @@ def _GetGroupData(qcl, uuid):
       ht.TListOf(ht.TListOf(ht.TIsLength(2)))(d) for d in results_data)
 
   # Extract values ignoring result status
-  (raw_instances, raw_nodes) = [[map(compat.snd, values)
+  (raw_instances, raw_nodes) = [[list(map(compat.snd, values))
                                  for values in res]
                                 for res in results_data]
 
@@ -858,7 +858,7 @@ def _GroupWatcher(opts):
     (nodes, instances, locks) = _GetGroupData(client, group_uuid)
 
     # Update per-group instance status file
-    _UpdateInstanceStatus(inst_status_path, instances.values())
+    _UpdateInstanceStatus(inst_status_path, list(instances.values()))
 
     _MergeInstanceStatus(pathutils.INSTANCE_STATUS_FILE,
                          pathutils.WATCHER_GROUP_INSTANCE_STATUS_FILE,
@@ -869,7 +869,7 @@ def _GroupWatcher(opts):
 
     # Check if the nodegroup only has ext storage type
     only_ext = compat.all(i.disk_template == constants.DT_EXT
-                          for i in instances.values())
+                          for i in list(instances.values()))
 
     # We skip current NodeGroup verification if there are only external storage
     # devices. Currently we provide an interface for external storage provider

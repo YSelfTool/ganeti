@@ -94,9 +94,9 @@ def _TcpPingMock(cfg, mock_fct, target, port, timeout=None,
     return True
   if cfg.GetNodeInfoByName(target) is not None:
     return True
-  if target in [node.primary_ip for node in cfg.GetAllNodesInfo().values()]:
+  if target in [node.primary_ip for node in list(cfg.GetAllNodesInfo().values())]:
     return True
-  if target in [node.secondary_ip for node in cfg.GetAllNodesInfo().values()]:
+  if target in [node.secondary_ip for node in list(cfg.GetAllNodesInfo().values())]:
     return True
   return False
 

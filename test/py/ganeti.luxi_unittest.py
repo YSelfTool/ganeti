@@ -40,4 +40,4 @@ from ganeti import errors
 from ganeti import luxi
 from ganeti import serializer
 
-import testutils
+from . import testutils

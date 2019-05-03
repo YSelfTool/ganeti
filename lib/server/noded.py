@@ -35,7 +35,7 @@
 # C0103: Functions in this module need to have a given name structure,
 # and the name of the daemon doesn't match
 
-from __future__ import print_function
+
 
 import os
 import sys
@@ -1111,7 +1111,7 @@ class NodeRequestHandler(http.server.HttpServerHandler):
     """
     name, idata, ial_params_dict = params
     ial_params = []
-    for ial_param in ial_params_dict.items():
+    for ial_param in list(ial_params_dict.items()):
       if ial_param[1] is not None:
         ial_params.append("--" + ial_param[0] + "=" + ial_param[1])
       else:
@@ -1365,7 +1365,7 @@ def SSLVerifyPeer(conn, cert, errnum, errdepth, ok):
       candidate_certs = {
         constants.CRYPTO_BOOTSTRAP: utils.GetCertificateDigest(
           cert_filename=pathutils.NODED_CERT_FILE)}
-    match = cert.digest("sha1") in candidate_certs.values()
+    match = cert.digest("sha1") in list(candidate_certs.values())
     if not match:
       logging.debug("Received certificate which is not a certificate of a"
                     " master candidate. Certificate digest: %s. List of master"

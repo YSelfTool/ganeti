@@ -48,7 +48,7 @@ import threading
 import time
 
 try:
-    from urllib import urlencode
+    from urllib.parse import urlencode
 except ImportError:
     from urllib.parse import urlencode
 
@@ -56,7 +56,7 @@ import pycurl
 import simplejson
 
 try:
-  from cStringIO import StringIO
+  from io import StringIO
 except ImportError:
   from io import StringIO
 
@@ -806,7 +806,7 @@ class GanetiRapiClient(object): # pylint: disable=R0904
       raise GanetiApiError("Required fields can not be specified as"
                            " keywords: %s" % ", ".join(conflicts))
 
-    base.update((key, value) for key, value in kwargs.items()
+    base.update((key, value) for key, value in list(kwargs.items())
                 if key != "dry_run")
 
   def InstanceAllocation(self, mode, name, disk_template, disks, nics,

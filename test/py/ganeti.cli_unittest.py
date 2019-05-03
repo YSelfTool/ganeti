@@ -31,11 +31,11 @@
 """Script for unittesting the cli module"""
 
 import copy
-import testutils
+from . import testutils
 import time
 import unittest
 import yaml
-from cStringIO import StringIO
+from io import StringIO
 
 from ganeti import constants
 from ganeti import cli
@@ -62,7 +62,7 @@ class TestParseTimespec(unittest.TestCase):
       ("61m", 61 * 60),
       ]
     for value, expected_result in test_data:
-      self.failUnlessEqual(cli.ParseTimespec(value), expected_result)
+      self.assertEqual(cli.ParseTimespec(value), expected_result)
 
   def testInvalidTime(self):
     """Test invalid timespecs"""
@@ -73,7 +73,7 @@ class TestParseTimespec(unittest.TestCase):
       "s",
       ]
     for value in test_data:
-      self.failUnlessRaises(OpPrereqError, cli.ParseTimespec, value)
+      self.assertRaises(OpPrereqError, cli.ParseTimespec, value)
 
 
 class TestToStream(unittest.TestCase):
@@ -88,18 +88,18 @@ class TestToStream(unittest.TestCase):
                  ]:
       buf = StringIO()
       cli._ToStream(buf, data)
-      self.failUnlessEqual(buf.getvalue(), data + "\n")
+      self.assertEqual(buf.getvalue(), data + "\n")
 
   def testParams(self):
       buf = StringIO()
       cli._ToStream(buf, "foo %s", 1)
-      self.failUnlessEqual(buf.getvalue(), "foo 1\n")
+      self.assertEqual(buf.getvalue(), "foo 1\n")
       buf = StringIO()
       cli._ToStream(buf, "foo %s", (15,16))
-      self.failUnlessEqual(buf.getvalue(), "foo (15, 16)\n")
+      self.assertEqual(buf.getvalue(), "foo (15, 16)\n")
       buf = StringIO()
       cli._ToStream(buf, "foo %s %s", "a", "b")
-      self.failUnlessEqual(buf.getvalue(), "foo a b\n")
+      self.assertEqual(buf.getvalue(), "foo a b\n")
 
 
 class TestGenerateTable(unittest.TestCase):
@@ -295,7 +295,7 @@ class TestFormatQueryResult(unittest.TestCase):
     response = objects.QueryResponse(fields=fields, data=[
       [(constants.RS_NORMAL, "x"), (constants.RS_NORMAL, ["a", "b", "c"]),
        (constants.RS_NORMAL, 1234)],
-      [(constants.RS_NORMAL, "y"), (constants.RS_NORMAL, range(10)),
+      [(constants.RS_NORMAL, "y"), (constants.RS_NORMAL, list(range(10))),
        (constants.RS_NORMAL, 1291746295)],
       ])
 
@@ -542,7 +542,7 @@ class _MockJobPollCb(cli.JobPollCbBase, cli.JobPollReportCbBase):
 
   def ReportNotChanged(self, job_id, status):
     self.tc.assertEqual(job_id, self.job_id)
-    self.tc.assert_(self._expect_notchanged)
+    self.tc.assertTrue(self._expect_notchanged)
     self._expect_notchanged = False
 
 
@@ -696,7 +696,7 @@ class TestFormatLogMessage(unittest.TestCase):
     self.assertRaises(TypeError, cli.FormatLogMessage,
                       constants.ELOG_MESSAGE, [1, 2, 3])
 
-    self.assert_(cli.FormatLogMessage("some other type", (1, 2, 3)))
+    self.assertTrue(cli.FormatLogMessage("some other type", (1, 2, 3)))
 
 
 class TestParseFields(unittest.TestCase):
@@ -1005,11 +1005,11 @@ class TestQftNames(unittest.TestCase):
     self.assertEqual(frozenset(cli._QFT_NAMES), constants.QFT_ALL)
 
   def testUnique(self):
-    lcnames = [s.lower() for s in cli._QFT_NAMES.values()]
+    lcnames = [s.lower() for s in list(cli._QFT_NAMES.values())]
     self.assertFalse(utils.FindDuplicates(lcnames))
 
   def testUppercase(self):
-    for name in cli._QFT_NAMES.values():
+    for name in list(cli._QFT_NAMES.values()):
       self.assertEqual(name[0], name[0].upper())
 
 
@@ -1160,8 +1160,8 @@ class TestFormatPolicyInfo(unittest.TestCase):
       self.assertTrue(isinstance(cluster, dict))
       if skip is None:
         skip = frozenset()
-      self.assertEqual(frozenset(cluster.keys()).difference(skip),
-                       frozenset(group.keys()))
+      self.assertEqual(frozenset(list(cluster.keys())).difference(skip),
+                       frozenset(list(group.keys())))
       for key in group:
         self._CompareClusterGroupItems(cluster[key], group[key])
     elif isinstance(group, list):
@@ -1170,7 +1170,7 @@ class TestFormatPolicyInfo(unittest.TestCase):
       for (cval, gval) in zip(cluster, group):
         self._CompareClusterGroupItems(cval, gval)
     else:
-      self.assertTrue(isinstance(group, basestring))
+      self.assertTrue(isinstance(group, str))
       self.assertEqual("default (%s)" % cluster, group)
 
   def _TestClusterVsGroup(self, policy):
@@ -1194,9 +1194,9 @@ class TestCreateIPolicyFromOpts(unittest.TestCase):
     self.assertTrue(type(default_pol) is dict)
     self.assertTrue(type(diff_pol) is dict)
     self.assertTrue(type(merged_pol) is dict)
-    self.assertEqual(frozenset(default_pol.keys()),
-                     frozenset(merged_pol.keys()))
-    for (key, val) in merged_pol.items():
+    self.assertEqual(frozenset(list(default_pol.keys())),
+                     frozenset(list(merged_pol.keys())))
+    for (key, val) in list(merged_pol.items()):
       if key in diff_pol:
         if type(val) is dict:
           self._RecursiveCheckMergedDicts(default_pol[key], diff_pol[key], val)
@@ -1441,7 +1441,7 @@ class TestCreateIPolicyFromOpts(unittest.TestCase):
   @staticmethod
   def _ConvertSpecToStrings(spec):
     ret = {}
-    for (par, val) in spec.items():
+    for (par, val) in list(spec.items()):
       ret[par] = str(val)
     return ret
 
@@ -1460,7 +1460,7 @@ class TestCreateIPolicyFromOpts(unittest.TestCase):
       minmax_ispecs = []
       for exp_mm_pair in exp_minmax:
         mmpair = {}
-        for (key, spec) in exp_mm_pair.items():
+        for (key, spec) in list(exp_mm_pair.items()):
           mmpair[key] = self._ConvertSpecToStrings(spec)
         minmax_ispecs.append(mmpair)
       exp_ipol[constants.ISPECS_MINMAX] = exp_minmax
@@ -1476,7 +1476,7 @@ class TestCreateIPolicyFromOpts(unittest.TestCase):
                                  group_ipolicy, fill_all)
     if minmax_ispecs:
       for mmpair in minmax_ispecs:
-        for (key, spec) in mmpair.items():
+        for (key, spec) in list(mmpair.items()):
           for par in [constants.ISPEC_MEM_SIZE, constants.ISPEC_DISK_SIZE]:
             if par in spec:
               spec[par] += "m"

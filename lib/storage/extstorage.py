@@ -471,7 +471,7 @@ def ExtStorageFromDisk(name, base_dir=None):
 
   es_files[constants.ES_PARAMETERS_FILE] = True
 
-  for (filename, required) in es_files.items():
+  for (filename, required) in list(es_files.items()):
     try:
       # Here we actually fill the dict with the ablsolute path name for each
       # script or None, depending on the corresponding checks. See the
@@ -543,7 +543,7 @@ def _ExtStorageEnvironment(unique_id, ext_params,
   result["VOL_NAME"] = vol_name
 
   # EXT params
-  for pname, pvalue in ext_params.items():
+  for pname, pvalue in list(ext_params.items()):
     result["EXTP_%s" % pname.upper()] = str(pvalue)
 
   if size is not None:

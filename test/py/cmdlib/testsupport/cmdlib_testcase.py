@@ -377,7 +377,7 @@ class CmdlibTestCase(testutils.GanetiTestCase):
     """
     state = opcode.__getstate__()
 
-    for key, value in kwargs.items():
+    for key, value in list(kwargs.items()):
       if value == self.REMOVE and key in state:
         del state[key]
       else:
@@ -386,7 +386,7 @@ class CmdlibTestCase(testutils.GanetiTestCase):
     return opcodes.OpCode.LoadOpCode(state)
 
   def _GetDefaultGroup(self):
-    for group in self.cfg.GetAllNodeGroupsInfo().values():
+    for group in list(self.cfg.GetAllNodeGroupsInfo().values()):
       if group.name == "default":
         return group
     assert False

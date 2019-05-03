@@ -142,7 +142,7 @@ class LUTagsSearch(NoHooksLU):
   @staticmethod
   def _ExtendTagTargets(targets, object_type_name, object_info_dict):
     return targets.extend(("/%s/%s" % (object_type_name, o.name), o)
-                          for o in object_info_dict.values())
+                          for o in list(object_info_dict.values()))
 
   def Exec(self, feedback_fn):
     """Returns the tag list.

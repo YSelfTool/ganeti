@@ -32,7 +32,7 @@
 
 """
 
-from __future__ import print_function
+
 
 import contextlib
 import copy
@@ -59,11 +59,11 @@ from ganeti import ht
 from ganeti import pathutils
 from ganeti import vcluster
 
-import colors
-import qa_config
-import qa_error
+from . import colors
+from . import qa_config
+from . import qa_error
 
-from qa_logging import FormatInfo
+from .qa_logging import FormatInfo
 
 
 _MULTIPLEXERS = {}
@@ -79,10 +79,10 @@ _RETRIES = 3
 
 
 (INST_DOWN,
- INST_UP) = range(500, 502)
+ INST_UP) = list(range(500, 502))
 
 (FIRST_ARG,
- RETURN_VALUE) = range(1000, 1002)
+ RETURN_VALUE) = list(range(1000, 1002))
 
 
 def _RaiseWithInfo(msg, error_desc):
@@ -135,7 +135,7 @@ def _GetName(entity, fn):
   @param fn: Function retrieving name from entity
 
   """
-  if isinstance(entity, basestring):
+  if isinstance(entity, str):
     result = entity
   else:
     result = fn(entity)
@@ -207,7 +207,7 @@ def AssertCommand(cmd, fail=False, node=None, log_cmd=True, forward_agent=True,
 
   nodename = _GetName(node, operator.attrgetter("primary"))
 
-  if isinstance(cmd, basestring):
+  if isinstance(cmd, str):
     cmdstr = cmd
   else:
     cmdstr = utils.ShellQuoteArgs(cmd)
@@ -382,7 +382,7 @@ def CloseMultiplexers():
   """Closes all current multiplexers and cleans up.
 
   """
-  for node in _MULTIPLEXERS.keys():
+  for node in list(_MULTIPLEXERS.keys()):
     (sname, child) = _MULTIPLEXERS.pop(node)
     utils.KillProcess(child.pid, timeout=10, waitpid=True)
     utils.RemoveFile(sname)
@@ -878,7 +878,7 @@ def MakeNodePath(node, path):
   """
   (_, basedir) = qa_config.GetVclusterSettings()
 
-  if isinstance(node, basestring):
+  if isinstance(node, str):
     name = node
   else:
     name = node.primary
@@ -893,7 +893,7 @@ def MakeNodePath(node, path):
 def _GetParameterOptions(specs):
   """Helper to build policy options."""
   values = ["%s=%s" % (par, val)
-            for (par, val) in specs.items()]
+            for (par, val) in list(specs.items())]
   return ",".join(values)
 
 
@@ -940,10 +940,10 @@ def TestSetISpecs(new_specs=None, diff_specs=None, get_policy_fn=None,
                   len(diff_specs[constants.ISPECS_MINMAX]))
       for (new_minmax, diff_minmax) in zip(new_specs[constants.ISPECS_MINMAX],
                                            diff_specs[constants.ISPECS_MINMAX]):
-        for (key, parvals) in diff_minmax.items():
-          for (par, val) in parvals.items():
+        for (key, parvals) in list(diff_minmax.items()):
+          for (par, val) in list(parvals.items()):
             new_minmax[key][par] = val
-    for (par, val) in diff_specs.get(constants.ISPECS_STD, {}).items():
+    for (par, val) in list(diff_specs.get(constants.ISPECS_STD, {}).items()):
       new_specs[constants.ISPECS_STD][par] = val
 
   if new_specs:
@@ -997,7 +997,7 @@ def ParseIPolicy(policy):
   """
   ret_specs = {}
   ret_policy = {}
-  for (key, val) in policy.items():
+  for (key, val) in list(policy.items()):
     if key == "bounds specs":
       ret_specs[constants.ISPECS_MINMAX] = []
       for minmax in val:

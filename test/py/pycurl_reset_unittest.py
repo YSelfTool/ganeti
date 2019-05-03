@@ -30,7 +30,7 @@
 
 """Script for testing for an issue in PycURL"""
 
-from __future__ import print_function
+
 
 import sys
 import warnings
@@ -38,7 +38,7 @@ import unittest
 import textwrap
 import pycurl
 
-import testutils
+from . import testutils
 
 
 DETAILS = [

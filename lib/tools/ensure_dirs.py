@@ -49,7 +49,7 @@ from ganeti import compat
 
 (DIR,
  FILE,
- QUEUE_DIR) = range(1, 4)
+ QUEUE_DIR) = list(range(1, 4))
 
 ALL_TYPES = compat.UniqueFrozenset([
   DIR,

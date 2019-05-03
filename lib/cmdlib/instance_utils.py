@@ -158,7 +158,7 @@ def BuildInstanceHookEnv(name, primary_node_name, secondary_node_names, os_type,
   env["INSTANCE_TAGS"] = " ".join(tags)
 
   for source, kind in [(bep, "BE"), (hvp, "HV")]:
-    for key, value in source.items():
+    for key, value in list(source.items()):
       env["INSTANCE_%s_%s" % (kind, key)] = value
 
   return env
@@ -806,7 +806,7 @@ def CheckInstanceExistence(lu, instance_name):
 
   """
   if instance_name in \
-     [inst.name for inst in lu.cfg.GetAllInstancesInfo().values()]:
+     [inst.name for inst in list(lu.cfg.GetAllInstancesInfo().values())]:
     raise errors.OpPrereqError("Instance '%s' is already in the cluster" %
                                instance_name, errors.ECODE_EXISTS)
 
@@ -1201,7 +1201,7 @@ def ComputeFullBeParams(op, cluster):
 
   """
   default_beparams = cluster.beparams[constants.PP_DEFAULT]
-  for param, value in op.beparams.iteritems():
+  for param, value in op.beparams.items():
     if value == constants.VALUE_AUTO:
       op.beparams[param] = default_beparams[param]
   objects.UpgradeBeParams(op.beparams)

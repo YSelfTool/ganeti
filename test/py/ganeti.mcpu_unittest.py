@@ -33,8 +33,8 @@
 
 import unittest
 import itertools
-import mocks
-from cmdlib.testsupport.rpc_runner_mock import CreateRpcRunnerMock
+from . import mocks
+from .cmdlib.testsupport.rpc_runner_mock import CreateRpcRunnerMock
 
 from ganeti import compat
 from ganeti import errors
@@ -50,7 +50,7 @@ from ganeti.constants import \
     LOCK_ATTEMPTS_MAXWAIT, \
     LOCK_ATTEMPTS_MINWAIT
 
-import testutils
+from . import testutils
 
 
 # FIXME: Document what BGL whitelist means
@@ -69,8 +69,8 @@ REQ_BGL_WHITELIST = compat.UniqueFrozenset([
 class TestLockAttemptTimeoutStrategy(unittest.TestCase):
   def testConstants(self):
     tpa = mcpu.LockAttemptTimeoutStrategy._TIMEOUT_PER_ATTEMPT
-    self.assert_(len(tpa) > LOCK_ATTEMPTS_TIMEOUT / LOCK_ATTEMPTS_MAXWAIT)
-    self.assert_(sum(tpa) >= LOCK_ATTEMPTS_TIMEOUT)
+    self.assertTrue(len(tpa) > LOCK_ATTEMPTS_TIMEOUT / LOCK_ATTEMPTS_MAXWAIT)
+    self.assertTrue(sum(tpa) >= LOCK_ATTEMPTS_TIMEOUT)
 
     self.assertTrue(LOCK_ATTEMPTS_TIMEOUT >= 1800,
                     msg="Waiting less than half an hour per priority")
@@ -84,21 +84,21 @@ class TestLockAttemptTimeoutStrategy(unittest.TestCase):
     prev = None
     for i in range(len(strat._TIMEOUT_PER_ATTEMPT)):
       timeout = strat.NextAttempt()
-      self.assert_(timeout is not None)
+      self.assertTrue(timeout is not None)
 
-      self.assert_(timeout <= LOCK_ATTEMPTS_MAXWAIT)
-      self.assert_(timeout >= LOCK_ATTEMPTS_MINWAIT)
-      self.assert_(prev is None or timeout >= prev)
+      self.assertTrue(timeout <= LOCK_ATTEMPTS_MAXWAIT)
+      self.assertTrue(timeout >= LOCK_ATTEMPTS_MINWAIT)
+      self.assertTrue(prev is None or timeout >= prev)
 
       prev = timeout
 
     for _ in range(10):
-      self.assert_(strat.NextAttempt() is None)
+      self.assertTrue(strat.NextAttempt() is None)
 
 
 class TestDispatchTable(unittest.TestCase):
   def test(self):
-    for opcls in opcodes.OP_MAPPING.values():
+    for opcls in list(opcodes.OP_MAPPING.values()):
       if not opcls.WITH_LU:
         continue
       self.assertTrue(opcls in mcpu.Processor.DISPATCH_TABLE,
@@ -122,7 +122,7 @@ class TestProcessResult(unittest.TestCase):
 
   def _Submit(self, jobs):
     job_ids = [next(self._count) for _ in jobs]
-    self._submitted.extend(zip(job_ids, jobs))
+    self._submitted.extend(list(zip(job_ids, jobs)))
     return job_ids
 
   def testNoJobs(self):
@@ -159,12 +159,12 @@ class TestProcessResult(unittest.TestCase):
       opcodes.OpTestDelay(priority=constants.OP_PRIO_LOW),
       ], [
       opcodes.OpTestDelay(comment="foobar", debug_level=10),
-      ]], other=True, value=range(10)))
+      ]], other=True, value=list(range(10))))
 
     self.assertEqual(res, {
       constants.JOB_IDS_KEY: [200, 201],
       "other": True,
-      "value": range(10),
+      "value": list(range(10)),
       })
 
     (_, (op1, )) = self._submitted.pop(0)

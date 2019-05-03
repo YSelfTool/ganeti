@@ -32,7 +32,7 @@
 
 """
 
-from testsupport import *
+from .testsupport import *
 
 import testutils
 

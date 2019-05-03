@@ -317,7 +317,7 @@ class _StaticResolver(object):
 
     """
     assert len(hosts) == len(self._addresses)
-    return zip(hosts, self._addresses, hosts)
+    return list(zip(hosts, self._addresses, hosts))
 
 
 def _CheckConfigNode(node_uuid_or_name, node, accept_offline_node):
@@ -393,9 +393,9 @@ class _RpcProcessor(object):
 
     assert isinstance(body, dict)
     assert len(body) == len(hosts)
-    assert compat.all(isinstance(v, str) for v in body.values())
-    assert frozenset(h[2] for h in hosts) == frozenset(body.keys()), \
-        "%s != %s" % (hosts, body.keys())
+    assert compat.all(isinstance(v, str) for v in list(body.values()))
+    assert frozenset(h[2] for h in hosts) == frozenset(list(body.keys())), \
+        "%s != %s" % (hosts, list(body.keys()))
 
     for (name, ip, original_name) in hosts:
       if ip is _OFFLINE:
@@ -420,7 +420,7 @@ class _RpcProcessor(object):
     """Combines pre-computed results for offline hosts with actual call results.
 
     """
-    for name, req in requests.items():
+    for name, req in list(requests.items()):
       if req.success and req.resp_status_code == http.HTTP_OK:
         host_result = RpcResult(data=serializer.LoadJson(req.resp_body),
                                 node=name, call=procedure)
@@ -465,7 +465,7 @@ class _RpcProcessor(object):
       self._PrepareRequests(self._resolver(nodes, resolver_opts), self._port,
                             procedure, body, read_timeout)
 
-    _req_process_fn(requests.values(), lock_monitor_cb=self._lock_monitor_cb)
+    _req_process_fn(list(requests.values()), lock_monitor_cb=self._lock_monitor_cb)
 
     assert not frozenset(results).intersection(requests)
 
@@ -534,7 +534,7 @@ class _RpcClientBase(object):
                         req_resolver_opts)
 
     if postproc_fn:
-      return dict((k, postproc_fn(v)) for (k, v) in result.items())
+      return dict((k, postproc_fn(v)) for (k, v) in list(result.items()))
     else:
       return result
 
@@ -753,8 +753,8 @@ def GetExclusiveStorageForNodes(cfg, node_uuids):
 
   """
   getflag = lambda n: _GetExclusiveStorageFlag(cfg, n)
-  flags = map(getflag, node_uuids)
-  return dict(zip(node_uuids, flags))
+  flags = list(map(getflag, node_uuids))
+  return dict(list(zip(node_uuids, flags)))
 
 
 def PrepareStorageUnitsForNodes(cfg, storage_units, node_uuids):
@@ -779,8 +779,8 @@ def PrepareStorageUnitsForNodes(cfg, storage_units, node_uuids):
   """
   getunit = lambda n: _AddExclusiveStorageFlagToLvmStorageUnits(
       storage_units, _GetExclusiveStorageFlag(cfg, n))
-  flags = map(getunit, node_uuids)
-  return dict(zip(node_uuids, flags))
+  flags = list(map(getunit, node_uuids))
+  return dict(list(zip(node_uuids, flags)))
 
 
 #: Generic encoders
@@ -968,7 +968,7 @@ class RpcRunner(_RpcClientBase,
 
     """
     return dict((name, [self._SingleDiskDictDP(node, disk) for disk in disks])
-                for name, disks in value.items())
+                for name, disks in list(value.items()))
 
   def _EncodeImportExportIO(self, node, ieinfo):
     """Encodes import/export I/O information.

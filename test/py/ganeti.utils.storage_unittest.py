@@ -37,7 +37,7 @@ import unittest
 from ganeti import constants
 from ganeti.utils import storage
 
-import testutils
+from . import testutils
 
 
 class TestGetStorageUnitForDiskTemplate(unittest.TestCase):

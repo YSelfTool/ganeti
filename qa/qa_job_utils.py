@@ -42,11 +42,11 @@ from ganeti import locking
 from ganeti import utils
 from ganeti.utils import retry
 
-import qa_config
-import qa_logging
-import qa_error
+from . import qa_config
+from . import qa_logging
+from . import qa_error
 
-from qa_utils import AssertCommand, GetCommandOutput, GetObjectInfo, stdout_of
+from .qa_utils import AssertCommand, GetCommandOutput, GetObjectInfo, stdout_of
 
 
 AVAILABLE_LOCKS = [locking.LEVEL_NODE, ]
@@ -56,7 +56,7 @@ def GetOutputFromMaster(cmd, use_multiplexer=True, log_cmd=True):
   """ Gets the output of a command executed on master.
 
   """
-  if isinstance(cmd, basestring):
+  if isinstance(cmd, str):
     cmdstr = cmd
   else:
     cmdstr = utils.ShellQuoteArgs(cmd)
@@ -101,10 +101,10 @@ def GetJobStatuses(job_ids=None):
   """
   cmd = ["gnt-job", "list", "--no-headers", "--output=id,status"]
   if job_ids is not None:
-    cmd.extend(map(str, job_ids))
+    cmd.extend(list(map(str, job_ids)))
 
   list_output = GetOutputFromMaster(cmd)
-  return dict(map(lambda s: s.split(), list_output.splitlines()))
+  return dict([s.split() for s in list_output.splitlines()])
 
 
 def _RetrieveTerminationInfo(job_id):
@@ -127,7 +127,7 @@ def _RetrieveTerminationInfo(job_id):
   is_termination_info_fn = \
     lambda e: e["Content"][1] == constants.ELOG_DELAY_TEST
 
-  filtered_logs = filter(is_termination_info_fn, execution_logs)
+  filtered_logs = list(filter(is_termination_info_fn, execution_logs))
 
   no_logs = len(filtered_logs)
   if no_logs > 1:
@@ -182,7 +182,7 @@ def _GetNodeUUIDMap(nodes):
   cmd = ["gnt-node", "list", "--no-header", "-o", "name,uuid"]
   cmd.extend(nodes)
   output = GetOutputFromMaster(cmd)
-  return dict(map(lambda x: x.split(), output.splitlines()))
+  return dict([x.split() for x in output.splitlines()])
 
 
 def _FindLockNames(locks):
@@ -328,8 +328,8 @@ class PausedWatcher(object):
       if ex_value is None:
         raise
       else:
-        print(qa_logging.FormatError('Re-enabling watcher failed: %s' %
-                                     (err, )))
+        print((qa_logging.FormatError('Re-enabling watcher failed: %s' %
+                                     (err, ))))
 
 
 # TODO: Can this be done as a decorator? Implement as needed.
@@ -360,7 +360,7 @@ def RunWithLocks(fn, locks, timeout, block, *args, **kwargs):
   good conservative estimate.
 
   """
-  if filter(lambda l_type: l_type not in AVAILABLE_LOCKS, locks):
+  if [l_type for l_type in locks if l_type not in AVAILABLE_LOCKS]:
     raise qa_error.Error("Attempted to acquire locks that cannot yet be "
                          "acquired in the course of a QA test.")
 

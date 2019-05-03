@@ -41,7 +41,7 @@ from ganeti.storage import gluster
 from ganeti import ssconf
 from ganeti import utils
 
-import testutils
+from . import testutils
 
 class TestGlusterVolume(testutils.GanetiTestCase):
 

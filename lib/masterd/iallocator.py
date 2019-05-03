@@ -84,11 +84,10 @@ class _AutoReqParam(outils.AutoSlots):
     return [slot for (slot, _) in params]
 
 
-class IARequestBase(outils.ValidatedSlots):
+class IARequestBase(outils.ValidatedSlots, metaclass=_AutoReqParam):
   """A generic IAllocator request object.
 
   """
-  __metaclass__ = _AutoReqParam
 
   MODE = NotImplemented
   REQ_PARAMS = []
@@ -326,7 +325,7 @@ class IAReqRelocate(IARequestBase):
     IARequestBase.ValidateResult(self, ia, result)
 
     node2group = dict((name, ndata["group"])
-                      for (name, ndata) in ia.in_data["nodes"].items())
+                      for (name, ndata) in list(ia.in_data["nodes"].items()))
 
     fn = compat.partial(self._NodesToGroups, node2group,
                         ia.in_data["nodegroups"])
@@ -501,10 +500,10 @@ class IAllocator(object):
     ginfo = cfg.GetAllNodeGroupsInfo()
     ninfo = cfg.GetAllNodesInfo()
     iinfo = cfg.GetAllInstancesInfo()
-    i_list = [(inst, cluster_info.FillBE(inst)) for inst in iinfo.values()]
+    i_list = [(inst, cluster_info.FillBE(inst)) for inst in list(iinfo.values())]
 
     # node data
-    node_list = [n.uuid for n in ninfo.values() if n.vm_capable]
+    node_list = [n.uuid for n in list(ninfo.values()) if n.vm_capable]
 
     if isinstance(self.req, IAReqInstanceAlloc):
       hypervisor_name = self.req.hypervisor
@@ -544,11 +543,11 @@ class IAllocator(object):
     ng = dict((guuid, {
       "name": gdata.name,
       "alloc_policy": gdata.alloc_policy,
-      "networks": [net_uuid for net_uuid, _ in gdata.networks.items()],
+      "networks": [net_uuid for net_uuid, _ in list(gdata.networks.items())],
       "ipolicy": gmi.CalculateGroupIPolicy(cluster, gdata),
       "tags": list(gdata.GetTags()),
       })
-      for guuid, gdata in ginfo.items())
+      for guuid, gdata in list(ginfo.items()))
 
     return ng
 
@@ -573,7 +572,7 @@ class IAllocator(object):
       "vm_capable": ninfo.vm_capable,
       "ndparams": cfg.GetNdParams(ninfo),
       })
-      for ninfo in node_cfg.values())
+      for ninfo in list(node_cfg.values()))
 
     return node_results
 
@@ -724,7 +723,7 @@ class IAllocator(object):
     #TODO(dynmem): compute the right data on MAX and MIN memory
     # make a copy of the current dict
     node_results = dict(node_results)
-    for nuuid, nresult in node_data.items():
+    for nuuid, nresult in list(node_data.items()):
       ninfo = node_cfg[nuuid]
       assert ninfo.name in node_results, "Missing basic data for node %s" % \
                                          ninfo.name
@@ -848,7 +847,7 @@ class IAllocator(object):
 
     ial_params = self.cfg.GetDefaultIAllocatorParameters()
 
-    for ial_param in self.req.GetExtraParams().items():
+    for ial_param in list(self.req.GetExtraParams().items()):
       ial_params[ial_param[0]] = ial_param[1]
 
     result = call_fn(self.cfg.GetMasterNode(), name, self.in_text, ial_params)

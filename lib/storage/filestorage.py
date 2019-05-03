@@ -353,7 +353,7 @@ def _GetForbiddenFileStoragePaths():
     paths.update(
         "%s/%s" % (prefix, s) for s in ["bin", "lib", "lib32", "lib64", "sbin"])
 
-  return compat.UniqueFrozenset(map(os.path.normpath, paths))
+  return compat.UniqueFrozenset(list(map(os.path.normpath, paths)))
 
 
 def _ComputeWrongFileStoragePaths(paths,
@@ -373,7 +373,7 @@ def _ComputeWrongFileStoragePaths(paths,
             path in _forbidden or
             [p for p in _forbidden if utils.IsBelowDir(p, path)])
 
-  return utils.NiceSort(filter(_Check, map(os.path.normpath, paths)))
+  return utils.NiceSort(list(filter(_Check, list(map(os.path.normpath, paths)))))
 
 
 def ComputeWrongFileStoragePaths(_filename=pathutils.FILE_STORAGE_PATHS_FILE):

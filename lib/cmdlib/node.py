@@ -186,7 +186,7 @@ class LUNodeAdd(LogicalUnit):
 
     self.changed_primary_ip = False
 
-    for existing_node in self.cfg.GetAllNodesInfo().values():
+    for existing_node in list(self.cfg.GetAllNodesInfo().values()):
       if self.op.readd and node_name == existing_node.name:
         if existing_node.secondary_ip != secondary_ip:
           raise errors.OpPrereqError("Readded node doesn't have the same IP"
@@ -493,14 +493,14 @@ class LUNodeSetParams(LogicalUnit):
   HPATH = "node-modify"
   HTYPE = constants.HTYPE_NODE
   REQ_BGL = False
-  (_ROLE_CANDIDATE, _ROLE_DRAINED, _ROLE_OFFLINE, _ROLE_REGULAR) = range(4)
+  (_ROLE_CANDIDATE, _ROLE_DRAINED, _ROLE_OFFLINE, _ROLE_REGULAR) = list(range(4))
   _F2R = {
     (True, False, False): _ROLE_CANDIDATE,
     (False, True, False): _ROLE_DRAINED,
     (False, False, True): _ROLE_OFFLINE,
     (False, False, False): _ROLE_REGULAR,
     }
-  _R2F = dict((v, k) for k, v in _F2R.items())
+  _R2F = dict((v, k) for k, v in list(_F2R.items()))
   _FLAGS = ["master_candidate", "drained", "offline"]
 
   def CheckArguments(self):
@@ -566,7 +566,7 @@ class LUNodeSetParams(LogicalUnit):
     if self.lock_instances:
       self.needed_locks[locking.LEVEL_INSTANCE] = \
         self.cfg.GetInstanceNames(
-          self.cfg.GetInstancesInfoByFilter(self._InstanceFilter).keys())
+          list(self.cfg.GetInstancesInfoByFilter(self._InstanceFilter).keys()))
 
   def BuildHooksEnv(self):
     """Build hooks env.
@@ -604,7 +604,7 @@ class LUNodeSetParams(LogicalUnit):
       # Verify instance locks
       owned_instance_names = self.owned_locks(locking.LEVEL_INSTANCE)
       wanted_instance_names = frozenset([inst.name for inst in
-                                         affected_instances.values()])
+                                         list(affected_instances.values())])
       if wanted_instance_names - owned_instance_names:
         raise errors.OpPrereqError("Instances affected by changing node %s's"
                                    " secondary IP address have changed since"
@@ -752,7 +752,7 @@ class LUNodeSetParams(LogicalUnit):
                                      " passed, and the target node is the"
                                      " master", errors.ECODE_INVAL)
 
-      assert not (set([inst.name for inst in affected_instances.values()]) -
+      assert not (set([inst.name for inst in list(affected_instances.values())]) -
                   self.owned_locks(locking.LEVEL_INSTANCE))
 
       if node.offline:
@@ -760,12 +760,12 @@ class LUNodeSetParams(LogicalUnit):
           msg = ("Cannot change secondary IP address: offline node has"
                  " instances (%s) configured to use it" %
                  utils.CommaJoin(
-                   [inst.name for inst in affected_instances.values()]))
+                   [inst.name for inst in list(affected_instances.values())]))
           raise errors.OpPrereqError(msg, errors.ECODE_STATE)
       else:
         # On online nodes, check that no instances are running, and that
         # the node has the new ip and we can reach it.
-        for instance in affected_instances.values():
+        for instance in list(affected_instances.values()):
           CheckInstanceState(self, instance, INSTANCE_DOWN,
                              msg="cannot change secondary ip")
 
@@ -931,7 +931,7 @@ class LUNodePowercycle(NoHooksLU):
 
 
 def _GetNodeInstancesInner(cfg, fn):
-  return [i for i in cfg.GetAllInstancesInfo().values() if fn(i)]
+  return [i for i in list(cfg.GetAllInstancesInfo().values()) if fn(i)]
 
 
 def _GetNodePrimaryInstances(cfg, node_uuid):
@@ -1331,7 +1331,7 @@ class LUNodeQueryvols(NoHooksLU):
     volumes = self.rpc.call_node_volumes(node_uuids)
 
     ilist = self.cfg.GetAllInstancesInfo()
-    vol2inst = MapInstanceLvsToNodes(self.cfg, ilist.values())
+    vol2inst = MapInstanceLvsToNodes(self.cfg, list(ilist.values()))
 
     output = []
     for node_uuid in node_uuids:
@@ -1471,7 +1471,7 @@ class LUNodeQueryStorage(NoHooksLU):
 
       rows = dict([(row[name_idx], row) for row in nresult.payload])
 
-      for name in utils.NiceSort(rows.keys()):
+      for name in utils.NiceSort(list(rows.keys())):
         row = rows[name]
 
         out = []
@@ -1544,7 +1544,7 @@ class LUNodeRemove(LogicalUnit):
       raise errors.OpPrereqError("Node is the master node, failover to another"
                                  " node is required", errors.ECODE_INVAL)
 
-    for _, instance in self.cfg.GetAllInstancesInfo().items():
+    for _, instance in list(self.cfg.GetAllInstancesInfo().items()):
       if node.uuid in self.cfg.GetInstanceNodes(instance.uuid):
         raise errors.OpPrereqError("Instance %s is still running on the node,"
                                    " please remove first" % instance.name,

@@ -46,8 +46,8 @@ import mock
 import os
 import shutil
 import tempfile
-import testutils
-from testutils import patch_object
+from . import testutils
+from .testutils import patch_object
 
 
 def setUpModule():

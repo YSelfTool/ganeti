@@ -38,7 +38,7 @@ import os
 import string # pylint: disable=W0402
 import shutil
 import time
-from cStringIO import StringIO
+from io import StringIO
 
 from ganeti import constants
 from ganeti import errors
@@ -651,7 +651,7 @@ class XenHypervisor(hv_base.BaseHypervisor):
     data.write("TAGS=\"%s\"\n" % r"\ ".join(instance.GetTags()))
     if nic.netinfo:
       netinfo = objects.Network.FromDict(nic.netinfo)
-      for k, v in netinfo.HooksDict().iteritems():
+      for k, v in netinfo.HooksDict().items():
         data.write("%s=\"%s\"\n" % (k, v))
 
     data.write("MAC=%s\n" % nic.mac)
@@ -768,7 +768,7 @@ class XenHypervisor(hv_base.BaseHypervisor):
         if hvp[constants.HV_VIF_SCRIPT]:
           nic_args["script"] = hvp[constants.HV_VIF_SCRIPT]
 
-      nic_str = ", ".join(["%s=%s" % p for p in nic_args.items()])
+      nic_str = ", ".join(["%s=%s" % p for p in list(nic_args.items())])
       vif_data.append("'%s'" % (nic_str, ))
       self._WriteNICInfoFile(instance, idx, nic)
 

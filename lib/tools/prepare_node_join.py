@@ -184,7 +184,7 @@ def UpdateSshRoot(data, dry_run, _homedir_fn=None):
       logging.info("This is a dry run, not modifying %s", auth_keys_file)
     else:
       all_authorized_keys = []
-      for keys in authorized_keys.values():
+      for keys in list(authorized_keys.values()):
         all_authorized_keys += keys
       ssh.AddAuthorizedKeys(auth_keys_file, all_authorized_keys)
 

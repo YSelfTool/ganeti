@@ -45,7 +45,7 @@ from ganeti import utils
 from ganeti import compat
 from ganeti import errors
 
-import testutils
+from . import testutils
 
 
 class TestReadFile(testutils.GanetiTestCase):
@@ -124,7 +124,7 @@ class TestReadOneLineFile(testutils.GanetiTestCase):
         utils.WriteFile(myfile, data=dummydata)
         datalax = utils.ReadOneLineFile(myfile, strict=False)
         if nl:
-          self.assert_(set("\r\n") & set(dummydata))
+          self.assertTrue(set("\r\n") & set(dummydata))
           self.assertRaises(errors.GenericError, utils.ReadOneLineFile,
                             myfile, strict=True)
           explen = len("Foo bar baz ") + len(ws)
@@ -143,7 +143,7 @@ class TestReadOneLineFile(testutils.GanetiTestCase):
       for ol in ["", "otherline"]:
         dummydata = "%s%s%s%s%s%s" % (nl, nl, myline, nl, ol, nl)
         utils.WriteFile(myfile, data=dummydata)
-        self.assert_(set("\r\n") & set(dummydata))
+        self.assertTrue(set("\r\n") & set(dummydata))
         datalax = utils.ReadOneLineFile(myfile, strict=False)
         self.assertEqual(myline, datalax)
         if ol:
@@ -160,8 +160,8 @@ class TestReadOneLineFile(testutils.GanetiTestCase):
 
 class TestTimestampForFilename(unittest.TestCase):
   def test(self):
-    self.assert_("." not in utils.TimestampForFilename())
-    self.assert_(":" not in utils.TimestampForFilename())
+    self.assertTrue("." not in utils.TimestampForFilename())
+    self.assertTrue(":" not in utils.TimestampForFilename())
 
 
 class TestCreateBackup(testutils.GanetiTestCase):
@@ -241,11 +241,11 @@ class TestListVisibleFiles(unittest.TestCase):
     self._test(files, expected)
 
   def testNonAbsolutePath(self):
-    self.failUnlessRaises(errors.ProgrammerError, utils.ListVisibleFiles,
+    self.assertRaises(errors.ProgrammerError, utils.ListVisibleFiles,
                           "abc")
 
   def testNonNormalizedPath(self):
-    self.failUnlessRaises(errors.ProgrammerError, utils.ListVisibleFiles,
+    self.assertRaises(errors.ProgrammerError, utils.ListVisibleFiles,
                           "/bin/../tmp")
 
   def testMountpoint(self):
@@ -299,7 +299,7 @@ class TestWriteFile(testutils.GanetiTestCase):
     self.assertEqual(utils.ReadFile(self.tfile.name), data)
 
   def testWriteSimpleUnicode(self):
-    data = u"abc"
+    data = "abc"
     utils.WriteFile(self.tfile.name, data=data)
     self.assertEqual(utils.ReadFile(self.tfile.name), data)
 
@@ -440,7 +440,7 @@ class TestFileID(testutils.GanetiTestCase):
   def testEquality(self):
     name = self._CreateTempFile()
     oldi = utils.GetFileID(path=name)
-    self.failUnless(utils.VerifyFileID(oldi, oldi))
+    self.assertTrue(utils.VerifyFileID(oldi, oldi))
 
   def testUpdate(self):
     name = self._CreateTempFile()
@@ -448,8 +448,8 @@ class TestFileID(testutils.GanetiTestCase):
     fd = os.open(name, os.O_RDWR)
     try:
       newi = utils.GetFileID(fd=fd)
-      self.failUnless(utils.VerifyFileID(oldi, newi))
-      self.failUnless(utils.VerifyFileID(newi, oldi))
+      self.assertTrue(utils.VerifyFileID(oldi, newi))
+      self.assertTrue(utils.VerifyFileID(newi, oldi))
     finally:
       os.close(fd)
 
@@ -554,20 +554,20 @@ class TestRename(unittest.TestCase):
   def testSimpleRename1(self):
     """Simple rename 1"""
     utils.RenameFile(self.tmpfile, os.path.join(self.tmpdir, "xyz"))
-    self.assert_(os.path.isfile(os.path.join(self.tmpdir, "xyz")))
+    self.assertTrue(os.path.isfile(os.path.join(self.tmpdir, "xyz")))
 
   def testSimpleRename2(self):
     """Simple rename 2"""
     utils.RenameFile(self.tmpfile, os.path.join(self.tmpdir, "xyz"),
                      mkdir=True)
-    self.assert_(os.path.isfile(os.path.join(self.tmpdir, "xyz")))
+    self.assertTrue(os.path.isfile(os.path.join(self.tmpdir, "xyz")))
 
   def testRenameMkdir(self):
     """Rename with mkdir"""
     utils.RenameFile(self.tmpfile, os.path.join(self.tmpdir, "test/xyz"),
                      mkdir=True)
-    self.assert_(os.path.isdir(os.path.join(self.tmpdir, "test")))
-    self.assert_(os.path.isfile(os.path.join(self.tmpdir, "test/xyz")))
+    self.assertTrue(os.path.isdir(os.path.join(self.tmpdir, "test")))
+    self.assertTrue(os.path.isfile(os.path.join(self.tmpdir, "test/xyz")))
 
     self.assertRaises(EnvironmentError, utils.RenameFile,
                       os.path.join(self.tmpdir, "test/xyz"),
@@ -590,25 +590,25 @@ class TestMakedirs(unittest.TestCase):
   def testNonExisting(self):
     path = utils.PathJoin(self.tmpdir, "foo")
     utils.Makedirs(path)
-    self.assert_(os.path.isdir(path))
+    self.assertTrue(os.path.isdir(path))
 
   def testExisting(self):
     path = utils.PathJoin(self.tmpdir, "foo")
     os.mkdir(path)
     utils.Makedirs(path)
-    self.assert_(os.path.isdir(path))
+    self.assertTrue(os.path.isdir(path))
 
   def testRecursiveNonExisting(self):
     path = utils.PathJoin(self.tmpdir, "foo/bar/baz")
     utils.Makedirs(path)
-    self.assert_(os.path.isdir(path))
+    self.assertTrue(os.path.isdir(path))
 
   def testRecursiveExisting(self):
     path = utils.PathJoin(self.tmpdir, "B/moo/xyz")
     self.assertFalse(os.path.exists(path))
     os.mkdir(utils.PathJoin(self.tmpdir, "B"))
     utils.Makedirs(path)
-    self.assert_(os.path.isdir(path))
+    self.assertTrue(os.path.isdir(path))
 
 
 class TestEnsureDirs(unittest.TestCase):
@@ -623,9 +623,9 @@ class TestEnsureDirs(unittest.TestCase):
         (utils.PathJoin(self.dir, "foo"), 0o777),
         (utils.PathJoin(self.dir, "bar"), 0000),
         ])
-    self.assertEquals(os.stat(utils.PathJoin(self.dir, "foo"))[0] & 0o777,
+    self.assertEqual(os.stat(utils.PathJoin(self.dir, "foo"))[0] & 0o777,
                       0o777)
-    self.assertEquals(os.stat(utils.PathJoin(self.dir, "bar"))[0] & 0o777, 0000)
+    self.assertEqual(os.stat(utils.PathJoin(self.dir, "bar"))[0] & 0o777, 0000)
 
   def tearDown(self):
     os.rmdir(utils.PathJoin(self.dir, "foo"))
@@ -639,7 +639,7 @@ class TestIsNormAbsPath(unittest.TestCase):
 
   def _pathTestHelper(self, path, result):
     if result:
-      self.assert_(utils.IsNormAbsPath(path),
+      self.assertTrue(utils.IsNormAbsPath(path),
           msg="Path %s should result absolute and normalized" % path)
     else:
       self.assertFalse(utils.IsNormAbsPath(path),
@@ -720,16 +720,16 @@ class TestPathJoin(unittest.TestCase):
 
   def testBasicItems(self):
     mlist = ["/a", "b", "c"]
-    self.failUnlessEqual(utils.PathJoin(*mlist), "/".join(mlist))
+    self.assertEqual(utils.PathJoin(*mlist), "/".join(mlist))
 
   def testNonAbsPrefix(self):
-    self.failUnlessRaises(ValueError, utils.PathJoin, "a", "b")
+    self.assertRaises(ValueError, utils.PathJoin, "a", "b")
 
   def testBackTrack(self):
-    self.failUnlessRaises(ValueError, utils.PathJoin, "/a", "b/../c")
+    self.assertRaises(ValueError, utils.PathJoin, "/a", "b/../c")
 
   def testMultiAbs(self):
-    self.failUnlessRaises(ValueError, utils.PathJoin, "/a", "/b")
+    self.assertRaises(ValueError, utils.PathJoin, "/a", "/b")
 
 
 class TestTailFile(testutils.GanetiTestCase):
@@ -737,8 +737,8 @@ class TestTailFile(testutils.GanetiTestCase):
 
   def testEmpty(self):
     fname = self._CreateTempFile()
-    self.failUnlessEqual(utils.TailFile(fname), [])
-    self.failUnlessEqual(utils.TailFile(fname, lines=25), [])
+    self.assertEqual(utils.TailFile(fname), [])
+    self.assertEqual(utils.TailFile(fname, lines=25), [])
 
   def testAllLines(self):
     data = ["test %d" % i for i in range(30)]
@@ -749,7 +749,7 @@ class TestTailFile(testutils.GanetiTestCase):
       if i > 0:
         fd.write("\n")
       fd.close()
-      self.failUnlessEqual(utils.TailFile(fname, lines=i), data[:i])
+      self.assertEqual(utils.TailFile(fname, lines=i), data[:i])
 
   def testPartialLines(self):
     data = ["test %d" % i for i in range(30)]
@@ -759,7 +759,7 @@ class TestTailFile(testutils.GanetiTestCase):
     fd.write("\n")
     fd.close()
     for i in range(1, 30):
-      self.failUnlessEqual(utils.TailFile(fname, lines=i), data[-i:])
+      self.assertEqual(utils.TailFile(fname, lines=i), data[-i:])
 
   def testBigFile(self):
     data = ["test %d" % i for i in range(30)]
@@ -771,7 +771,7 @@ class TestTailFile(testutils.GanetiTestCase):
     fd.write("\n")
     fd.close()
     for i in range(1, 30):
-      self.failUnlessEqual(utils.TailFile(fname, lines=i), data[-i:])
+      self.assertEqual(utils.TailFile(fname, lines=i), data[-i:])
 
 
 class TestPidFileFunctions(unittest.TestCase):
@@ -784,29 +784,29 @@ class TestPidFileFunctions(unittest.TestCase):
   def testPidFileFunctions(self):
     pid_file = self.f_dpn("test")
     fd = utils.WritePidFile(self.f_dpn("test"))
-    self.failUnless(os.path.exists(pid_file),
+    self.assertTrue(os.path.exists(pid_file),
                     "PID file should have been created")
     read_pid = utils.ReadPidFile(pid_file)
-    self.failUnlessEqual(read_pid, os.getpid())
-    self.failUnless(utils.IsProcessAlive(read_pid))
-    self.failUnlessRaises(errors.PidFileLockError, utils.WritePidFile,
+    self.assertEqual(read_pid, os.getpid())
+    self.assertTrue(utils.IsProcessAlive(read_pid))
+    self.assertRaises(errors.PidFileLockError, utils.WritePidFile,
                           self.f_dpn("test"))
     os.close(fd)
     utils.RemoveFile(self.f_dpn("test"))
-    self.failIf(os.path.exists(pid_file),
+    self.assertFalse(os.path.exists(pid_file),
                 "PID file should not exist anymore")
-    self.failUnlessEqual(utils.ReadPidFile(pid_file), 0,
+    self.assertEqual(utils.ReadPidFile(pid_file), 0,
                          "ReadPidFile should return 0 for missing pid file")
     fh = open(pid_file, "w")
     fh.write("blah\n")
     fh.close()
-    self.failUnlessEqual(utils.ReadPidFile(pid_file), 0,
+    self.assertEqual(utils.ReadPidFile(pid_file), 0,
                          "ReadPidFile should return 0 for invalid pid file")
     # but now, even with the file existing, we should be able to lock it
     fd = utils.WritePidFile(self.f_dpn("test"))
     os.close(fd)
     utils.RemoveFile(self.f_dpn("test"))
-    self.failIf(os.path.exists(pid_file),
+    self.assertFalse(os.path.exists(pid_file),
                 "PID file should not exist anymore")
 
   def testKill(self):
@@ -823,8 +823,8 @@ class TestPidFileFunctions(unittest.TestCase):
     # wait until the child has written the pid file
     os.read(r_fd, 1)
     read_pid = utils.ReadPidFile(pid_file)
-    self.failUnlessEqual(read_pid, new_pid)
-    self.failUnless(utils.IsProcessAlive(new_pid))
+    self.assertEqual(read_pid, new_pid)
+    self.assertTrue(utils.IsProcessAlive(new_pid))
 
     # Try writing to locked file
     try:
@@ -838,9 +838,9 @@ class TestPidFileFunctions(unittest.TestCase):
       self.fail("Writing to locked file didn't fail")
 
     utils.KillProcess(new_pid, waitpid=True)
-    self.failIf(utils.IsProcessAlive(new_pid))
+    self.assertFalse(utils.IsProcessAlive(new_pid))
     utils.RemoveFile(self.f_dpn("child"))
-    self.failUnlessRaises(errors.ProgrammerError, utils.KillProcess, 0)
+    self.assertRaises(errors.ProgrammerError, utils.KillProcess, 0)
 
   def testExceptionType(self):
     # Make sure the PID lock error is a subclass of LockError in case some code
@@ -855,7 +855,7 @@ class TestNewUUID(unittest.TestCase):
   """Test case for NewUUID"""
 
   def runTest(self):
-    self.failUnless(utils.UUID_RE.match(utils.NewUUID()))
+    self.assertTrue(utils.UUID_RE.match(utils.NewUUID()))
 
 
 def _MockStatResult(cb, mode, uid, gid):

@@ -40,12 +40,12 @@ import time
 
 from ganeti import constants
 
-import qa_config
-import qa_error
-from qa_instance_utils import GetGenericAddParameters
-import qa_job_utils
-import qa_logging
-import qa_utils
+from . import qa_config
+from . import qa_error
+from .qa_instance_utils import GetGenericAddParameters
+from . import qa_job_utils
+from . import qa_logging
+from . import qa_utils
 
 
 MAX_JOB_SUBMISSION_DURATION = 15.0
@@ -109,7 +109,7 @@ class _JobQueueDriver(object):
     job_statuses = qa_job_utils.GetJobStatuses(self._GetJobIds())
 
     new_statuses = {}
-    for job_id, status in job_statuses.items():
+    for job_id, status in list(job_statuses.items()):
       new_statuses.setdefault(status, []).append(self._jobs[int(job_id)])
     self._jobs_per_status = new_statuses
 
@@ -223,9 +223,9 @@ def _ExecuteJobSubmittingCmd(cmd):
   result = qa_job_utils.ExecuteJobProducingCommand(cmd)
   duration = qa_utils.TimedeltaToTotalSeconds(datetime.datetime.now() - start)
   if duration > MAX_JOB_SUBMISSION_DURATION:
-    print(qa_logging.FormatWarning(
+    print((qa_logging.FormatWarning(
       "Executing '%s' took %f seconds, a maximum of %f was expected" %
-      (cmd, duration, MAX_JOB_SUBMISSION_DURATION)))
+      (cmd, duration, MAX_JOB_SUBMISSION_DURATION))))
   return result
 
 
@@ -476,9 +476,9 @@ def TestJobQueueSubmissionPerformance():
       avg_duration = sum(submission_durations) / len(submission_durations)
       max_duration = avg_duration * 1.5
       if duration_seconds > max_duration:
-        print(qa_logging.FormatWarning(
+        print((qa_logging.FormatWarning(
           "Submitting a delay job took %f seconds, max %f expected" %
-          (duration_seconds, max_duration)))
+          (duration_seconds, max_duration))))
     else:
       submission_durations.append(duration_seconds)
 

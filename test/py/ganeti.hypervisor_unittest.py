@@ -39,12 +39,12 @@ from ganeti import errors
 from ganeti import hypervisor
 from ganeti.hypervisor import hv_base
 
-import testutils
+from . import testutils
 
 
 class TestParameters(unittest.TestCase):
   def test(self):
-    for hv, const_params in constants.HVC_DEFAULTS.items():
+    for hv, const_params in list(constants.HVC_DEFAULTS.items()):
       hyp = hypervisor.GetHypervisorClass(hv)
       for pname in const_params:
         self.assertTrue(pname in hyp.PARAMETERS,

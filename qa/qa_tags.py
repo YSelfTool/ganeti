@@ -34,9 +34,9 @@
 
 from ganeti import constants
 
-import qa_rapi
+from . import qa_rapi
 
-from qa_utils import AssertCommand
+from .qa_utils import AssertCommand
 
 
 _TEMP_TAG_NAMES = ["TEMP-Ganeti-QA-Tag%d" % i for i in range(3)]
