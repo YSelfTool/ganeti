@@ -335,7 +335,7 @@ class TestQaConfig(unittest.TestCase):
                                qa_config._QaNode))
 
   def testAcquireAndReleaseInstance(self):
-    self.assertFalse(compat.any(i.used for i in self.config["instances"]))
+    self.assertFalse(any(i.used for i in self.config["instances"]))
 
     inst = qa_config.AcquireInstance(_cfg=self.config)
     self.assertTrue(inst.used)
@@ -346,7 +346,7 @@ class TestQaConfig(unittest.TestCase):
     self.assertFalse(inst.used)
     self.assertTrue(inst.disk_template is None)
 
-    self.assertFalse(compat.any(i.used for i in self.config["instances"]))
+    self.assertFalse(any(i.used for i in self.config["instances"]))
 
   def testAcquireInstanceTooMany(self):
     # Acquire all instances
@@ -360,7 +360,7 @@ class TestQaConfig(unittest.TestCase):
                       qa_config.AcquireInstance, _cfg=self.config)
 
   def testAcquireNodeNoneAdded(self):
-    self.assertFalse(compat.any(n.added for n in self.config["nodes"]))
+    self.assertFalse(any(n.added for n in self.config["nodes"]))
 
     # First call must return master node
     node = qa_config.AcquireNode(_cfg=self.config)

@@ -128,22 +128,22 @@ class HooksMaster(object):
     if self.hooks_path is not None:
       phase_env = self.build_env_fn()
       if phase_env:
-        assert not compat.any(key.upper().startswith(prefix)
+        assert not any(key.upper().startswith(prefix)
                               for key in phase_env)
         env.update(("%s%s" % (prefix, key), value)
                    for (key, value) in list(phase_env.items()))
 
     if phase == constants.HOOKS_PHASE_PRE:
-      assert compat.all((key.startswith("GANETI_") and
+      assert all((key.startswith("GANETI_") and
                          not key.startswith("GANETI_POST_"))
                         for key in env)
 
     elif phase == constants.HOOKS_PHASE_POST:
-      assert compat.all(key.startswith("GANETI_POST_") for key in env)
+      assert all(key.startswith("GANETI_POST_") for key in env)
       assert isinstance(self.pre_env, dict)
 
       # Merge with pre-phase environment
-      assert not compat.any(key.startswith("GANETI_POST_")
+      assert not any(key.startswith("GANETI_POST_")
                             for key in self.pre_env)
       env.update(self.pre_env)
     else:
@@ -181,7 +181,7 @@ class HooksMaster(object):
     # Convert everything to strings
     env = dict([(str(key), str(val)) for key, val in env.items()])
 
-    assert compat.all(key == "PATH" or key.startswith("GANETI_")
+    assert all(key == "PATH" or key.startswith("GANETI_")
                       for key in env)
 
     return self.hooks_execution_fn(node_list, hpath, phase, env)

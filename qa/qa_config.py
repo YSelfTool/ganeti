@@ -764,9 +764,9 @@ def _TestEnabledInner(check_fn, names, fn):
 
   for name in names:
     if isinstance(name, Either):
-      value = _TestEnabledInner(check_fn, name.tests, compat.any)
+      value = _TestEnabledInner(check_fn, name.tests, any)
     elif isinstance(name, (list, tuple)):
-      value = _TestEnabledInner(check_fn, name, compat.all)
+      value = _TestEnabledInner(check_fn, name, all)
     elif callable(name):
       value = name()
     else:
@@ -796,7 +796,7 @@ def TestEnabled(tests, _cfg=None):
   default = cfg_tests.get("default", True)
 
   return _TestEnabledInner(lambda name: cfg_tests.get(name, default),
-                           tests, compat.all)
+                           tests, all)
 
 
 def GetInstanceCheckScript(*args):

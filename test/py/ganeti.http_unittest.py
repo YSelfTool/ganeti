@@ -678,7 +678,7 @@ class TestProcessRequests(unittest.TestCase):
     def _ProcessRequests(multi, handles):
       self.assertTrue(isinstance(multi, self._DummyCurlMulti))
       self.assertEqual(len(requests), len(handles))
-      self.assertTrue(compat.all(isinstance(curl, _FakeCurl)
+      self.assertTrue(all(isinstance(curl, _FakeCurl)
                                  for curl in handles))
 
       # Prepare for lock check
@@ -728,7 +728,7 @@ class TestProcessRequests(unittest.TestCase):
         yield (curl, msg)
 
       if use_monitor:
-        self.assertTrue(compat.all(req.lockcheck__ for req in requests))
+        self.assertTrue(all(req.lockcheck__ for req in requests))
 
     if use_monitor:
       self.assertEqual(lock_monitor_cb.GetMonitor(), None)

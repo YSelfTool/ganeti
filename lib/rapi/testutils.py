@@ -153,7 +153,7 @@ def _FormatHeaders(headers):
   @rtype: string
 
   """
-  assert compat.all(": " in header for header in headers)
+  assert all(": " in header for header in headers)
   return "\n".join(headers)
 
 

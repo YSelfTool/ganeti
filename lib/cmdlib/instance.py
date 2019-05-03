@@ -493,7 +493,7 @@ class LUInstanceMove(LogicalUnit):
                                             target_node.secondary_ip,
                                             self.op.compress,
                                             self.instance, transfers)
-    if not compat.all(import_result):
+    if not all(import_result):
       errs.append("Failed to transfer instance data")
 
     if errs:
@@ -554,8 +554,8 @@ class LUInstanceMultiAlloc(NoHooksLU):
       if inst.disk_template in constants.DTS_INT_MIRROR:
         nodes.append(bool(inst.snode))
 
-    has_nodes = compat.any(nodes)
-    if compat.all(nodes) ^ has_nodes:
+    has_nodes = any(nodes)
+    if all(nodes) ^ has_nodes:
       raise errors.OpPrereqError("There are instance objects providing"
                                  " pnode/snode while others do not",
                                  errors.ECODE_INVAL)

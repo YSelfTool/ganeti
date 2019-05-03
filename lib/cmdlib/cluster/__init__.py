@@ -1086,7 +1086,7 @@ class LUClusterSetParams(LogicalUnit):
       for group in list(self.cfg.GetAllNodeGroupsInfo().values()):
         instances = frozenset(
           [inst for inst in all_instances
-           if compat.any(nuuid in group.members
+           if any(nuuid in group.members
            for nuuid in self.cfg.GetInstanceNodes(inst.uuid))])
         new_ipolicy = objects.FillIPolicy(self.new_ipolicy, group.ipolicy)
         ipol = masterd.instance.CalculateGroupIPolicy(cluster, group)

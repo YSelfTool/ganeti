@@ -448,8 +448,8 @@ class _FilterCompilerHelper(object):
   """
   _OPS = {
     # Logic operators
-    qlang.OP_OR: (_OPTYPE_LOGIC, compat.any),
-    qlang.OP_AND: (_OPTYPE_LOGIC, compat.all),
+    qlang.OP_OR: (_OPTYPE_LOGIC, any),
+    qlang.OP_AND: (_OPTYPE_LOGIC, all),
 
     # Unary operators
     qlang.OP_NOT: (_OPTYPE_UNARY, None),
@@ -893,7 +893,7 @@ def _PrepareFieldList(fields, aliases):
     result[alias] = (fdef, k, flags, fn)
 
   assert len(result) == len(fields) + len(aliases)
-  assert compat.all(name == fdef.name
+  assert all(name == fdef.name
                     for (name, (fdef, _, _, _)) in list(result.items()))
 
   return result
@@ -1049,7 +1049,7 @@ def _ConvWrapInner(convert, fn, ctx, item):
   value = fn(ctx, item)
 
   # Is the value an abnormal status?
-  if compat.any(value is fs for fs in _FS_ALL):
+  if any(value is fs for fs in _FS_ALL):
     # Return right away
     return value
 

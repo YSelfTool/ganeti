@@ -995,7 +995,7 @@ class _JobProcessor(object):
       op = opctx.op
 
       # Consistency check
-      assert compat.all(i.status in (constants.OP_STATUS_QUEUED,
+      assert all(i.status in (constants.OP_STATUS_QUEUED,
                                      constants.OP_STATUS_CANCELING)
                         for i in job.ops[opctx.index + 1:])
 
@@ -1053,7 +1053,7 @@ class _JobProcessor(object):
           op.end_timestamp = TimeStampNow()
 
           if op.status == constants.OP_STATUS_CANCELING:
-            assert not compat.any(i.status != constants.OP_STATUS_CANCELING
+            assert not any(i.status != constants.OP_STATUS_CANCELING
                                   for i in job.ops[opctx.index:])
           else:
             assert op.status in constants.OPS_FINALIZED
@@ -1089,7 +1089,7 @@ class _JobProcessor(object):
       else:
         # Ensure all opcodes so far have been successful
         assert (opctx.index == 0 or
-                compat.all(i.status == constants.OP_STATUS_SUCCESS
+                all(i.status == constants.OP_STATUS_SUCCESS
                            for i in job.ops[:opctx.index]))
 
         # Reset context
@@ -1165,7 +1165,7 @@ class _JobDependencyManager(object):
     """Checks if a job is waiting.
 
     """
-    return compat.any(job in jobs
+    return any(job in jobs
                       for jobs in list(self._waiters.values()))
 
   def CheckAndRegister(self, job, dep_job_id, dep_status):

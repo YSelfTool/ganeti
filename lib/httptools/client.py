@@ -152,7 +152,7 @@ def _StartRequest(curl, req):
   assert isinstance(method, str)
   assert isinstance(url, str)
   assert isinstance(post_data, str)
-  assert compat.all(isinstance(i, str) for i in headers)
+  assert all(isinstance(i, str) for i in headers)
 
   # Buffer for response
   resp_buffer = StringIO()
@@ -372,7 +372,7 @@ def ProcessRequests(requests, lock_monitor_cb=None, _curl=pycurl.Curl,
   @param lock_monitor_cb: Callable for registering with lock monitor
 
   """
-  assert compat.all((req.error is None and
+  assert all((req.error is None and
                      req.success is None and
                      req.resp_status_code is None and
                      req.resp_body is None)
@@ -405,7 +405,7 @@ def ProcessRequests(requests, lock_monitor_cb=None, _curl=pycurl.Curl,
   # Don't try to read information anymore as all requests have been processed
   monitor.Disable()
 
-  assert compat.all(req.error is not None or
+  assert all(req.error is not None or
                     (req.success and
                      req.resp_status_code is not None and
                      req.resp_body is not None)

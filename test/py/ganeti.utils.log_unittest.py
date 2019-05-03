@@ -225,7 +225,7 @@ class TestSetupToolLogging(unittest.TestCase):
 
         lines = buf.getvalue().splitlines()
 
-        self.assertTrue(compat.all(line.count(":") == 3 for line in lines))
+        self.assertTrue(all(line.count(":") == 3 for line in lines))
 
         messages = [line.split(":", 3)[-1].strip() for line in lines]
 

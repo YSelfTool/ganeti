@@ -606,7 +606,7 @@ class ConfdCountingCallback(object):
     """Have all the registered queries received at least an answer?
 
     """
-    return compat.all(list(self._answers.values()))
+    return all(list(self._answers.values()))
 
   def _HandleExpire(self, up):
     # if we have no answer we have received none, before the expiration.

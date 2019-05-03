@@ -802,7 +802,7 @@ class MoveSourceExecutor(object):
                                compress=compress)
     (fin_resu, dresults) = poll_job_fn(cl, job_id)[0]
 
-    if not (fin_resu and compat.all(dresults)):
+    if not (fin_resu and all(dresults)):
       raise Error("Export failed for disks %s" %
                   utils.CommaJoin(str(idx) for idx, result
                                   in enumerate(dresults) if not result))
@@ -944,7 +944,7 @@ def _CheckInstanceOptions(parser, options, instance_names):
       options.nics = cli.ParseNicOption(options.nics)
   else:
     # Moving more than one instance
-    if compat.any(options.dest_instance_name, options.dest_primary_node,
+    if any(options.dest_instance_name, options.dest_primary_node,
                   options.dest_secondary_node, options.hvparams,
                   options.beparams, options.osparams, options.nics):
       parser.error("The options --dest-instance-name, --dest-primary-node,"
@@ -1090,7 +1090,7 @@ def main():
 
     logging.info("%s: %s", name, msg)
 
-  if compat.any(move.error_message for move in moves):
+  if any(move.error_message for move in moves):
     sys.exit(constants.EXIT_FAILURE)
 
   sys.exit(constants.EXIT_SUCCESS)

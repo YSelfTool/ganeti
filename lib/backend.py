@@ -3806,7 +3806,7 @@ def BlockdevGetmirrorstatusMulti(disks):
   """
   result = []
   lvs_cache = None
-  is_plain_disk = compat.any([_CheckForPlainDisk(d) for d in disks])
+  is_plain_disk = any([_CheckForPlainDisk(d) for d in disks])
   if is_plain_disk:
     lvs_cache = bdev.LogicalVolume.GetLvGlobalInfo()
   for disk in disks:
@@ -3840,7 +3840,7 @@ def _CheckForPlainDisk(disk):
   if disk.dev_type == constants.DT_PLAIN:
     return True
   if disk.children:
-    return compat.any([_CheckForPlainDisk(d) for d in disk.children])
+    return any([_CheckForPlainDisk(d) for d in disk.children])
   return False
 
 

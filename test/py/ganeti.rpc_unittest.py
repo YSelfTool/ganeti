@@ -558,7 +558,7 @@ class TestRpcClientBase(unittest.TestCase):
                                   _req_process_fn=http_proc)
       result = client._Call(cdef, nodes, [arg1, 300])
       self.assertEqual(len(result), len(nodes))
-      self.assertTrue(compat.all(not res.fail_msg and
+      self.assertTrue(all(not res.fail_msg and
                                  res.payload == hex(exp_timeout)
                                  for res in list(result.values())))
 
@@ -931,7 +931,7 @@ class TestRpcRunner(unittest.TestCase):
       }])
 
     inst_disks = cfg.GetInstanceDisks(inst.uuid)
-    self.assertTrue(compat.all(disk.params == {} for disk in inst_disks),
+    self.assertTrue(all(disk.params == {} for disk in inst_disks),
                     msg="Configuration objects were modified")
 
 

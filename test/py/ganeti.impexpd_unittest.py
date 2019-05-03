@@ -67,7 +67,7 @@ class CmdBuilderConfig(objects.ConfigObject):
 
 def CheckCmdWord(cmd, word):
   wre = re.compile(r"\b%s\b" % re.escape(word))
-  return compat.any(wre.search(i) for i in cmd)
+  return any(wre.search(i) for i in cmd)
 
 
 class TestCommandBuilder(unittest.TestCase):
@@ -128,10 +128,10 @@ class TestCommandBuilder(unittest.TestCase):
                   self.assertTrue(CheckCmdWord(cmd, compress_dict[compress]))
 
                 if cmd_prefix is not None:
-                  self.assertTrue(compat.any(cmd_prefix in i for i in cmd))
+                  self.assertTrue(any(cmd_prefix in i for i in cmd))
 
                 if cmd_suffix is not None:
-                  self.assertTrue(compat.any(cmd_suffix in i for i in cmd))
+                  self.assertTrue(any(cmd_suffix in i for i in cmd))
 
                 # Check socat command
                 socat_cmd = builder._GetSocatCommand()
@@ -158,21 +158,21 @@ class TestCommandBuilder(unittest.TestCase):
                               ipv4=False, ipv6=False)
       builder = impexpd.CommandBuilder(mode, opts, 1, 2, 3)
       cmd = builder._GetSocatCommand()
-      self.assertTrue(compat.all("pf=" not in i for i in cmd))
+      self.assertTrue(all("pf=" not in i for i in cmd))
 
       # IPv4
       opts = CmdBuilderConfig(host="localhost", port=6789,
                               ipv4=True, ipv6=False)
       builder = impexpd.CommandBuilder(mode, opts, 1, 2, 3)
       cmd = builder._GetSocatCommand()
-      self.assertTrue(compat.any(",pf=ipv4" in i for i in cmd))
+      self.assertTrue(any(",pf=ipv4" in i for i in cmd))
 
       # IPv6
       opts = CmdBuilderConfig(host="localhost", port=6789,
                               ipv4=False, ipv6=True)
       builder = impexpd.CommandBuilder(mode, opts, 1, 2, 3)
       cmd = builder._GetSocatCommand()
-      self.assertTrue(compat.any(",pf=ipv6" in i for i in cmd))
+      self.assertTrue(any(",pf=ipv6" in i for i in cmd))
 
       # IPv4 and IPv6
       opts = CmdBuilderConfig(host="localhost", port=6789,

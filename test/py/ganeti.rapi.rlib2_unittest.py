@@ -1129,9 +1129,9 @@ class TestParseInstanceReinstallRequest(testutils.GanetiTestCase):
       opcodes.OpInstanceStartup,
       ]
 
-    self.assertTrue(compat.all(isinstance(op, exp)
+    self.assertTrue(all(isinstance(op, exp)
                             for op, exp in zip(ops, expcls)))
-    self.assertTrue(compat.all(op.instance_name == name for op in ops))
+    self.assertTrue(all(op.instance_name == name for op in ops))
 
   def test(self):
     name = "shoo0tihohma"
@@ -1477,7 +1477,7 @@ class TestInstancesMultiAlloc(unittest.TestCase):
 
     (body, _) = handler.GetPostOpInput()
 
-    self.assertTrue(compat.all(
+    self.assertTrue(all(
       [isinstance(inst, opcodes.OpInstanceCreate) for inst in body["instances"]]
     ))
 

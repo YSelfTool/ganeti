@@ -491,7 +491,7 @@ class LUBackupExport(LogicalUnit):
 
       # Check for backwards compatibility
       assert len(dresults) == len(self.instance.disks)
-      assert compat.all(isinstance(i, bool) for i in dresults), \
+      assert all(isinstance(i, bool) for i in dresults), \
              "Not all results are boolean: %r" % dresults
 
     finally:
@@ -499,11 +499,11 @@ class LUBackupExport(LogicalUnit):
         feedback_fn("Deactivating disks for %s" % self.instance.name)
         ShutdownInstanceDisks(self, self.instance)
 
-    if not (compat.all(dresults) and fin_resu):
+    if not (all(dresults) and fin_resu):
       failures = []
       if not fin_resu:
         failures.append("export finalization")
-      if not compat.all(dresults):
+      if not all(dresults):
         fdsk = utils.CommaJoin(idx for (idx, dsk) in enumerate(dresults)
                                if not dsk)
         failures.append("disk export: disk(s) %s" % fdsk)

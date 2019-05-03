@@ -366,7 +366,7 @@ class TestHooksRunnerEnv(unittest.TestCase):
     self.assertEqual(hpath, self.lu.HPATH)
     self.assertEqual(phase, constants.HOOKS_PHASE_PRE)
     self.assertEqual(env["GANETI_FOO"], "pre-foo-value")
-    self.assertFalse(compat.any(key.startswith("GANETI_POST") for key in env))
+    self.assertFalse(any(key.startswith("GANETI_POST") for key in env))
     self._CheckEnv(env, constants.HOOKS_PHASE_PRE, self.lu.HPATH)
 
     # Check post-phase hook
@@ -396,7 +396,7 @@ class TestHooksRunnerEnv(unittest.TestCase):
     self.assertEqual(phase, constants.HOOKS_PHASE_POST)
     self._CheckEnv(env, constants.HOOKS_PHASE_POST,
                    constants.HOOKS_NAME_CFGUPDATE)
-    self.assertFalse(compat.any(key.startswith("GANETI_POST") for key in env))
+    self.assertFalse(any(key.startswith("GANETI_POST") for key in env))
     self.assertEqual(env["GANETI_FOO"], "pre-foo-value")
     self.assertRaises(IndexError, self._rpcs.pop)
 
@@ -451,7 +451,7 @@ class TestHooksRunnerEnv(unittest.TestCase):
     self.assertEqual(hpath, constants.HOOKS_NAME_CFGUPDATE)
     self.assertEqual(phase, constants.HOOKS_PHASE_POST)
     self.assertEqual(env["GANETI_FOO"], "value")
-    self.assertFalse(compat.any(key.startswith("GANETI_POST") for key in env))
+    self.assertFalse(any(key.startswith("GANETI_POST") for key in env))
     self._CheckEnv(env, constants.HOOKS_PHASE_POST,
                    constants.HOOKS_NAME_CFGUPDATE)
 
@@ -496,7 +496,7 @@ class TestHooksRunnerEnv(unittest.TestCase):
     self.assertEqual(set(node_list), set([self.lu.cfg.GetMasterNodeName()]))
     self.assertEqual(hpath, constants.HOOKS_NAME_CFGUPDATE)
     self.assertEqual(phase, constants.HOOKS_PHASE_POST)
-    self.assertFalse(compat.any(key.startswith("GANETI_POST") for key in env))
+    self.assertFalse(any(key.startswith("GANETI_POST") for key in env))
     self._CheckEnv(env, constants.HOOKS_PHASE_POST,
                    constants.HOOKS_NAME_CFGUPDATE)
     self.assertRaises(IndexError, self._rpcs.pop)

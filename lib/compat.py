@@ -67,39 +67,6 @@ except ImportError:
   sha1_hash = sha.new # pylint: disable=C0103
 
 
-def _all(seq):
-  """Returns True if all elements in the iterable are True.
-
-  """
-  for _ in itertools.filterfalse(bool, seq):
-    return False
-  return True
-
-
-def _any(seq):
-  """Returns True if any element of the iterable are True.
-
-  """
-  for _ in filter(bool, seq):
-    return True
-  return False
-
-
-try:
-  # pylint: disable=E0601
-  # pylint: disable=W0622
-  all = all
-except NameError:
-  all = _all
-
-try:
-  # pylint: disable=E0601
-  # pylint: disable=W0622
-  any = any
-except NameError:
-  any = _any
-
-
 def partition(seq, pred=bool): # pylint: disable=W0622
   """Partition a list in two, based on the given predicate.
 

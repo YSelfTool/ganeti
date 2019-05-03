@@ -370,7 +370,7 @@ def TestClusterEpo():
   result_output = GetCommandOutput(master.primary,
                                    "gnt-node list --verbose --no-headers -o"
                                    " powered")
-  AssertEqual(compat.all(powered == "(unavail)"
+  AssertEqual(all(powered == "(unavail)"
                          for powered in result_output.splitlines()), True)
 
   # Conflicting
@@ -389,7 +389,7 @@ def TestClusterEpo():
     result_output = GetCommandOutput(master.primary,
                                      "gnt-instance list --no-headers -o status")
     # ERROR_down because the instance is stopped but not recorded as such
-    AssertEqual(compat.all(status == "ERROR_down"
+    AssertEqual(all(status == "ERROR_down"
                            for status in result_output.splitlines()), True)
 
     # Now start everything again
@@ -398,7 +398,7 @@ def TestClusterEpo():
     # All instances should have been started now
     result_output = GetCommandOutput(master.primary,
                                      "gnt-instance list --no-headers -o status")
-    AssertEqual(compat.all(status == "running"
+    AssertEqual(all(status == "running"
                            for status in result_output.splitlines()), True)
 
 

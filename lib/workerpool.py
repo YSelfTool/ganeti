@@ -374,10 +374,10 @@ class WorkerPool(object):
     @note: See L{AddTask} for a note on task IDs.
 
     """
-    assert compat.all(isinstance(task, (tuple, list)) for task in tasks), \
+    assert all(isinstance(task, (tuple, list)) for task in tasks), \
            "Each task must be a sequence"
     assert (isinstance(priority, int) or
-            compat.all(isinstance(prio, int) for prio in priority)), \
+            all(isinstance(prio, int) for prio in priority)), \
            "Priority must be numeric or be a list of numeric values"
     assert task_id is None or isinstance(task_id, (tuple, list)), \
            "Task IDs must be in a sequence"
@@ -400,7 +400,7 @@ class WorkerPool(object):
     try:
       self._WaitWhileQuiescingUnlocked()
 
-      assert compat.all(isinstance(prio, int) for prio in priority)
+      assert all(isinstance(prio, int) for prio in priority)
       assert len(tasks) == len(priority)
       assert len(tasks) == len(task_id)
 

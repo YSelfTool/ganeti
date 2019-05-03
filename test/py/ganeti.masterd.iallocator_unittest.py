@@ -79,8 +79,8 @@ class TestIAReqMultiInstanceAlloc(unittest.TestCase):
 
     result_fn = iallocator.IAReqMultiInstanceAlloc.REQ_RESULT
 
-    self.assertTrue(compat.all(list(map(result_fn, good_results))))
-    self.assertFalse(compat.any(list(map(result_fn, bad_results))))
+    self.assertTrue(all(list(map(result_fn, good_results))))
+    self.assertFalse(any(list(map(result_fn, bad_results))))
 
 
 class TestIARequestBase(unittest.TestCase):

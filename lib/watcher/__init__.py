@@ -342,7 +342,7 @@ def _CheckForOfflineNodes(nodes, instance):
   @return: True if any of the secondary is offline, False otherwise
 
   """
-  return compat.any(nodes[node_name].offline for node_name in instance.snodes)
+  return any(nodes[node_name].offline for node_name in instance.snodes)
 
 
 def _VerifyDisks(cl, uuid, nodes, instances):
@@ -624,7 +624,7 @@ def _StartGroupChildren(cl, wait):
   """Starts a new instance of the watcher for every node group.
 
   """
-  assert not compat.any(arg.startswith(cli.NODEGROUP_OPT_NAME)
+  assert not any(arg.startswith(cli.NODEGROUP_OPT_NAME)
                         for arg in sys.argv)
 
   result = cl.QueryGroups([], ["name", "uuid"], False)
@@ -767,7 +767,7 @@ def _GetGroupData(qcl, uuid):
   ]
 
   # Ensure results are tuples with two values
-  assert compat.all(
+  assert all(
       ht.TListOf(ht.TListOf(ht.TIsLength(2)))(d) for d in results_data)
 
   # Extract values ignoring result status
@@ -810,7 +810,7 @@ def _LoadKnownGroups():
   result = list(line.split(None, 1)[0] for line in groups
                 if line.strip())
 
-  if not compat.all(utils.UUID_RE.match(r) for r in result):
+  if not all(utils.UUID_RE.match(r) for r in result):
     raise errors.GenericError("Ssconf contains invalid group UUID")
 
   return result
@@ -868,7 +868,7 @@ def _GroupWatcher(opts):
     _CheckDisks(client, notepad, nodes, instances, started)
 
     # Check if the nodegroup only has ext storage type
-    only_ext = compat.all(i.disk_template == constants.DT_EXT
+    only_ext = all(i.disk_template == constants.DT_EXT
                           for i in list(instances.values()))
 
     # We skip current NodeGroup verification if there are only external storage

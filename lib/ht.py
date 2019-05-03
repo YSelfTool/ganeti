@@ -303,7 +303,7 @@ def TAnd(*args):
 
   """
   def fn(val):
-    return compat.all(t(val) for t in args)
+    return all(t(val) for t in args)
 
   return CombinationDesc("and", args, fn)
 
@@ -313,7 +313,7 @@ def TOr(*args):
 
   """
   def fn(val):
-    return compat.any(t(val) for t in args)
+    return any(t(val) for t in args)
 
   return CombinationDesc("or", args, fn)
 
@@ -461,7 +461,7 @@ def TListOf(my_type):
 
   """
   desc = WithDesc("List of %s" % (Parens(my_type), ))
-  return desc(TAnd(TList, lambda lst: compat.all(my_type(v) for v in lst)))
+  return desc(TAnd(TList, lambda lst: all(my_type(v) for v in lst)))
 
 
 TMaybeListOf = lambda item_type: TMaybe(TListOf(item_type))
@@ -494,8 +494,8 @@ def TDictOf(key_type, val_type):
                   (Parens(key_type), Parens(val_type)))
 
   def fn(container):
-    return (compat.all(key_type(v) for v in list(container.keys())) and
-            compat.all(val_type(v) for v in list(container.values())))
+    return (all(key_type(v) for v in list(container.keys())) and
+            all(val_type(v) for v in list(container.values())))
 
   return desc(TAnd(TDict, fn))
 
@@ -510,7 +510,7 @@ def _TStrictDictCheck(require_all, exclusive, items, val):
     # Requires items not found in value
     return False
 
-  return compat.all(items.get(key, notfound_fn)(value)
+  return all(items.get(key, notfound_fn)(value)
                     for (key, value) in list(val.items()))
 
 
@@ -566,7 +566,7 @@ def TItems(items):
                                   (text[int(idx > 0)], idx, Parens(check))
                                   for (idx, check) in enumerate(items)))
 
-  return desc(lambda value: compat.all(check(i)
+  return desc(lambda value: all(check(i)
                                        for (check, i) in zip(items, value)))
 
 

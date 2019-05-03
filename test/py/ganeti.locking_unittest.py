@@ -952,7 +952,7 @@ class TestSharedLock(_ThreadedTestCase):
         # acquires only one.
         while names:
           names.remove(self.done.get_nowait())
-      self.assertFalse(compat.any(names for (_, names, _) in acquires))
+      self.assertFalse(any(names for (_, names, _) in acquires))
 
     self.assertRaises(queue.Empty, self.done.get_nowait)
 
