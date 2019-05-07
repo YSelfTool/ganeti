@@ -34,7 +34,7 @@ import unittest
 
 from ganeti.utils import version
 
-from . import testutils
+import testutils
 
 class ParseVersionTest(unittest.TestCase):
     def testParseVersion(self):

@@ -35,7 +35,7 @@ import unittest
 from ganeti import constants
 from ganeti.tools import burnin
 
-from . import testutils
+import testutils
 
 
 class TestConstants(unittest.TestCase):

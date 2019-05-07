@@ -50,7 +50,7 @@ from ganeti import compat
 from ganeti.hypervisor import hv_base
 from ganeti.hypervisor import hv_xen
 
-from . import testutils
+import testutils
 
 
 # Map from hypervisor class to hypervisor name

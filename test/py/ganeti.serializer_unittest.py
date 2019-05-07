@@ -39,7 +39,7 @@ from ganeti import ht
 from ganeti import objects
 from ganeti import serializer
 
-from . import testutils
+import testutils
 
 
 class TestSerializer(testutils.GanetiTestCase):

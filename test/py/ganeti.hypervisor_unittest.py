@@ -39,7 +39,7 @@ from ganeti import errors
 from ganeti import hypervisor
 from ganeti.hypervisor import hv_base
 
-from . import testutils
+import testutils
 
 
 class TestParameters(unittest.TestCase):

@@ -40,7 +40,7 @@ from ganeti import httptools as http
 from ganeti import compat
 from ganeti.rapi import baserlib
 
-from . import testutils
+import testutils
 
 
 class TestFillOpcode(unittest.TestCase):

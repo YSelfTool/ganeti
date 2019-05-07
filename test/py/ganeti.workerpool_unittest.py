@@ -42,7 +42,7 @@ from ganeti import errors
 from ganeti import utils
 from ganeti import compat
 
-from . import testutils
+import testutils
 
 
 class CountingContext(object):

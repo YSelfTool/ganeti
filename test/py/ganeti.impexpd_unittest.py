@@ -43,7 +43,7 @@ from ganeti import utils
 from ganeti import errors
 from ganeti import impexpd
 
-from . import testutils
+import testutils
 
 
 class CmdBuilderConfig(objects.ConfigObject):

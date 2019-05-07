@@ -38,7 +38,7 @@ from ganeti import constants
 from ganeti import compat
 from ganeti.utils import algo
 
-from . import testutils
+import testutils
 
 
 class TestUniqueSequence(unittest.TestCase):

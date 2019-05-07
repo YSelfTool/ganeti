@@ -35,7 +35,7 @@ import tempfile
 import unittest
 import shutil
 
-from . import testutils
+import testutils
 from . import mocks
 
 from ganeti import constants

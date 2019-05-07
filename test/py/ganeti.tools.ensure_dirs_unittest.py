@@ -36,7 +36,7 @@ import os.path
 from ganeti import utils
 from ganeti.tools import ensure_dirs
 
-from . import testutils
+import testutils
 
 
 class TestGetPaths(unittest.TestCase):

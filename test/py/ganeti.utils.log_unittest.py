@@ -43,7 +43,7 @@ from ganeti import errors
 from ganeti import compat
 from ganeti import utils
 
-from . import testutils
+import testutils
 
 
 class TestLogHandler(unittest.TestCase):

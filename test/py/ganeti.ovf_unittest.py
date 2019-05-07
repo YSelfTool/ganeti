@@ -52,7 +52,7 @@ from ganeti import ovf
 from ganeti import utils
 from ganeti import pathutils
 
-from . import testutils
+import testutils
 
 OUTPUT_DIR = tempfile.mkdtemp()
 

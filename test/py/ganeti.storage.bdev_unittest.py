@@ -42,7 +42,7 @@ from ganeti import objects
 from ganeti import utils
 from ganeti.storage import bdev
 
-from . import testutils
+import testutils
 
 def _FakeRunCmd(success, stdout, cmd):
   if success:

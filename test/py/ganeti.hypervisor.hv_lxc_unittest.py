@@ -46,7 +46,7 @@ from unittest import mock
 import os
 import shutil
 import tempfile
-from . import testutils
+import testutils
 from .testutils import patch_object
 
 

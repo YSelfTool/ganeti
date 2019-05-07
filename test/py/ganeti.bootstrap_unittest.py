@@ -40,7 +40,7 @@ from ganeti.storage import drbd
 from ganeti import errors
 from ganeti import pathutils
 
-from . import testutils
+import testutils
 from unittest import mock
 
 

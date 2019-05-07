@@ -37,7 +37,7 @@ import tempfile
 from ganeti import constants
 from ganeti import utils
 
-from . import testutils
+import testutils
 
 
 class TestHmacFunctions(unittest.TestCase):

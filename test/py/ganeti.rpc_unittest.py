@@ -47,7 +47,7 @@ from ganeti import serializer
 from ganeti import objects
 from ganeti import backend
 
-from . import testutils
+import testutils
 from . import mocks
 
 

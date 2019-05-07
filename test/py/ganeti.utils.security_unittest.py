@@ -39,7 +39,7 @@ import unittest
 from ganeti import constants
 from ganeti.utils import security
 
-from . import testutils
+import testutils
 
 
 class TestUuidConversion(unittest.TestCase):

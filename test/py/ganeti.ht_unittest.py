@@ -35,7 +35,7 @@ import unittest
 from ganeti import constants
 from ganeti import ht
 
-from . import testutils
+import testutils
 
 
 class TestTypeChecks(unittest.TestCase):

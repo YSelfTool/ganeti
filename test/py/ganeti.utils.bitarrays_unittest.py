@@ -31,7 +31,7 @@
 """Script for unittesting the bitarray utility functions"""
 
 import unittest
-from . import testutils
+import testutils
 from bitarray import bitarray
 
 from ganeti import errors

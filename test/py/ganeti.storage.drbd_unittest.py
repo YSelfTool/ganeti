@@ -40,7 +40,7 @@ from ganeti.storage import drbd
 from ganeti.storage import drbd_info
 from ganeti.storage import drbd_cmdgen
 
-from . import testutils
+import testutils
 
 
 class TestDRBD8(testutils.GanetiTestCase):

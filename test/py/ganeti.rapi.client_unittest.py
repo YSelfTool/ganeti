@@ -50,7 +50,7 @@ from ganeti.rapi import connector
 from ganeti.rapi import rlib2
 from ganeti.rapi import client
 
-from . import testutils
+import testutils
 
 
 # List of resource handlers which aren't used by the RAPI client

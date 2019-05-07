@@ -44,7 +44,7 @@ from ganeti import utils
 from ganeti.tools import prepare_node_join
 from ganeti.tools import common
 
-from . import testutils
+import testutils
 
 
 _JoinError = prepare_node_join.JoinError

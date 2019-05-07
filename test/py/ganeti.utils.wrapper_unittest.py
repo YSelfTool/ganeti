@@ -41,7 +41,7 @@ import shutil
 from ganeti import constants
 from ganeti import utils
 
-from . import testutils
+import testutils
 
 
 class TestSetCloseOnExecFlag(unittest.TestCase):

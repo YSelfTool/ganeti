@@ -46,7 +46,7 @@ from ganeti import ssh
 from ganeti import cli
 
 from unittest import mock
-from . import testutils
+import testutils
 
 
 class TestEpoUtilities(unittest.TestCase):

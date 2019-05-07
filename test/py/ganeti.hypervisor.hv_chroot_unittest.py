@@ -40,7 +40,7 @@ from ganeti import hypervisor
 
 from ganeti.hypervisor import hv_chroot
 
-from . import testutils
+import testutils
 
 
 class TestConsole(unittest.TestCase):

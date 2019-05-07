@@ -48,7 +48,7 @@ import ganeti.httptools.server
 import ganeti.httptools.client
 import ganeti.httptools.auth
 
-from . import testutils
+import testutils
 
 
 class TestStartLines(unittest.TestCase):

@@ -36,7 +36,7 @@ from ganeti import constants
 from ganeti import errors
 from ganeti import utils
 
-from . import testutils
+import testutils
 
 
 class TestRetry(testutils.GanetiTestCase):

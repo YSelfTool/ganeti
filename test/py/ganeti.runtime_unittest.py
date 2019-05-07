@@ -34,7 +34,7 @@ from ganeti import errors
 from ganeti import runtime
 from ganeti import ht
 
-from . import testutils
+import testutils
 import unittest
 
 

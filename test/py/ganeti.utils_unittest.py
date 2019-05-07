@@ -47,7 +47,7 @@ import time
 import unittest
 import warnings
 
-from . import testutils
+import testutils
 from ganeti import constants
 from ganeti import compat
 from ganeti import utils

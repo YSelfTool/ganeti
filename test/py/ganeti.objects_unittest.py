@@ -40,7 +40,7 @@ from ganeti import objects
 from ganeti import errors
 from ganeti import serializer
 
-from . import testutils
+import testutils
 
 
 class SimpleObject(objects.ConfigObject):
