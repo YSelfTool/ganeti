@@ -232,7 +232,7 @@ def WriteFile(file_name, fn=None, data=None,
       if data is not None:
         if isinstance(data, str):
           data = data.encode()
-        assert isinstance(data, str)
+        assert isinstance(data, bytes)
         to_write = len(data)
         offset = 0
         while offset < to_write:
