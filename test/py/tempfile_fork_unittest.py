@@ -40,7 +40,7 @@ import logging
 
 from ganeti import utils
 
-from . import testutils
+import testutils
 
 
 # This constant is usually at a much higher value. Setting it lower for test

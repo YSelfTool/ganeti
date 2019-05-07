@@ -43,7 +43,7 @@ from ganeti import utils
 import ganeti.rapi.testutils
 import ganeti.rapi.client
 
-from . import testutils
+import testutils
 
 
 KNOWN_UNUSED_LUXI = compat.UniqueFrozenset([

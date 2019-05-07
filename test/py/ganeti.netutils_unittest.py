@@ -37,7 +37,7 @@ import socket
 import tempfile
 import unittest
 
-from . import testutils
+import testutils
 from ganeti import constants
 from ganeti import errors
 from ganeti import netutils

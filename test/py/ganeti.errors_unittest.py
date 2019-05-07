@@ -36,7 +36,7 @@ import unittest
 
 from ganeti import errors
 
-from . import testutils
+import testutils
 
 
 class TestErrors(testutils.GanetiTestCase):

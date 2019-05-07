@@ -48,7 +48,7 @@ from ganeti import serializer
 
 from ganeti.config import TemporaryReservationManager
 
-from . import testutils
+import testutils
 from . import mocks
 from unittest import mock
 from .testutils.config_mock import ConfigMock, _UpdateIvNames

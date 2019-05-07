@@ -55,7 +55,7 @@ from ganeti import mcpu
 from ganeti import query
 from ganeti import workerpool
 
-from . import testutils
+import testutils
 
 
 class _FakeJob:

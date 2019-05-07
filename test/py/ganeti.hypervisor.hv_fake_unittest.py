@@ -38,7 +38,7 @@ from ganeti import hypervisor
 
 from ganeti.hypervisor import hv_fake
 
-from . import testutils
+import testutils
 
 
 class TestConsole(unittest.TestCase):

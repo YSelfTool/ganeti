@@ -40,7 +40,7 @@ from ganeti import errors
 
 import ganeti.confd.client
 
-from . import testutils
+import testutils
 
 
 class ResettableMock(object):

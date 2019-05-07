@@ -42,7 +42,7 @@ from ganeti import constants
 from ganeti import errors
 from ganeti import compat
 
-from . import testutils
+import testutils
 
 
 class TestOpcodes(unittest.TestCase):

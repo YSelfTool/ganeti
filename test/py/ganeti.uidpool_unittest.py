@@ -40,7 +40,7 @@ from ganeti import uidpool
 from ganeti import errors
 from ganeti import pathutils
 
-from . import testutils
+import testutils
 
 
 class TestUidPool(testutils.GanetiTestCase):

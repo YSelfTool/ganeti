@@ -47,7 +47,7 @@ from ganeti import netutils
 from ganeti.utils import version
 from ganeti.tools.cfgupgrade import CfgUpgrade, ParseOptions, Error
 
-from . import testutils
+import testutils
 from unittest import mock
 
 

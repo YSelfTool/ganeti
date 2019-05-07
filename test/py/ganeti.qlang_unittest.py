@@ -38,7 +38,7 @@ from ganeti import errors
 from ganeti import qlang
 from ganeti import query
 
-from . import testutils
+import testutils
 
 
 class TestMakeSimpleFilter(unittest.TestCase):

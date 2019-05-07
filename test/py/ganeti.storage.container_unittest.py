@@ -40,7 +40,7 @@ from ganeti import compat
 from ganeti import errors
 from ganeti.storage import container
 
-from . import testutils
+import testutils
 
 
 class TestVGReduce(testutils.GanetiTestCase):

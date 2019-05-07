@@ -36,8 +36,8 @@ from unittest import mock
 import os
 import shutil
 import tempfile
-from . import testutils
-from . import testutils_ssh
+import testutils
+import testutils_ssh
 import unittest
 
 from ganeti import backend

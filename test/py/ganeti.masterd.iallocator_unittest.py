@@ -40,7 +40,7 @@ from ganeti import objects
 from ganeti import ht
 from ganeti.masterd import iallocator
 
-from . import testutils
+import testutils
 
 
 class _StubIAllocator(object):

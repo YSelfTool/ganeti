@@ -35,7 +35,7 @@ import unittest
 
 from ganeti import outils
 
-from . import testutils
+import testutils
 
 
 class SlotsAutoSlot(outils.AutoSlots):

@@ -40,7 +40,7 @@ from ganeti import compat
 from ganeti import errors
 from ganeti import jstore
 
-from . import testutils
+import testutils
 
 
 class TestFormatJobID(testutils.GanetiTestCase):

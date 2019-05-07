@@ -31,7 +31,7 @@
 """Script for unittesting the cli module"""
 
 import copy
-from . import testutils
+import testutils
 import time
 import unittest
 import yaml

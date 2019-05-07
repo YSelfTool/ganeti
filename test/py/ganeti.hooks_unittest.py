@@ -50,7 +50,7 @@ from ganeti.constants import HKR_SUCCESS, HKR_FAIL, HKR_SKIP
 
 from .mocks import FakeConfig, FakeProc, FakeContext
 
-from . import testutils
+import testutils
 
 
 class FakeLU(cmdlib.LogicalUnit):

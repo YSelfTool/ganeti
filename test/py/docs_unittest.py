@@ -46,7 +46,7 @@ from ganeti.rapi import baserlib
 from ganeti.rapi import rlib2
 from ganeti.rapi import connector
 
-from . import testutils
+import testutils
 
 
 VALID_URI_RE = re.compile(r"^[-/a-z0-9]*$")

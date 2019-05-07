@@ -43,7 +43,7 @@ from ganeti import objects
 from ganeti import compat
 from ganeti import constants
 
-from . import testutils
+import testutils
 
 
 class _ClientForCancelJob:

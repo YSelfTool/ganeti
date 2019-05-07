@@ -38,7 +38,7 @@ from ganeti import errors
 from ganeti import serializer
 from ganeti.rpc import client
 
-from . import testutils
+import testutils
 
 
 class TextRPCParsing(testutils.GanetiTestCase):

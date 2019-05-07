@@ -41,7 +41,7 @@ from ganeti import constants
 from ganeti import errors
 from ganeti import ssconf
 
-from . import testutils
+import testutils
 from unittest import mock
 
 

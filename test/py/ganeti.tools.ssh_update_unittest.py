@@ -39,7 +39,7 @@ from ganeti import constants
 from ganeti import utils
 from ganeti.tools import ssh_update
 
-from . import testutils
+import testutils
 
 
 _JoinError = ssh_update.SshUpdateError

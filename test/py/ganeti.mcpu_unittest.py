@@ -50,7 +50,7 @@ from ganeti.constants import \
     LOCK_ATTEMPTS_MAXWAIT, \
     LOCK_ATTEMPTS_MINWAIT
 
-from . import testutils
+import testutils
 
 
 # FIXME: Document what BGL whitelist means

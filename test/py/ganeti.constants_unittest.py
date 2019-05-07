@@ -41,7 +41,7 @@ from ganeti import utils
 
 from ganeti.utils import version
 
-from . import testutils
+import testutils
 
 
 class TestConstants(unittest.TestCase):

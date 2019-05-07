@@ -48,7 +48,7 @@ from ganeti import compat
 from ganeti import objects
 from ganeti import query
 
-from . import testutils
+import testutils
 
 
 # This is used to test the ssynchronize decorator.

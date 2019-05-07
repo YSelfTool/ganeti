@@ -36,7 +36,7 @@ import os
 from ganeti import errors
 from ganeti.storage import extstorage
 
-from . import testutils
+import testutils
 
 
 class FakeStatResult(object):

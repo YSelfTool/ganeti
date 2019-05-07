@@ -45,7 +45,7 @@ from ganeti.masterd.instance import \
   ComputeRemoteImportDiskInfo, CheckRemoteExportDiskInfo, \
   FormatProgress
 
-from . import testutils
+import testutils
 
 
 class TestMisc(unittest.TestCase):
