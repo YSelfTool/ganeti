@@ -233,14 +233,8 @@ def WriteFile(file_name, fn=None, data=None,
         if isinstance(data, str):
           data = data.encode()
         assert isinstance(data, bytes)
-        to_write = len(data)
-        offset = 0
-        while offset < to_write:
-          written = os.write(fd, buffer(data, offset))
-          assert written >= 0
-          assert written <= to_write - offset
-          offset += written
-        assert offset == to_write
+        written = os.write(fd, data)
+        assert written == len(data)
       else:
         fn(fd)
       if callable(postwrite):
