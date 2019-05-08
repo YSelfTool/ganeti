@@ -48,7 +48,7 @@ from ganeti import objects
 from ganeti import backend
 
 import testutils
-from . import mocks
+import mocks
 
 
 class _FakeRequestProcessor:

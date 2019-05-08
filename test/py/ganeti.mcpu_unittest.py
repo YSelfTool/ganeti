@@ -33,7 +33,7 @@
 
 import unittest
 import itertools
-from . import mocks
+import mocks
 from .cmdlib.testsupport.rpc_runner_mock import CreateRpcRunnerMock
 
 from ganeti import compat
