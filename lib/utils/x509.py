@@ -290,8 +290,8 @@ def GenerateSelfSignedX509Cert(common_name, validity, serial_no):
   cert.set_pubkey(key)
   cert.sign(key, constants.X509_CERT_SIGN_DIGEST)
 
-  key_pem = OpenSSL.crypto.dump_privatekey(OpenSSL.crypto.FILETYPE_PEM, key)
-  cert_pem = OpenSSL.crypto.dump_certificate(OpenSSL.crypto.FILETYPE_PEM, cert)
+  key_pem = OpenSSL.crypto.dump_privatekey(OpenSSL.crypto.FILETYPE_PEM, key).decode()
+  cert_pem = OpenSSL.crypto.dump_certificate(OpenSSL.crypto.FILETYPE_PEM, cert).decode()
 
   return (key_pem, cert_pem)
 
@@ -369,9 +369,9 @@ def GenerateSignedX509Cert(common_name, validity, serial_no,
 
   # Encode the key and certificate in PEM format.
   key_pem = OpenSSL.crypto.dump_privatekey(
-      OpenSSL.crypto.FILETYPE_PEM, key_pair)
+      OpenSSL.crypto.FILETYPE_PEM, key_pair).decode()
   cert_pem = OpenSSL.crypto.dump_certificate(
-      OpenSSL.crypto.FILETYPE_PEM, cert)
+      OpenSSL.crypto.FILETYPE_PEM, cert).decode()
 
   return (key_pem, cert_pem)
 
