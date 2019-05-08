@@ -82,7 +82,7 @@ class TestGetSocketCredentials(unittest.TestCase):
       try:
         data = serializer.DumpJson(_GetSocketCredentials(self.sockpath))
 
-        os.write(c2pw, data)
+        os.write(c2pw, data.encode())
         os.close(c2pw)
 
         os._exit(0)
