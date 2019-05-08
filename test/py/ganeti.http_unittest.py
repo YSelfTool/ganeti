@@ -31,6 +31,7 @@
 """Script for unittesting the http module"""
 
 
+import base64
 import functools
 import os
 import unittest
@@ -241,7 +242,7 @@ class TestHttpServerRequestAuthentication(unittest.TestCase):
 
   def testAuthForPublicResource(self):
     headers = {
-      http.HTTP_AUTHORIZATION: "Basic %s" % ("foo".encode("base64").strip(), ),
+      http.HTTP_AUTHORIZATION: "Basic %s" % (base64.encodebytes("foo".encode()).strip().decode(), ),
       }
     req = http.server._HttpServerRequest("GET", "/", headers, None, None)
     ra = _FakeRequestAuth("area1", False, None)
@@ -250,7 +251,7 @@ class TestHttpServerRequestAuthentication(unittest.TestCase):
   def testAuthForPublicResource(self):
     headers = {
       http.HTTP_AUTHORIZATION:
-        "Basic %s" % ("foo:bar".encode("base64").strip(), ),
+        "Basic %s" % (base64.encodebytes("foo:bar".encode()).strip().decode(), ),
       }
     req = http.server._HttpServerRequest("GET", "/", headers, None, None)
     ac = _SimpleAuthenticator("foo", "bar")
@@ -265,7 +266,7 @@ class TestHttpServerRequestAuthentication(unittest.TestCase):
   def testInvalidRequestHeader(self):
     checks = {
       http.HttpUnauthorized: ["", "\t", "-", ".", "@", "<", ">", "Digest",
-                              "basic %s" % "foobar".encode("base64").strip()],
+                              "basic %s" % base64.encodebytes("foobar".encode()).strip().decode()],
       http.HttpBadRequest: ["Basic"],
       }
 
@@ -286,7 +287,7 @@ class TestHttpServerRequestAuthentication(unittest.TestCase):
             basic_auth += "WRONG"
           headers = {
               http.HTTP_AUTHORIZATION:
-                "Basic %s" % (basic_auth.encode("base64").strip(), ),
+                "Basic %s" % (base64.encodebytes(basic_auth.encode()).strip().decode(), ),
             }
           req = http.server._HttpServerRequest("GET", "/", headers, None, None)
 
