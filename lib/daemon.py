@@ -413,7 +413,7 @@ class AsyncAwaker(GanetiBaseAsyncoreDispatcher):
     # sending more than one wakeup token, which doesn't harm at all.
     if self.need_signal:
       self.need_signal = False
-      self.out_socket.send(chr(0))
+      self.out_socket.send(b"\0")
 
 
 class _ShutdownCheck(object):
