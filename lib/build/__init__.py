@@ -45,7 +45,7 @@ def LoadModule(filename):
   """
   (name, ext) = os.path.splitext(filename)
 
-  fh = open(filename, "U")
+  fh = open(filename)
   try:
     return imp.load_module(name, fh, filename, (ext, "U", imp.PY_SOURCE))
   finally:
