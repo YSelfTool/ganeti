@@ -133,10 +133,10 @@ class QmpStub(threading.Thread):
         break
       response = self.script.pop(0)
       if isinstance(response, str):
-        conn.send(response)
+        conn.send(response.encode())
       elif isinstance(response, list):
         for chunk in response:
-          conn.send(chunk)
+          conn.send(chunk.encode())
       else:
         raise errors.ProgrammerError("Unknown response type for %s" % response)
 
@@ -144,7 +144,7 @@ class QmpStub(threading.Thread):
 
   def encode_string(self, message):
     return (serializer.DumpJson(message) +
-            hv_kvm.QmpConnection._MESSAGE_END_TOKEN)
+            hv_kvm.QmpConnection._MESSAGE_END_TOKEN).encode()
 
 
 class TestQmpMessage(testutils.GanetiTestCase):
