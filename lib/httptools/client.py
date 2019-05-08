@@ -117,7 +117,7 @@ class HttpClientRequest(object):
               self.method,
               self.path]
 
-    return "<%s at %#x>" % (" ".join(status), id(self))
+    return "<%s at %#x>" % (" ".join(map(str, status)), id(self))
 
   @property
   def url(self):
