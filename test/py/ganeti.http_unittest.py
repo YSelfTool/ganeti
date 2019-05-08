@@ -523,23 +523,23 @@ class TestClientStartRequest(unittest.TestCase):
                       _FakeCurl(), req)
 
   def testWrongHostType(self):
-    self._TestWrongTypes(str("localhost"), 8080, "GET", "/version")
+    self._TestWrongTypes(b"localhost", 8080, "GET", "/version")
 
   def testWrongUrlType(self):
-    self._TestWrongTypes("localhost", 8080, "GET", str("/version"))
+    self._TestWrongTypes("localhost", 8080, "GET", b"/version")
 
   def testWrongMethodType(self):
-    self._TestWrongTypes("localhost", 8080, str("GET"), "/version")
+    self._TestWrongTypes("localhost", 8080, b"GET", "/version")
 
   def testWrongHeaderType(self):
     self._TestWrongTypes("localhost", 8080, "GET", "/version",
                          headers={
-                           str("foo"): "bar",
+                           b"foo": "bar",
                            })
 
   def testWrongPostDataType(self):
     self._TestWrongTypes("localhost", 8080, "GET", "/version",
-                         post_data=str("verylongdata" * 100))
+                         post_data=b"verylongdata" * 100)
 
 
 class _EmptyCurlMulti:
