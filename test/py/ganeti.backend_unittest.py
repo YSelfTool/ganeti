@@ -1416,8 +1416,10 @@ class TestAddRemoveGenerateNodeSshKey(testutils.GanetiTestCase):
   def testRemoveMasterCandidateBulk(self):
     node_list = []
     key_map = {}
-    for node_name, (node_uuid, node_key, _, _, _) in \
+    for node_name, (node_uuid, node_key, _, _, is_master) in \
         self._ssh_file_manager.GetAllMasterCandidates()[:3]:
+      if is_master:
+        continue
       node_list.append(backend.SshRemoveNodeInfo(uuid=node_uuid,
                                                  name=node_name,
                                                  from_authorized_keys=True,
