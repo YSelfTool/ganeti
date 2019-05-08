@@ -47,7 +47,7 @@ import os
 import shutil
 import tempfile
 import testutils
-from .testutils import patch_object
+from testutils import patch_object
 
 
 def setUpModule():
