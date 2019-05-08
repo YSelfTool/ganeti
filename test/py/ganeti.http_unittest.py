@@ -518,9 +518,10 @@ class TestClientStartRequest(unittest.TestCase):
           assert id(opts) == id(curl.opts)
 
   def _TestWrongTypes(self, *args, **kwargs):
-    req = http.client.HttpClientRequest(*args, **kwargs)
-    self.assertRaises(AssertionError, http.client._StartRequest,
-                      _FakeCurl(), req)
+    def test_func():
+        req = http.client.HttpClientRequest(*args, **kwargs)
+        http.client._StartRequest(_FakeCurl(), req)
+    self.assertRaises((AssertionError, TypeError), test_func)
 
   def testWrongHostType(self):
     self._TestWrongTypes(b"localhost", 8080, "GET", "/version")
