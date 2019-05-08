@@ -313,7 +313,7 @@ class AsyncUDPSocket(GanetiBaseAsyncoreDispatcher):
       else:
         ip, port = address
 
-      self.handle_datagram(payload, ip, port)
+      self.handle_datagram(payload.decode(), ip, port)
 
   def handle_datagram(self, payload, ip, port):
     """Handle an already read udp datagram
@@ -333,7 +333,7 @@ class AsyncUDPSocket(GanetiBaseAsyncoreDispatcher):
       logging.error("handle_write called with empty output queue")
       return
     (ip, port, payload) = self._out_queue[0]
-    utils.IgnoreSignals(self.socket.sendto, payload, 0, (ip, port))
+    utils.IgnoreSignals(self.socket.sendto, payload.encode(), 0, (ip, port))
     self._out_queue.pop(0)
 
   def enqueue_send(self, ip, port, payload):
