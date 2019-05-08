@@ -754,7 +754,10 @@ def GenericPollJob(job_id, cbs, report_cbs, cancel_fn=None,
         (serial, timestamp, log_type, message) = log_entry
         report_cbs.ReportLogMessage(job_id, serial, timestamp,
                                     log_type, message)
-        prev_logmsg_serial = max(prev_logmsg_serial, serial)
+        if prev_logmsg_serial is None:
+            prev_logmsg_serial = serial
+        else:
+            prev_logmsg_serial = max(prev_logmsg_serial, serial)
 
     # TODO: Handle canceled and archived jobs
     elif status in (constants.JOB_STATUS_SUCCESS,
