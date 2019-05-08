@@ -416,6 +416,8 @@ def SafeEncode(text):
   if isinstance(text, str):
     # only if unicode; if str already, we handle it below
     text = text.encode("ascii", "backslashreplace")
+  if not isinstance(text, bytes):
+    raise TypeError("SafeEncode expected bytes or str, not {}".format(repr(text)))
   resu = ""
   for c in text:
     char = chr(c)
