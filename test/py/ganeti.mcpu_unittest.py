@@ -34,7 +34,7 @@
 import unittest
 import itertools
 import mocks
-from .cmdlib.testsupport.rpc_runner_mock import CreateRpcRunnerMock
+from cmdlib.testsupport.rpc_runner_mock import CreateRpcRunnerMock
 
 from ganeti import compat
 from ganeti import errors
