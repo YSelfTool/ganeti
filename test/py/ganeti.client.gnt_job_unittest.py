@@ -142,9 +142,9 @@ class TestCancelJob(unittest.TestCase):
     def _Query(qfilter):
       # Need to sort as constants.JOBS_PENDING has no stable order
       assert isinstance(constants.JOBS_PENDING, frozenset)
-      self.assertEqual(sorted(qfilter),
-                       sorted(qlang.MakeSimpleFilter("status",
-                                                     constants.JOBS_PENDING)))
+      self.assertEqual(qfilter,
+                       qlang.MakeSimpleFilter("status",
+                                              constants.JOBS_PENDING))
 
       return [
         [(constants.RS_UNAVAIL, None),
