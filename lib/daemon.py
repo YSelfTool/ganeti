@@ -354,7 +354,7 @@ class AsyncUDPSocket(GanetiBaseAsyncoreDispatcher):
     @return: True if some data has been handled, False otherwise
 
     """
-    result = utils.WaitForFdCondition(self, select.POLLIN, timeout)
+    result = utils.WaitForFdCondition(self.socket, select.POLLIN, timeout)
     if result is not None and result & select.POLLIN:
       self.handle_read()
       return True
