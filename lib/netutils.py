@@ -349,7 +349,7 @@ def TcpPing(target, port, timeout=10, live_port_needed=False, source=None):
   except socket.timeout:
     success = False
   except socket.error as err:
-    success = (not live_port_needed) and (err[0] == errno.ECONNREFUSED)
+    success = (not live_port_needed) and (err.errno == errno.ECONNREFUSED)
 
   return success
 
