@@ -54,7 +54,7 @@ import ganeti.hypervisor.hv_kvm.monitor as monitor
 from unittest import mock
 import testutils
 
-from .testutils.config_mock import ConfigMock
+from testutils.config_mock import ConfigMock
 
 
 class QmpStub(threading.Thread):
