@@ -48,7 +48,7 @@ from ganeti import compat
 from ganeti import pathutils
 from ganeti.constants import HKR_SUCCESS, HKR_FAIL, HKR_SKIP
 
-from .mocks import FakeConfig, FakeProc, FakeContext
+from mocks import FakeConfig, FakeProc, FakeContext
 
 import testutils
 
