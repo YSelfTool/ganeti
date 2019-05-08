@@ -303,7 +303,7 @@ class AsyncUDPSocket(GanetiBaseAsyncoreDispatcher):
 
   # this method is overriding an asyncore.dispatcher method
   def handle_read(self):
-    recv_result = utils.IgnoreSignals(self.recvfrom,
+    recv_result = utils.IgnoreSignals(self.socket.recvfrom,
                                       constants.MAX_UDP_DATA_SIZE)
     if recv_result is not None:
       payload, address = recv_result
@@ -333,7 +333,7 @@ class AsyncUDPSocket(GanetiBaseAsyncoreDispatcher):
       logging.error("handle_write called with empty output queue")
       return
     (ip, port, payload) = self._out_queue[0]
-    utils.IgnoreSignals(self.sendto, payload, 0, (ip, port))
+    utils.IgnoreSignals(self.socket.sendto, payload, 0, (ip, port))
     self._out_queue.pop(0)
 
   def enqueue_send(self, ip, port, payload):
