@@ -95,17 +95,16 @@ def _FingerprintFile(filename):
   if not (os.path.exists(filename) and os.path.isfile(filename)):
     return None
 
-  f = open(filename)
+  with open(filename, "rb") as f:
+    fp = hashlib.sha1()
+    while True:
+      data = f.read(4096)
+      if not data:
+        break
 
-  fp = hashlib.sha1()
-  while True:
-    data = f.read(4096)
-    if not data:
-      break
+      fp.update(data)
 
-    fp.update(data)
-
-  return fp.hexdigest()
+    return fp.hexdigest()
 
 
 def FingerprintFiles(files):
