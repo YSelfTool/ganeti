@@ -628,7 +628,7 @@ def _RunCmdPipe(cmd, env, via_shell, cwd, interactive, timeout, noclose_fds,
             poller.unregister(fd)
             del fdmap[fd]
             continue
-          fdmap[fd][0].write(data)
+          fdmap[fd][0].write(data.decode())
         if (event & select.POLLNVAL or event & select.POLLHUP or
             event & select.POLLERR):
           poller.unregister(fd)
