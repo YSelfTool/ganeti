@@ -98,7 +98,7 @@ class HttpClientRequest(object):
       self.headers = []
     elif isinstance(headers, dict):
       # Support for old interface
-      self.headers = ["%s: %s" % (name, value)
+      self.headers = [": ".join((name, value))
                       for name, value in list(headers.items())]
     else:
       self.headers = headers
