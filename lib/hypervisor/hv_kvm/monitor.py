@@ -358,7 +358,7 @@ class QmpConnection(MonitorSocket):
         data = self.sock.recv(4096)
         if not data:
           break
-        recv_buffer.write(data)
+        recv_buffer.write(data.decode())
 
         (message, self._buf) = self._ParseMessage(recv_buffer.getvalue())
         if message:
@@ -387,7 +387,7 @@ class QmpConnection(MonitorSocket):
       raise errors.ProgrammerError("QMP data deserialization error: %s" % err)
 
     try:
-      self.sock.sendall(message_str)
+      self.sock.sendall(message_str.encode())
     except socket.timeout as err:
       raise errors.HypervisorError("Timeout while sending a QMP message: "
                                    "%s" % err)
