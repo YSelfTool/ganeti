@@ -112,7 +112,7 @@ class TestLogHandler(unittest.TestCase):
 
   def testConsole(self):
     for (console, check) in [(None, False),
-                             (tempfile.NamedTemporaryFile(), True),
+                             (tempfile.NamedTemporaryFile(mode="w+"), True),
                              (self._FailingFile(os.devnull), False)]:
       # Create a handler which will fail when handling errors
       cls = utils.log._LogErrorsToConsole(self._FailingHandler)
