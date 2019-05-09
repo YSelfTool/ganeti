@@ -132,10 +132,12 @@ def _NiceSortTryInt(val):
   """Attempts to convert a string to an integer.
 
   """
-  if val and val.isdigit():
-    return int(val)
+  if isinstance(val, type(None)):
+    return ('NoneType', None)
+  elif val and val.isdigit():
+    return ('int', int(val))
   else:
-    return -sum(map(ord, val))
+    return ('str', val)
 
 
 def NiceSortKey(value):
@@ -143,8 +145,7 @@ def NiceSortKey(value):
 
   """
   return [_NiceSortTryInt(grp)
-          for grp in _SORTER_RE.match(str(value)).groups()
-          if grp]
+          for grp in _SORTER_RE.match(str(value)).groups()]
 
 
 def NiceSort(values, key=None):
