@@ -547,9 +547,10 @@ class TestNodeQuery(unittest.TestCase):
                      (constants.RS_NORMAL, 2))
     self.assertEqual(live_data_row[field_index["sinst_cnt"]],
                      (constants.RS_NORMAL, 3))
-    self.assertEqual(master_row[field_index["pinst_list"]],
-                     (constants.RS_NORMAL,
-                      [inst_uuid_to_inst_name[uuid] for uuid in
+    self.assertEqual(master_row[field_index["pinst_list"]][0],
+                     constants.RS_NORMAL)
+    self.assertEqual(sorted(master_row[field_index["pinst_list"]][1]),
+                      sorted([inst_uuid_to_inst_name[uuid] for uuid in
                        node_to_primary_uuid[master_node.uuid]]))
     self.assertEqual(live_data_row[field_index["sinst_list"]],
                      (constants.RS_NORMAL,
