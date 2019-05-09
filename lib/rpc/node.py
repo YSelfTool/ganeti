@@ -165,7 +165,7 @@ def _Compress(_, data):
 
   # Compress with zlib and encode in base64
   return (constants.RPC_ENCODING_ZLIB_BASE64,
-          base64.b64encode(zlib.compress(data, 3)))
+          base64.b64encode(zlib.compress(data.encode(), 3)).decode())
 
 
 class RpcResult(object):
