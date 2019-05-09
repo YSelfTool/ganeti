@@ -230,13 +230,13 @@ class TestNiceSort(unittest.TestCase):
 
   def testNiceSortKey(self):
     self.assertEqual(algo.NiceSortKey(""),
-                     ([None] * algo._SORTER_GROUPS) + [""])
+                     ([("NoneType", None)] * algo._SORTER_GROUPS) + [("str", "")])
     self.assertEqual(algo.NiceSortKey("Hello World"),
-                     ["Hello World"] +
-                     ([None] * int(algo._SORTER_GROUPS - 1)) + [""])
+                     [("str", "Hello World")] +
+                     ([("NoneType", None)] * int(algo._SORTER_GROUPS - 1)) + [("str", "")])
     self.assertEqual(algo.NiceSortKey("node1.net75.bld3.example.com"),
-                     ["node", 1, ".net", 75, ".bld", 3, ".example.com",
-                      None, ""])
+                     [("str", "node"), ("int", 1), ("str", ".net"), ("int", 75), ("str", ".bld"), ("int", 3), ("str", ".example.com"),
+                      ("NoneType", None), ("str", "")])
 
 
 class TestInvertDict(unittest.TestCase):
