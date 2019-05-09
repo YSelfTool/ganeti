@@ -34,7 +34,6 @@ import functools
 import re
 import unittest
 import random
-import mimetools
 import base64
 from io import StringIO
 
