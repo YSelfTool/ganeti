@@ -148,10 +148,10 @@ class TestRemoteApiHandler(unittest.TestCase):
                      "Basic authentication requires credentials")
 
   def testInvalidBasicAuth(self):
-    for auth in ["!invalid=base!64.", base64.b64encode(" "),
-                 base64.b64encode("missingcolonchar")]:
+    for auth in [b"!invalid=base!64.", base64.b64encode(b" "),
+                 base64.b64encode(b"missingcolonchar")]:
       headers = rapi.testutils._FormatHeaders([
-        "%s: Basic %s" % (http.HTTP_AUTHORIZATION, auth),
+        "%s: Basic %s" % (http.HTTP_AUTHORIZATION, auth.decode()),
         ])
 
       (code, _, data) = self._Test(http.HTTP_POST, "/2/instances", headers, "")
@@ -166,7 +166,7 @@ class TestRemoteApiHandler(unittest.TestCase):
 
     return rapi.testutils._FormatHeaders([
       "%s: Basic %s" % (http.HTTP_AUTHORIZATION,
-                        base64.b64encode("%s:%s" % (username, pw))),
+                        base64.b64encode(("%s:%s" % (username, pw)).encode()).decode()),
       "%s: %s" % (http.HTTP_CONTENT_TYPE, http.HTTP_APP_JSON),
       ])
 
