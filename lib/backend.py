@@ -225,9 +225,9 @@ def _Decompress(data):
   assert len(data) == 2
   (encoding, content) = data
   if encoding == constants.RPC_ENCODING_NONE:
-    return content
+    return content.decode()
   elif encoding == constants.RPC_ENCODING_ZLIB_BASE64:
-    return zlib.decompress(base64.b64decode(content))
+    return zlib.decompress(base64.b64decode(content)).decode()
   else:
     raise AssertionError("Unknown data encoding")
 

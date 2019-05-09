@@ -763,7 +763,7 @@ class TestRpcRunner(unittest.TestCase):
     data = 1779 * "Hello World\n"
 
     tmpfile = tempfile.NamedTemporaryFile()
-    tmpfile.write(data)
+    tmpfile.write(data.encode())
     tmpfile.flush()
     st = os.stat(tmpfile.name)
 
