@@ -898,7 +898,7 @@ def WritePidFile(pidfile):
       msg.append(", PID read from file is %s" % pid)
     raise errors.PidFileLockError("".join(msg))
 
-  os.write(fd_pidfile, "%d\n" % os.getpid())
+  os.write(fd_pidfile, ("%d\n" % os.getpid()).encode())
 
   return fd_pidfile
 

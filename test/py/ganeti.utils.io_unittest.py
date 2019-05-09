@@ -56,7 +56,7 @@ class TestReadFile(testutils.GanetiTestCase):
     self.assertEqual(len(data), 1229)
 
     h = hashlib.md5()
-    h.update(data)
+    h.update(data.encode())
     self.assertEqual(h.hexdigest(), "a02be485db0d82b70c0ae7913b26894e")
 
   def testReadSize(self):
@@ -65,7 +65,7 @@ class TestReadFile(testutils.GanetiTestCase):
     self.assertEqual(len(data), 100)
 
     h = hashlib.md5()
-    h.update(data)
+    h.update(data.encode())
     self.assertEqual(h.hexdigest(), "256d28505448898d4741b10c5f5dbc12")
 
   def testCallback(self):
@@ -340,7 +340,7 @@ class TestWriteFile(testutils.GanetiTestCase):
 
   def testDryRun(self):
     orig = "abc"
-    self.tfile.write(orig)
+    self.tfile.write(orig.encode())
     self.tfile.flush()
     utils.WriteFile(self.tfile.name, data="hello", dry_run=True)
     self.assertEqual(utils.ReadFile(self.tfile.name), orig)
@@ -360,7 +360,7 @@ class TestWriteFile(testutils.GanetiTestCase):
     fd = utils.WriteFile(self.tfile.name, data=data, close=False)
     try:
       os.lseek(fd, 0, 0)
-      self.assertEqual(os.read(fd, 4096), data)
+      self.assertEqual(os.read(fd, 4096).decode(), data)
     finally:
       os.close(fd)
 
@@ -817,7 +817,7 @@ class TestPidFileFunctions(unittest.TestCase):
     new_pid = os.fork()
     if new_pid == 0: #child
       utils.WritePidFile(self.f_dpn("child"))
-      os.write(w_fd, "a")
+      os.write(w_fd, b"a")
       signal.pause()
       os._exit(0)
       return
