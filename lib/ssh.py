@@ -160,6 +160,7 @@ def AddAuthorizedKeys(file_obj, keys):
 
   if isinstance(file_obj, str):
     f = open(file_obj, "a+")
+    f.seek(0)
   else:
     f = file_obj
 
@@ -172,6 +173,8 @@ def AddAuthorizedKeys(file_obj, keys):
                            in key_field_list
                            if split_key != line_key]
       nl = line.endswith("\n")
+
+    f.seek(0, os.SEEK_END)
 
     if not nl:
       f.write("\n")
