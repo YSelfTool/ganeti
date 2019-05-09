@@ -32,7 +32,7 @@
 """
 
 import http.server
-import cgi
+import html
 import functools
 import logging
 import os
@@ -341,7 +341,7 @@ class HttpResponder(object):
 
     values = {
       "code": err.code,
-      "message": cgi.escape(message),
+      "message": html.escape(message),
       "explain": longmsg,
       }
 
