@@ -218,7 +218,7 @@ def SignX509Certificate(cert, key, salt):
     raise errors.GenericError("Invalid salt: %r" % salt)
 
   # Dumping as PEM here ensures the certificate is in a sane format
-  cert_pem = OpenSSL.crypto.dump_certificate(OpenSSL.crypto.FILETYPE_PEM, cert)
+  cert_pem = OpenSSL.crypto.dump_certificate(OpenSSL.crypto.FILETYPE_PEM, cert).decode()
 
   return ("%s: %s/%s\n\n%s" %
           (constants.X509_CERT_SIGNATURE_HEADER, salt,
