@@ -442,7 +442,7 @@ def _StartDaemonChild(errpipe_read, errpipe_write,
     SetupDaemonFDs(output, fd_output)
 
     # Send daemon PID to parent
-    utils_wrapper.RetryOnSignal(os.write, pidpipe_write, str(os.getpid()))
+    utils_wrapper.RetryOnSignal(os.write, pidpipe_write, str(os.getpid()).encode())
 
     # Close all file descriptors except stdio and error message pipe
     CloseFDs(noclose_fds=noclose_fds)
@@ -479,7 +479,7 @@ def WriteErrorToFD(fd, err):
   if not err:
     err = "<unknown error>"
 
-  utils_wrapper.RetryOnSignal(os.write, fd, err)
+  utils_wrapper.RetryOnSignal(os.write, fd, err.encode())
 
 
 def _CheckIfAlive(child):
@@ -549,19 +549,19 @@ def _RunCmdPipe(cmd, env, via_shell, cwd, interactive, timeout, noclose_fds,
     stdin = subprocess.PIPE
 
   if noclose_fds:
-    preexec_fn = lambda: CloseFDs(noclose_fds)
+    for fd in noclose_fds:
+      os.set_inheritable(fd, True)
     close_fds = False
   else:
-    preexec_fn = None
     close_fds = True
+
 
   child = subprocess.Popen(cmd, shell=via_shell,
                            stderr=stderr,
                            stdout=stdout,
                            stdin=stdin,
                            close_fds=close_fds, env=env,
-                           cwd=cwd,
-                           preexec_fn=preexec_fn)
+                           cwd=cwd)
 
   if postfork_fn:
     postfork_fn(child.pid)
