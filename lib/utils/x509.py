@@ -111,7 +111,7 @@ def GetX509CertValidity(cert):
     if not_before_asn1 is None:
       not_before = None
     else:
-      not_before = _ParseAsn1Generalizedtime(not_before_asn1)
+      not_before = _ParseAsn1Generalizedtime(not_before_asn1.decode())
 
   try:
     get_notafter_fn = cert.get_notAfter
@@ -123,7 +123,7 @@ def GetX509CertValidity(cert):
     if not_after_asn1 is None:
       not_after = None
     else:
-      not_after = _ParseAsn1Generalizedtime(not_after_asn1)
+      not_after = _ParseAsn1Generalizedtime(not_after_asn1.decode())
 
   return (not_before, not_after)
 
