@@ -79,7 +79,7 @@ class TestSetNonblockFlag(unittest.TestCase):
 class TestIgnoreProcessNotFound(unittest.TestCase):
   @staticmethod
   def _WritePid(fd):
-    os.write(fd, str(os.getpid()))
+    os.write(fd, str(os.getpid()).encode())
     os.close(fd)
     return True
 
